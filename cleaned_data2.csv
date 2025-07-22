@@ -1,0 +1,433 @@
+Disaster Subtype,Start Year,Disaster Type,Country,Subregion,Region,Location,Start Month,Start Day,End Year,End Month,End Day,Latitude,Longitude
+coastal flood,2001,Flood,Malawi,Sub-Saharan Africa,africa,Nkhotakota,1.0,1.0,2001,1.0,27.0,-12.8321965,34.0329177
+coastal flood,2001,Flood,Mozambique,Sub-Saharan Africa,africa,Caia,1.0,1.0,2001,4.0,27.0,-17.7981948,35.0884236
+coastal flood,2001,Flood,Malawi,Sub-Saharan Africa,africa,Phalombe,1.0,1.0,2001,1.0,27.0,-15.6922071,35.6650523
+coastal flood,2003,Flood,Mozambique,Sub-Saharan Africa,africa,Malema,1.0,1.0,2003,2.0,17.0,-14.7346835,37.3676317
+coastal flood,2003,Flood,Mozambique,Sub-Saharan Africa,africa,Mocuba,1.0,1.0,2003,2.0,17.0,-16.8519695,36.8785266
+coastal flood,2003,Flood,Mozambique,Sub-Saharan Africa,africa,Cidade de Quelimane,1.0,1.0,2003,2.0,17.0,-17.8673682,36.8971189
+coastal flood,2007,Flood,Madagascar,Sub-Saharan Africa,africa,Antananarivo I,2.0,8.0,2007,2.0,8.0,-21.743247,46.6145685
+coastal flood,2007,Flood,Madagascar,Sub-Saharan Africa,africa,Antananarivo II,2.0,8.0,2007,2.0,8.0,-18.9100122,47.5255809
+coastal flood,2007,Flood,Madagascar,Sub-Saharan Africa,africa,Antananarivo Atsimondrano,2.0,8.0,2007,2.0,8.0,-19.0098481,47.5123767
+cold wave,2016,Extreme temperature,Morocco,Northern Africa,africa,Figuig district (Oriental province),2.0,27.0,2016,2.0,27.0,32.1097961,-1.2287718
+cold wave,2016,Extreme temperature,Morocco,Northern Africa,africa,Taza,2.0,27.0,2016,2.0,27.0,34.230155,-4.010104
+cold wave,2016,Extreme temperature,Morocco,Northern Africa,africa,Boulemane,2.0,27.0,2016,2.0,27.0,33.3637958,-4.729575
+cold wave,2017,Extreme temperature,Algeria,Northern Africa,africa,Laghouat,1.0,16.0,2017,1.0,20.0,33.7504405,2.6431094
+cold wave,2017,Extreme temperature,Algeria,Northern Africa,africa,Tébéssa,1.0,16.0,2017,1.0,20.0,35.124945,7.9011735
+cold wave,2017,Extreme temperature,Morocco,Northern Africa,africa,Oriental,1.0,15.0,2017,2.0,26.0,33.3202138,-2.4238471
+cold wave,2018,Extreme temperature,Morocco,Northern Africa,africa,Chefchaouen,1.0,5.0,2018,1.0,9.0,35.1700832,-5.2766583
+cold wave,2018,Extreme temperature,Morocco,Northern Africa,africa,Midelt,1.0,5.0,2018,1.0,9.0,32.680347,-4.739897
+cold wave,2018,Extreme temperature,Morocco,Northern Africa,africa,Zagora,1.0,5.0,2018,1.0,9.0,39.4438441,23.1022243
+cold wave,2019,Extreme temperature,Algeria,Northern Africa,africa,Tizi Ouzou,1.0,11.0,2019,3.0,22.0,36.6816175,4.237186
+cold wave,2019,Extreme temperature,Algeria,Northern Africa,africa,Medea,1.0,11.0,2019,3.0,22.0,35.9752045,3.0123504
+cold wave,2019,Extreme temperature,Algeria,Northern Africa,africa,Boumerdes,1.0,11.0,2019,3.0,22.0,36.7358032,3.6163046
+drought,2000,Drought,Madagascar,Sub-Saharan Africa,africa,district (Alaotra Mangoro province),6.0,22.0,2000,12.0,22.0,-17.0074287,48.571098
+drought,2000,Drought,Madagascar,Sub-Saharan Africa,africa,Ambovombe-Androy,6.0,22.0,2000,12.0,22.0,-25.178398,46.0877489
+drought,2000,Drought,Madagascar,Sub-Saharan Africa,africa,Faratsiho,6.0,22.0,2000,12.0,22.0,-19.4050956,46.9508361
+drought,2001,Drought,Zimbabwe,Sub-Saharan Africa,africa,Zvishavane,3.0,19.0,2003,8.0,19.0,-20.3159097,30.0526888
+drought,2001,Drought,Eswatini,Sub-Saharan Africa,africa,Lomahasha,3.0,19.0,2004,8.0,19.0,-25.9900748,31.9965301
+drought,2001,Drought,Mali,Sub-Saharan Africa,africa,Koulikoro,4.0,19.0,2001,8.0,19.0,13.4820706,-7.6096079
+drought,2002,Drought,Mozambique,Sub-Saharan Africa,africa,Maputo,3.0,19.0,2002,8.0,19.0,-25.966213,32.56745
+drought,2002,Drought,Namibia,Sub-Saharan Africa,africa,Otjozondjupa,7.0,28.0,2003,3.0,28.0,-19.9424962,18.395886
+drought,2002,Drought,Senegal,Sub-Saharan Africa,africa,Kedougou,8.0,28.0,2002,8.0,28.0,12.5570752,-12.1855655
+drought,2003,Drought,Rwanda,Sub-Saharan Africa,africa,Gisagara,3.0,21.0,2007,1.0,21.0,-2.6069045,29.846704
+drought,2003,Drought,Burundi,Sub-Saharan Africa,africa,Gitega,9.0,21.0,2004,1.0,21.0,-3.4284953,29.9249718
+drought,2003,Drought,Mozambique,Sub-Saharan Africa,africa,Moatize,1.0,21.0,2003,1.0,21.0,-16.0134154,33.9157588
+drought,2004,Drought,United Republic of Tanzania,Sub-Saharan Africa,africa,Manyara,10.0,10.0,2004,10.0,10.0,-4.072751,35.8521735
+drought,2004,Drought,Kenya,Sub-Saharan Africa,africa,Mbeere,7.0,10.0,2004,7.0,10.0,-0.7293525,37.7051948
+drought,2004,Drought,Kenya,Sub-Saharan Africa,africa,Nyanza,7.0,10.0,2004,7.0,10.0,-0.540052,34.4882692
+drought,2005,Drought,Kenya,Sub-Saharan Africa,africa,Marsabit,12.0,14.0,2006,12.0,15.0,2.8579582,37.7154892
+drought,2005,Drought,Kenya,Sub-Saharan Africa,africa,Samburu,12.0,14.0,2006,12.0,15.0,1.5394463,36.942166
+drought,2005,Drought,Kenya,Sub-Saharan Africa,africa,Kitui,12.0,14.0,2006,12.0,15.0,-1.5642219,38.3728116
+drought,2006,Drought,Mali,Sub-Saharan Africa,africa,Kidal province,8.0,5.0,2006,9.0,17.0,-8.5313761,119.7928374
+drought,2006,Drought,United Republic of Tanzania,Sub-Saharan Africa,africa,Manyara,8.0,5.0,2006,9.0,17.0,-4.072751,35.8521735
+drought,2006,Drought,Guinea-Bissau,Sub-Saharan Africa,africa,Quinara,5.0,5.0,2006,5.0,17.0,11.6340114,-15.0952685
+drought,2007,Drought,Eswatini,Sub-Saharan Africa,africa,Hhohho,7.0,30.0,2007,7.0,30.0,-26.0988012,31.3630822
+drought,2007,Drought,Zimbabwe,Sub-Saharan Africa,africa,Midlands,1.0,30.0,2009,6.0,27.0,-19.2785043,29.8790852
+drought,2007,Drought,Zimbabwe,Sub-Saharan Africa,africa,Matabeleland North,1.0,30.0,2009,6.0,27.0,-18.9283715,27.4992231
+drought,2008,Drought,Burundi,Sub-Saharan Africa,africa,Karuzi,9.0,30.0,2009,1.0,3.0,-3.1255377,30.0978347
+drought,2008,Drought,Kenya,Sub-Saharan Africa,africa,Eastern,7.0,30.0,2009,10.0,3.0,7.7596435,81.5850205
+drought,2008,Drought,Mozambique,Sub-Saharan Africa,africa,Sofala,12.0,30.0,2009,10.0,3.0,-19.0771666,34.7164804
+drought,2009,Drought,South Sudan,Sub-Saharan Africa,africa,Jonglei,1.0,24.0,2010,8.0,12.0,8.0,32.0
+drought,2009,Drought,Niger,Sub-Saharan Africa,africa,Agadez,9.0,24.0,2010,3.0,12.0,16.972556,7.990739
+drought,2009,Drought,South Sudan,Sub-Saharan Africa,africa,Upper Nile,1.0,24.0,2010,8.0,12.0,9.0,33.0
+drought,2010,Drought,Zimbabwe,Sub-Saharan Africa,africa,Matabeleland South,5.0,15.0,2013,11.0,12.0,-20.7364801,28.9396495
+drought,2010,Drought,Somalia,Sub-Saharan Africa,africa,Sanaag,2.0,15.0,2011,11.0,12.0,10.4386899,47.5924085
+drought,2010,Drought,Somalia,Sub-Saharan Africa,africa,Gedo,2.0,15.0,2011,11.0,12.0,3.0,42.0
+drought,2011,Drought,Burundi,Sub-Saharan Africa,africa,Kayanza,8.0,15.0,2011,8.0,15.0,-3.0214816,29.6458034
+drought,2011,Drought,Ethiopia,Sub-Saharan Africa,africa,Somali,1.0,15.0,2012,1.0,12.0,8.3676771,49.083416
+drought,2011,Drought,Senegal,Sub-Saharan Africa,africa,Saint-Louis,12.0,31.0,2013,12.0,31.0,38.6280278,-90.1910154
+drought,2012,Drought,Chad,Sub-Saharan Africa,africa,Kanem,6.0,15.0,2013,2.0,3.0,15.2264398,15.3151191
+drought,2012,Drought,Angola,Sub-Saharan Africa,africa,Bie,3.0,15.0,2013,5.0,3.0,-12.2630485,17.4967812
+drought,2012,Drought,Angola,Sub-Saharan Africa,africa,Moxico,3.0,15.0,2013,5.0,3.0,-12.7287195,21.2737637
+drought,2013,Drought,Zimbabwe,Sub-Saharan Africa,africa,Mashonaland Central,1.0,30.0,2017,1.0,7.0,-16.742872,31.2952086
+drought,2013,Drought,Namibia,Sub-Saharan Africa,africa,Ohangwena,1.0,30.0,2014,1.0,7.0,-17.5877369,16.7737955
+drought,2013,Drought,Zimbabwe,Sub-Saharan Africa,africa,Matabeleland North,1.0,30.0,2017,1.0,7.0,-18.9283715,27.4992231
+drought,2014,Drought,Kenya,Sub-Saharan Africa,africa,Baringo,1.0,16.0,2015,5.0,18.0,0.71401,36.0172739
+drought,2014,Drought,Somalia,Sub-Saharan Africa,africa,Bakool,7.0,16.0,2017,12.0,18.0,3.9991789,43.9995531
+drought,2014,Drought,Somalia,Sub-Saharan Africa,africa,Karkaar,7.0,16.0,2017,12.0,18.0,9.912471,49.392509
+drought,2015,Drought,South Africa,Sub-Saharan Africa,africa,Mpumalanga,1.0,3.0,2017,5.0,4.0,-26.276849,30.1500153
+drought,2015,Drought,Ethiopia,Sub-Saharan Africa,africa,Oromia,9.0,3.0,2017,4.0,4.0,7.6721644,40.0299727
+drought,2015,Drought,Niger,Sub-Saharan Africa,africa,Niamey,4.0,3.0,2017,3.0,4.0,13.524834,2.109823
+drought,2016,Drought,Eswatini,Sub-Saharan Africa,africa,Lubombo,2.0,24.0,2017,2.0,24.0,-26.55452,31.8619116
+drought,2016,Drought,Kenya,Sub-Saharan Africa,africa,Isiolo,6.0,24.0,2018,1.0,24.0,1.00606,38.7478954
+drought,2016,Drought,Mozambique,Sub-Saharan Africa,africa,Tete,1.0,24.0,2017,1.0,24.0,-15.5205193,32.7682742
+drought,2017,Drought,Madagascar,Sub-Saharan Africa,africa,South,1.0,30.0,2018,12.0,14.0,18.2612839,-73.8444985
+drought,2017,Drought,South Africa,Sub-Saharan Africa,africa,Cap town,5.0,30.0,2018,6.0,14.0,-33.9288301,18.4172197
+drought,2017,Drought,Niger,Sub-Saharan Africa,africa,Abala,5.0,30.0,2017,6.0,14.0,14.9320767,3.4298122
+drought,2018,Drought,Namibia,Sub-Saharan Africa,africa,Kavango East,10.0,4.0,2020,12.0,9.0,-18.3982355,20.72468
+drought,2018,Drought,Namibia,Sub-Saharan Africa,africa,Omaheke,10.0,4.0,2020,12.0,9.0,-21.9074676,19.3929661
+drought,2018,Drought,Namibia,Sub-Saharan Africa,africa,Hardap,10.0,4.0,2020,12.0,9.0,-24.4140944,17.4134051
+drought,2019,Drought,Kenya,Sub-Saharan Africa,africa,Isiolo,1.0,25.0,2019,9.0,10.0,1.00606,38.7478954
+drought,2019,Drought,Kenya,Sub-Saharan Africa,africa,Marsabit,1.0,25.0,2019,9.0,10.0,2.8579582,37.7154892
+drought,2019,Drought,Somalia,Sub-Saharan Africa,africa,Woqooyi Galbeed,2.0,25.0,2019,10.0,10.0,9.5051825,44.0731432
+drought,2020,Drought,Kenya,Sub-Saharan Africa,africa,Tana River,12.0,11.0,2022,12.0,23.0,-1.5365119,39.5508374
+drought,2020,Drought,Kenya,Sub-Saharan Africa,africa,Samburu,12.0,11.0,2022,12.0,23.0,1.5394463,36.942166
+drought,2020,Drought,Angola,Sub-Saharan Africa,africa,Benguela,12.0,11.0,2022,2.0,13.0,-12.5790048,13.4037117
+drought,2021,Drought,Somalia,Sub-Saharan Africa,africa,Jubaland,3.0,11.0,2022,12.0,23.0,1.3453924,42.0252942
+drought,2021,Drought,Mozambique,Sub-Saharan Africa,africa,Cabo Delgado,6.0,27.0,2022,11.0,28.0,-12.4254942,39.4168743
+drought,2021,Drought,Zimbabwe,Sub-Saharan Africa,africa,Masvingo,8.0,27.0,2022,2.0,28.0,-20.7453957,31.334138
+drought,2022,Drought,Djibouti,Sub-Saharan Africa,africa,Dikhil,6.0,12.0,2022,7.0,13.0,11.42837,42.0639774
+drought,2022,Drought,Chad,Sub-Saharan Africa,africa,Fada,6.0,12.0,2022,8.0,13.0,17.1930577,21.5813259
+drought,2022,Drought,Chad,Sub-Saharan Africa,africa,Kimiti,6.0,12.0,2022,8.0,13.0,-6.0986225,35.7487396
+drought,2023,Drought,Botswana,Sub-Saharan Africa,africa,Southern,7.0,7.0,2024,6.0,15.0,22.219269,114.2252234
+drought,2023,Drought,Lesotho,Sub-Saharan Africa,africa,Mohale's Hoek,12.0,7.0,2024,7.0,15.0,-30.0696842,27.8038609
+drought,2023,Drought,Mozambique,Sub-Saharan Africa,africa,Tete,10.0,7.0,2024,5.0,15.0,-15.5205193,32.7682742
+drought,2024,Drought,Zambia,Sub-Saharan Africa,africa,Southern,2.0,26.0,2025,2.0,26.0,22.219269,114.2252234
+drought,2024,Drought,Namibia,Sub-Saharan Africa,africa,Khomas,5.0,26.0,2024,9.0,26.0,-22.9082553,17.09198
+drought,2024,Drought,Zambia,Sub-Saharan Africa,africa,Shangombo,2.0,26.0,2025,2.0,26.0,-16.321673,22.099831
+drought,2025,Drought,Somalia,Sub-Saharan Africa,africa,Gedo,1.0,14.0,2025,5.0,15.0,3.0,42.0
+drought,2025,Drought,Kenya,Sub-Saharan Africa,africa,Turkana,1.0,14.0,2025,5.0,15.0,3.5258945,36.0742949
+drought,2025,Drought,Kenya,Sub-Saharan Africa,africa,Mandera,1.0,14.0,2025,5.0,15.0,3.2285332,40.7056153
+flash flood,2000,Flood,Algeria,Northern Africa,africa,Relizane district (Relizane province),10.0,22.0,2000,10.0,25.0,35.6811988,0.5425686
+flash flood,2000,Flood,South Africa,Sub-Saharan Africa,africa,Kwazulu-Natal province,11.0,19.0,2000,11.0,23.0,-29.4870163,30.2224876
+flash flood,2000,Flood,Algeria,Northern Africa,africa,El Bayadh district (El Bayadh province),10.0,22.0,2000,10.0,25.0,33.6378523,1.0122039
+flash flood,2001,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Dar-es-salaam province),2.0,27.0,2001,2.0,27.0,9.005181,-13.0125159
+flash flood,2001,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Dar-es-salaam province),2.0,27.0,2001,2.0,27.0,9.005181,-13.0125159
+flash flood,2001,Flood,Chad,Sub-Saharan Africa,africa,Logone Occidental,8.0,19.0,2001,10.0,11.0,8.7795637,15.9126749
+flash flood,2003,Flood,Namibia,Sub-Saharan Africa,africa,Kabe,5.0,12.0,2003,5.0,12.0,40.6511137,-75.4422336
+flash flood,2003,Flood,Morocco,Northern Africa,africa,Nador district (Nador province),11.0,17.0,2003,11.0,18.0,36.568546,2.3956797
+flash flood,2003,Flood,Malawi,Sub-Saharan Africa,africa,Mzimba,4.0,5.0,2003,4.0,8.0,-11.8458102,33.5578319
+flash flood,2005,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Rural province),2.0,2.0,2005,2.0,2.0,-3.4759817,29.4535702
+flash flood,2005,Flood,Burundi,Sub-Saharan Africa,africa,Bubanza province),2.0,2.0,2005,2.0,2.0,-3.5353754,29.4683783
+flash flood,2005,Flood,Ethiopia,Sub-Saharan Africa,africa,Dire Dawa,4.0,23.0,2005,4.0,26.0,9.5912196,41.9797191
+flash flood,2006,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Rural,5.0,18.0,2006,5.0,18.0,-3.4759817,29.4535702
+flash flood,2006,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Mairie,5.0,18.0,2006,5.0,18.0,-3.3493959,29.3631843
+flash flood,2006,Flood,Mauritania,Sub-Saharan Africa,africa,Guidimakha,8.0,3.0,2006,10.0,11.0,15.3766896,-12.124663
+flash flood,2007,Flood,Algeria,Northern Africa,africa,Tizi Ouzou,9.0,21.0,2007,9.0,24.0,36.6816175,4.237186
+flash flood,2007,Flood,Malawi,Sub-Saharan Africa,africa,Southern Region province),11.0,18.0,2008,2.0,2.0,-10.0226491,151.5800288
+flash flood,2007,Flood,Algeria,Northern Africa,africa,M'Sila,9.0,21.0,2007,9.0,24.0,35.1300205,4.2003107
+flash flood,2008,Flood,Burkina Faso,Sub-Saharan Africa,africa,Boucle Du Mouhoun,7.0,1.0,2008,7.0,8.0,12.4777805,-3.5879571
+flash flood,2008,Flood,Burkina Faso,Sub-Saharan Africa,africa,Cascades,7.0,1.0,2008,7.0,8.0,10.3071812,-4.4351893
+flash flood,2008,Flood,Burkina Faso,Sub-Saharan Africa,africa,Hauts-bassins,7.0,1.0,2008,7.0,8.0,11.3890275,-4.041365
+flash flood,2009,Flood,Tunisia,Northern Africa,africa,Gabes,9.0,22.0,2009,9.0,23.0,33.8878082,10.10044
+flash flood,2009,Flood,Tunisia,Northern Africa,africa,Gafsa,9.0,22.0,2009,9.0,23.0,34.4224374,8.7843862
+flash flood,2009,Flood,Tunisia,Northern Africa,africa,Tozeur,9.0,22.0,2009,9.0,23.0,33.9239001,8.1370639
+flash flood,2014,Flood,Zimbabwe,Sub-Saharan Africa,africa,Makonde district (Mashonaland West province),1.0,20.0,2014,2.0,10.0,-17.3499308,30.1923212
+flash flood,2014,Flood,Zimbabwe,Sub-Saharan Africa,africa,Chiredzi,1.0,20.0,2014,2.0,10.0,-21.4164577,31.8233421
+flash flood,2014,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Kilosa,1.0,22.0,2014,1.0,23.0,-6.959463,36.9211504
+flash flood,2015,Flood,Madagascar,Sub-Saharan Africa,africa,Antananarivo I,2.0,27.0,2015,2.0,27.0,-21.743247,46.6145685
+flash flood,2015,Flood,Madagascar,Sub-Saharan Africa,africa,Antananarivo Atsimondrano,2.0,27.0,2015,2.0,27.0,-19.0098481,47.5123767
+flash flood,2015,Flood,Angola,Sub-Saharan Africa,africa,Lunda Norte,2.0,13.0,2015,2.0,14.0,-8.5088253,19.7538618
+flash flood,2016,Flood,Mali,Sub-Saharan Africa,africa,Mopti,7.0,11.0,2016,7.0,23.0,14.514489,-3.6464581
+flash flood,2016,Flood,Sudan,Northern Africa,africa,East Darfur,6.0,11.0,2016,9.0,8.0,11.2231983,26.5858041
+flash flood,2016,Flood,Mali,Sub-Saharan Africa,africa,Gao,7.0,11.0,2016,7.0,23.0,16.2788129,-0.0412392
+flash flood,2017,Flood,Cameroon,Sub-Saharan Africa,africa,Bebong,8.0,4.0,2017,8.0,29.0,10.3298227,123.9431927
+flash flood,2017,Flood,Uganda,Sub-Saharan Africa,africa,Rukungiri district,9.0,20.0,2017,9.0,27.0,-0.7843103,29.9256035
+flash flood,2017,Flood,Cameroon,Sub-Saharan Africa,africa,Fondo Nera,8.0,4.0,2017,8.0,29.0,42.7543008,12.86307
+flash flood,2018,Flood,Rwanda,Sub-Saharan Africa,africa,Rugerero,3.0,3.0,2018,3.0,5.0,-1.690949,29.3006011
+flash flood,2018,Flood,Algeria,Northern Africa,africa,Tiaret,4.0,24.0,2018,4.0,28.0,34.8947575,1.5945792
+flash flood,2018,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Mairie,1.0,14.0,2018,1.0,24.0,-3.3493959,29.3631843
+flash flood,2019,Flood,Uganda,Sub-Saharan Africa,africa,Kikajjo,5.0,26.0,2019,5.0,29.0,0.3075398,32.5721771
+flash flood,2019,Flood,Angola,Sub-Saharan Africa,africa,Luanda,3.0,25.0,2020,1.0,10.0,-8.8272699,13.2439512
+flash flood,2019,Flood,South Sudan,Sub-Saharan Africa,africa,Twic East,6.0,5.0,2019,6.0,7.0,7.0120052,31.3062638
+flash flood,2020,Flood,Egypt,Northern Africa,africa,Beni Suef,3.0,11.0,2020,3.0,15.0,28.8382688,30.8544768
+flash flood,2020,Flood,Tunisia,Northern Africa,africa,Mahdia,9.0,5.0,2020,9.0,12.0,35.503642,11.0682429
+flash flood,2020,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Iringa,1.0,27.0,2020,2.0,3.0,-7.7742718,35.4826339
+flash flood,2021,Flood,Angola,Sub-Saharan Africa,africa,Kilamba Kiaxi (Luanda Province),4.0,19.0,2021,4.0,19.0,-8.9013603,13.2365062
+flash flood,2021,Flood,Algeria,Northern Africa,africa,Chlef Province,3.0,6.0,2021,3.0,7.0,36.20342,1.2680696
+flash flood,2021,Flood,Angola,Sub-Saharan Africa,africa,Cazenga,4.0,19.0,2021,4.0,19.0,-8.8229305,13.3079626
+flash flood,2022,Flood,Zambia,Sub-Saharan Africa,africa,Namwala,1.0,11.0,2022,2.0,2.0,-15.7511868,26.4371121
+flash flood,2022,Flood,Uganda,Sub-Saharan Africa,africa,Nyarusiza,1.0,24.0,2022,1.0,27.0,-1.313611,29.679722
+flash flood,2022,Flood,Tunisia,Northern Africa,africa,el Kef,3.0,19.0,2022,3.0,19.0,36.0357642,8.7249381
+flash flood,2023,Flood,Ethiopia,Sub-Saharan Africa,africa,SNNP,10.0,15.0,2023,11.0,30.0,7.0503551,38.4812481
+flash flood,2023,Flood,Ethiopia,Sub-Saharan Africa,africa,Afar,10.0,15.0,2023,11.0,30.0,11.7108206,41.0330866
+flash flood,2023,Flood,Zambia,Sub-Saharan Africa,africa,Namwala,2.0,7.0,2023,3.0,9.0,-15.7511868,26.4371121
+flash flood,2024,Flood,Sudan,Northern Africa,africa,Khartoum,6.0,1.0,2024,8.0,27.0,15.5038301,32.5738979
+flash flood,2024,Flood,Somalia,Sub-Saharan Africa,africa,Jubaland,4.0,19.0,2024,5.0,2.0,1.3453924,42.0252942
+flash flood,2024,Flood,Somalia,Sub-Saharan Africa,africa,Hirshabelle,4.0,19.0,2024,5.0,2.0,3.78,45.6723945
+flash flood,2025,Flood,Botswana,Sub-Saharan Africa,africa,South-East,2.0,19.0,2025,2.0,21.0,-24.6563846,26.0575429
+flash flood,2025,Flood,Botswana,Sub-Saharan Africa,africa,Kgatleng,2.0,19.0,2025,2.0,21.0,-24.134085,26.4177246
+flash flood,2025,Flood,Botswana,Sub-Saharan Africa,africa,Ghanzi,2.0,19.0,2025,2.0,21.0,-22.145794,22.7610828
+flood (general),2000,Flood,Morocco,Northern Africa,africa,Chefchaouen,12.0,22.0,2000,12.0,22.0,35.1700832,-5.2766583
+flood (general),2000,Flood,Angola,Sub-Saharan Africa,africa,Bengo province),3.0,27.0,2000,3.0,27.0,-8.3196672,13.8656195
+flood (general),2000,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Rural,12.0,27.0,2000,12.0,27.0,-3.4759817,29.4535702
+flood (general),2001,Flood,Mozambique,Sub-Saharan Africa,africa,Tete,7.0,19.0,2001,7.0,19.0,-15.5205193,32.7682742
+flood (general),2001,Flood,Canary Islands,Northern Africa,africa,Canarias),11.0,20.0,2001,11.0,20.0,28.2935785,-16.6214471
+flood (general),2001,Flood,South Africa,Sub-Saharan Africa,africa,City of Cape Town district (Western Cape province),7.0,3.0,2001,7.0,3.0,-33.9264672,18.4239137
+flood (general),2002,Flood,Mauritania,Sub-Saharan Africa,africa,R'kiz,1.0,9.0,2002,1.0,9.0,16.920138,-15.2355732
+flood (general),2002,Flood,Malawi,Sub-Saharan Africa,africa,Ntcheu,12.0,28.0,2002,12.0,28.0,-14.8304129,34.7658316
+flood (general),2002,Flood,Malawi,Sub-Saharan Africa,africa,Machinga,12.0,28.0,2002,12.0,28.0,-14.9027497,35.6025816
+flood (general),2006,Flood,Togo,Sub-Saharan Africa,africa,Agoè Zongo,6.0,20.0,2006,6.0,28.0,6.2544491,1.2079169
+flood (general),2006,Flood,Togo,Sub-Saharan Africa,africa,Maritime province),6.0,20.0,2006,6.0,28.0,43.9419996,7.0202655
+flood (general),2006,Flood,Burundi,Sub-Saharan Africa,africa,Muramvya province,6.0,17.0,2006,6.0,28.0,-3.2751181,29.6307855
+flood (general),2007,Flood,Algeria,Northern Africa,africa,Relizane,3.0,21.0,2007,3.0,23.0,35.8363185,0.9118537
+flood (general),2007,Flood,Mozambique,Sub-Saharan Africa,africa,Nampula,12.0,11.0,2008,1.0,3.0,-14.966969,39.2707752
+flood (general),2007,Flood,Mozambique,Sub-Saharan Africa,africa,Maganja da Costa,12.0,11.0,2008,1.0,3.0,-17.348539,37.4329229
+flood (general),2008,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Kigoma,1.0,10.0,2008,3.0,31.0,-4.5126571,30.0050533
+flood (general),2008,Flood,Kenya,Sub-Saharan Africa,africa,Eastern province),3.0,20.0,2008,4.0,2.0,7.7596435,81.5850205
+flood (general),2008,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Ruvuma,1.0,10.0,2008,3.0,31.0,-10.749721,35.6616934
+flood (general),2015,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Arusha,5.0,7.0,2015,5.0,21.0,-3.3696827,36.6880794
+flood (general),2015,Flood,Somalia,Sub-Saharan Africa,africa,Bay,3.0,19.0,2015,4.0,17.0,30.2481693,-85.6593633
+flood (general),2015,Flood,Democratic Republic of the Congo,Sub-Saharan Africa,africa,Pécheur,11.0,19.0,2015,12.0,17.0,-4.3424662,15.5006894
+flood (general),2016,Flood,Liberia,Sub-Saharan Africa,africa,Mambahn Kaba,6.0,29.0,2016,7.0,12.0,6.2847021,-10.4912757
+flood (general),2016,Flood,Mozambique,Sub-Saharan Africa,africa,Gaza,10.0,9.0,2017,1.0,14.0,-23.328398,32.8066057
+flood (general),2016,Flood,Mozambique,Sub-Saharan Africa,africa,Maputo,10.0,9.0,2017,1.0,14.0,-25.966213,32.56745
+flood (general),2017,Flood,Nigeria,Sub-Saharan Africa,africa,Bayelsa,7.0,8.0,2017,7.0,9.0,4.7629786,6.028898
+flood (general),2017,Flood,Botswana,Sub-Saharan Africa,africa,Gweta,2.0,18.0,2017,2.0,23.0,-20.208965,25.255303
+flood (general),2017,Flood,Guinea,Sub-Saharan Africa,africa,Quartier commercial,7.0,4.0,2017,7.0,4.0,13.4482594,-6.2659634
+flood (general),2018,Flood,Mali,Sub-Saharan Africa,africa,Bourem,8.0,7.0,2018,8.0,19.0,16.9575282,-0.3468008
+flood (general),2018,Flood,Democratic Republic of the Congo,Sub-Saharan Africa,africa,Bandalungwa,1.0,3.0,2018,1.0,7.0,-4.3422198,15.2831648
+flood (general),2018,Flood,Kenya,Sub-Saharan Africa,africa,Tana river,3.0,14.0,2018,5.0,31.0,-1.5365119,39.5508374
+flood (general),2019,Flood,Uganda,Sub-Saharan Africa,africa,Iganga,10.0,15.0,2019,11.0,6.0,0.7221911,33.5016935
+flood (general),2019,Flood,Madagascar,Sub-Saharan Africa,africa,Antananarivo,1.0,19.0,2019,1.0,20.0,-18.9100122,47.5255809
+flood (general),2019,Flood,Angola,Sub-Saharan Africa,africa,Zaire Provinces,3.0,16.0,2019,3.0,22.0,-1.946218,18.26545
+flood (general),2020,Flood,Guinea,Sub-Saharan Africa,africa,Balandou,9.0,6.0,2020,9.0,7.0,10.4582947,-10.0368273
+flood (general),2020,Flood,Sudan,Northern Africa,africa,Khartoum,6.0,15.0,2020,9.0,9.0,15.5038301,32.5738979
+flood (general),2020,Flood,Mozambique,Sub-Saharan Africa,africa,Tete,10.0,1.0,2020,10.0,31.0,-15.5205193,32.7682742
+flood (general),2021,Flood,Chad,Sub-Saharan Africa,africa,Batha,6.0,26.0,2021,8.0,31.0,13.8367731,18.9649806
+flood (general),2021,Flood,Niger,Sub-Saharan Africa,africa,Niamey,6.0,15.0,2021,8.0,31.0,13.524834,2.109823
+flood (general),2021,Flood,Mozambique,Sub-Saharan Africa,africa,Magude,2.0,12.0,2021,2.0,17.0,-24.7598051,32.4382853
+flood (general),2022,Flood,Democratic Republic of the Congo,Sub-Saharan Africa,africa,Bandalungwa,12.0,12.0,2022,12.0,13.0,-4.3422198,15.2831648
+flood (general),2022,Flood,Côte d’Ivoire,Sub-Saharan Africa,africa,Bonoua,6.0,16.0,2022,6.0,21.0,5.2736582,-3.5966802
+flood (general),2022,Flood,Benin,Sub-Saharan Africa,africa,Malanville,9.0,1.0,2022,10.0,31.0,11.8618128,3.3862982
+flood (general),2023,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Kigoma,10.0,15.0,2023,11.0,23.0,-4.5126571,30.0050533
+flood (general),2023,Flood,Somalia,Sub-Saharan Africa,africa,Jowhar,10.0,23.0,2023,10.0,24.0,2.4608799,45.1855774
+flood (general),2023,Flood,Kenya,Sub-Saharan Africa,africa,Isiolo,10.0,15.0,2024,10.0,19.0,1.00606,38.7478954
+flood (general),2024,Flood,Sierra Leone,Sub-Saharan Africa,africa,Northern province),9.0,23.0,2024,10.0,8.0,9.28,80.2827753
+flood (general),2024,Flood,Burundi,Sub-Saharan Africa,africa,Rumonge,4.0,11.0,2024,5.0,2.0,-3.8755076,29.4706207
+flood (general),2024,Flood,Guinea,Sub-Saharan Africa,africa,Tiguibiry,8.0,21.0,2024,8.0,21.0,11.3652389,-9.1709011
+flood (general),2025,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Kyela,5.0,14.0,2025,5.0,15.0,-9.5445786,33.8210736
+flood (general),2025,Flood,Malawi,Sub-Saharan Africa,africa,Mangochi,1.0,11.0,2025,3.0,11.0,-14.1406247,35.3263624
+flood (general),2025,Flood,Namibia,Sub-Saharan Africa,africa,Ohangwena,3.0,1.0,2025,4.0,8.0,-17.5877369,16.7737955
+forest fire,2007,Wildfire,Canary Islands,Northern Africa,africa,Canarias province),7.0,27.0,2007,8.0,2.0,-12.2052057,-77.0136046
+forest fire,2007,Wildfire,Canary Islands,Northern Africa,africa,Canarias province),7.0,27.0,2007,8.0,2.0,-12.2052057,-77.0136046
+forest fire,2007,Wildfire,South Africa,Sub-Saharan Africa,africa,Eastern Cape,7.0,27.0,2007,7.0,30.0,-32.2171831,26.6386401
+forest fire,2022,Wildfire,Algeria,Northern Africa,africa,Mila,8.0,14.0,2022,8.0,21.0,36.2502135,6.1652163
+forest fire,2022,Wildfire,Algeria,Northern Africa,africa,Batna,8.0,14.0,2022,8.0,21.0,35.3384291,5.7315453
+forest fire,2022,Wildfire,Algeria,Northern Africa,africa,Bejaia,8.0,14.0,2022,8.0,21.0,36.7511783,5.0643687
+lightning/thunderstorms,2009,Storm,South Africa,Sub-Saharan Africa,africa,KwaZulu-Natal province),1.0,3.0,2009,1.0,4.0,-29.4870163,30.2224876
+lightning/thunderstorms,2009,Storm,South Africa,Sub-Saharan Africa,africa,KwaZulu-Natal province),1.0,3.0,2009,1.0,4.0,-29.4870163,30.2224876
+lightning/thunderstorms,2009,Storm,South Africa,Sub-Saharan Africa,africa,KwaZulu-Natal province),1.0,3.0,2009,1.0,4.0,-29.4870163,30.2224876
+lightning/thunderstorms,2010,Storm,South Africa,Sub-Saharan Africa,africa,Free State,12.0,15.0,2011,1.0,12.0,-28.7853618,26.4978933
+lightning/thunderstorms,2010,Storm,South Africa,Sub-Saharan Africa,africa,Mpumalanga,12.0,15.0,2011,1.0,12.0,-26.276849,30.1500153
+lightning/thunderstorms,2010,Storm,South Africa,Sub-Saharan Africa,africa,Gauteng,12.0,15.0,2011,1.0,12.0,-25.9363439,28.0813105
+lightning/thunderstorms,2015,Storm,Egypt,Northern Africa,africa,Matrouh,11.0,3.0,2015,11.0,4.0,29.7876385,27.427041
+lightning/thunderstorms,2015,Storm,Malawi,Sub-Saharan Africa,africa,Northern Region,1.0,2.0,2015,1.0,4.0,2.797198,32.2643949
+lightning/thunderstorms,2015,Storm,Zimbabwe,Sub-Saharan Africa,africa,Midlands,1.0,2.0,2015,1.0,4.0,-19.2785043,29.8790852
+lightning/thunderstorms,2016,Storm,Nigeria,Sub-Saharan Africa,africa,Akwa Ibom,8.0,14.0,2016,9.0,7.0,4.9906379,7.7966205
+lightning/thunderstorms,2016,Storm,Nigeria,Sub-Saharan Africa,africa,Delta,8.0,14.0,2016,9.0,7.0,33.3926893,-95.6749486
+lightning/thunderstorms,2016,Storm,Egypt,Northern Africa,africa,Ismailia,10.0,27.0,2016,10.0,29.0,30.6043775,32.2770825
+lightning/thunderstorms,2017,Storm,South Africa,Sub-Saharan Africa,africa,Kraaifontein (Cape Town),6.0,7.0,2017,6.0,8.0,-33.8658667,18.7299605
+lightning/thunderstorms,2017,Storm,South Africa,Sub-Saharan Africa,africa,Mossel Bay,6.0,7.0,2017,6.0,8.0,-34.1832022,22.1536248
+lightning/thunderstorms,2017,Storm,South Africa,Sub-Saharan Africa,africa,Rheenendal,6.0,7.0,2017,6.0,8.0,-33.9508606,22.9460912
+lightning/thunderstorms,2020,Storm,Burundi,Sub-Saharan Africa,africa,Gitega,3.0,16.0,2020,3.0,22.0,-3.4284953,29.9249718
+lightning/thunderstorms,2020,Storm,Burundi,Sub-Saharan Africa,africa,Ruyigi,3.0,16.0,2020,3.0,22.0,-3.4573516,30.3488303
+lightning/thunderstorms,2020,Storm,Burundi,Sub-Saharan Africa,africa,Bujumbura Mairie,3.0,16.0,2020,3.0,22.0,-3.3493959,29.3631843
+lightning/thunderstorms,2021,Storm,South Africa,Sub-Saharan Africa,africa,Buffalo City,12.0,12.0,2021,12.0,30.0,44.23052,-91.864325
+lightning/thunderstorms,2021,Storm,South Africa,Sub-Saharan Africa,africa,Joe Gqabi (Eastern Cape Province); Kwazulu-Natal,12.0,12.0,2021,12.0,30.0,-31.0801416,28.3427684
+lightning/thunderstorms,2021,Storm,South Africa,Sub-Saharan Africa,africa,Amathole,12.0,12.0,2021,12.0,30.0,-32.6414,27.2369193
+riverine flood,2000,Flood,United Republic of Tanzania,Sub-Saharan Africa,africa,Mwanza province,12.0,1.0,2000,12.0,31.0,-16.2408,27.74896
+riverine flood,2000,Flood,Botswana,Sub-Saharan Africa,africa,Bobirwa,2.0,26.0,2000,2.0,27.0,-21.9976845,28.4256921
+riverine flood,2000,Flood,Eswatini,Sub-Saharan Africa,africa,Manzini,1.0,26.0,2000,1.0,27.0,-26.4976444,31.3750815
+riverine flood,2001,Flood,Algeria,Northern Africa,africa,Bab el oued,11.0,10.0,2001,11.0,14.0,36.7907677,3.0530812
+riverine flood,2001,Flood,Algeria,Northern Africa,africa,Sidi Lakhdar,11.0,10.0,2001,11.0,14.0,36.2656357,2.1617628
+riverine flood,2001,Flood,Algeria,Northern Africa,africa,Mostaganem,11.0,10.0,2001,11.0,14.0,35.928808,0.089978
+riverine flood,2002,Flood,Mali,Sub-Saharan Africa,africa,Goundam,7.0,26.0,2002,7.0,27.0,16.4168533,-3.6636275
+riverine flood,2002,Flood,Algeria,Northern Africa,africa,Batna,10.0,9.0,2002,10.0,12.0,35.3384291,5.7315453
+riverine flood,2002,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Mairie,5.0,6.0,2002,5.0,6.0,-3.3493959,29.3631843
+riverine flood,2003,Flood,Kenya,Sub-Saharan Africa,africa,Kisumu,4.0,28.0,2003,5.0,20.0,-0.1029109,34.7541761
+riverine flood,2003,Flood,Tunisia,Northern Africa,africa,Jendouba,1.0,14.0,2003,1.0,16.0,36.6779725,8.752647
+riverine flood,2003,Flood,Kenya,Sub-Saharan Africa,africa,Rachuonyo,4.0,28.0,2003,5.0,20.0,-0.3795021,34.656712
+riverine flood,2004,Flood,Kenya,Sub-Saharan Africa,africa,Tana River,4.0,9.0,2004,5.0,11.0,-1.5365119,39.5508374
+riverine flood,2004,Flood,Guinea-Bissau,Sub-Saharan Africa,africa,Bafata,9.0,27.0,2004,9.0,28.0,12.1348511,-14.750361
+riverine flood,2004,Flood,Zambia,Sub-Saharan Africa,africa,Chavuma,2.0,1.0,2004,6.0,2.0,-13.0815305,22.6901247
+riverine flood,2005,Flood,Angola,Sub-Saharan Africa,africa,Bengo,1.0,27.0,2005,3.0,28.0,-8.3196672,13.8656195
+riverine flood,2005,Flood,Mozambique,Sub-Saharan Africa,africa,Nhamatanda,12.0,22.0,2006,2.0,7.0,-19.3054169,34.2457548
+riverine flood,2005,Flood,Senegal,Sub-Saharan Africa,africa,Pikine,8.0,20.0,2005,9.0,10.0,14.751544,-17.396413
+riverine flood,2006,Flood,Angola,Sub-Saharan Africa,africa,Huila,1.0,14.0,2006,1.0,15.0,2.4738993,-75.5900113
+riverine flood,2006,Flood,Democratic Republic of the Congo,Sub-Saharan Africa,africa,Matete,4.0,8.0,2006,4.0,27.0,-4.3889613,15.3512504
+riverine flood,2006,Flood,Congo,Sub-Saharan Africa,africa,Yoro,11.0,4.0,2006,11.0,18.0,15.2994474,-87.2916981
+riverine flood,2007,Flood,Benin,Sub-Saharan Africa,africa,Donga,7.0,21.0,2007,9.0,24.0,9.2679806,1.7170684
+riverine flood,2007,Flood,Burundi,Sub-Saharan Africa,africa,Bujumbura Mairie,1.0,1.0,2007,1.0,17.0,-3.3493959,29.3631843
+riverine flood,2007,Flood,Senegal,Sub-Saharan Africa,africa,Kaolack,8.0,9.0,2007,9.0,20.0,14.138815,-16.076391
+riverine flood,2008,Flood,Ethiopia,Sub-Saharan Africa,africa,Somali province),11.0,16.0,2008,11.0,17.0,7.0658432,43.6268096
+riverine flood,2008,Flood,Benin,Sub-Saharan Africa,africa,Tohoué,7.0,1.0,2008,7.0,8.0,6.4306558,2.6630653
+riverine flood,2008,Flood,Uganda,Sub-Saharan Africa,africa,Kaabong,11.0,17.0,2008,11.0,17.0,3.6582061,34.2111234
+riverine flood,2009,Flood,Mali,Sub-Saharan Africa,africa,Mopti,5.0,29.0,2009,9.0,4.0,14.514489,-3.6464581
+riverine flood,2009,Flood,Benin,Sub-Saharan Africa,africa,Atlantique province),6.0,22.0,2009,7.0,3.0,33.7235609,-7.3388614
+riverine flood,2009,Flood,Angola,Sub-Saharan Africa,africa,Terra Nova,12.0,10.0,2009,12.0,10.0,60.2246684,25.1272631
+riverine flood,2010,Flood,Mali,Sub-Saharan Africa,africa,Mopti,10.0,4.0,2010,10.0,4.0,14.514489,-3.6464581
+riverine flood,2010,Flood,Togo,Sub-Saharan Africa,africa,Centrale,6.0,5.0,2010,10.0,5.0,45.7292376,11.4815675
+riverine flood,2010,Flood,Togo,Sub-Saharan Africa,africa,Djidjole,9.0,4.0,2010,10.0,4.0,6.2011277,1.1881595
+riverine flood,2011,Flood,Zambia,Sub-Saharan Africa,africa,Kafue,3.0,14.0,2011,3.0,20.0,-14.3734594,27.1952118
+riverine flood,2011,Flood,Mozambique,Sub-Saharan Africa,africa,Chokwe,3.0,14.0,2011,3.0,20.0,-16.4547758,35.0129933
+riverine flood,2011,Flood,Namibia,Sub-Saharan Africa,africa,Ohangwena,3.0,1.0,2011,4.0,12.0,-17.5877369,16.7737955
+riverine flood,2012,Flood,Burkina Faso,Sub-Saharan Africa,africa,Boucle Du Mouhoun,6.0,15.0,2012,9.0,5.0,12.4777805,-3.5879571
+riverine flood,2012,Flood,Comoros,Sub-Saharan Africa,africa,Bambao,4.0,20.0,2012,4.0,28.0,-12.2022861,44.5166595
+riverine flood,2012,Flood,Burkina Faso,Sub-Saharan Africa,africa,Nord,6.0,15.0,2012,9.0,5.0,50.5289615,3.0883508
+riverine flood,2013,Flood,Zimbabwe,Sub-Saharan Africa,africa,Matabeleland North,1.0,10.0,2013,1.0,31.0,-18.9283715,27.4992231
+riverine flood,2013,Flood,Ghana,Sub-Saharan Africa,africa,Yendi Municipal,3.0,3.0,2013,4.0,30.0,9.4739214,0.0227693
+riverine flood,2013,Flood,Ghana,Sub-Saharan Africa,africa,Nanumba North,3.0,3.0,2013,4.0,30.0,8.9220096,-0.1386447
+riverine flood,2014,Flood,Morocco,Northern Africa,africa,Oriental province),11.0,28.0,2014,11.0,30.0,37.9160365,46.6781589
+riverine flood,2014,Flood,Niger,Sub-Saharan Africa,africa,Tillaberi,6.0,25.0,2014,10.0,3.0,14.429363,2.3433607
+riverine flood,2014,Flood,Niger,Sub-Saharan Africa,africa,Dosso,6.0,25.0,2014,10.0,3.0,13.0496369,3.1944647
+riverine flood,2015,Flood,Côte d’Ivoire,Sub-Saharan Africa,africa,Attecoube,6.0,7.0,2015,6.0,21.0,5.3481717,-4.034076
+riverine flood,2015,Flood,Kenya,Sub-Saharan Africa,africa,Busia,12.0,1.0,2016,1.0,6.0,0.3917103,34.0160135
+riverine flood,2015,Flood,Nigeria,Sub-Saharan Africa,africa,Ondo,9.0,5.0,2015,9.0,24.0,7.0209686,5.0567477
+riverine flood,2016,Flood,Nigeria,Sub-Saharan Africa,africa,Ringim,9.0,1.0,2016,9.0,20.0,12.1658289,9.1100548
+riverine flood,2016,Flood,Burkina Faso,Sub-Saharan Africa,africa,Kadiogo district,6.0,21.0,2016,7.0,16.0,9.4168077,-4.7851342
+riverine flood,2016,Flood,Burkina Faso,Sub-Saharan Africa,africa,Nord,6.0,21.0,2016,7.0,16.0,50.5289615,3.0883508
+riverine flood,2017,Flood,Côte d’Ivoire,Sub-Saharan Africa,africa,Abidjan (Abobo,6.0,10.0,2017,6.0,21.0,5.4263155,-4.0202247
+riverine flood,2017,Flood,Côte d’Ivoire,Sub-Saharan Africa,africa,Koumassi,6.0,10.0,2017,6.0,21.0,5.2927045,-3.9585801
+riverine flood,2017,Flood,Niger,Sub-Saharan Africa,africa,Zinder,6.0,13.0,2017,6.0,19.0,13.8063421,8.9891659
+riverine flood,2018,Flood,Somalia,Sub-Saharan Africa,africa,Bakool,4.0,1.0,2018,5.0,31.0,3.9991789,43.9995531
+riverine flood,2018,Flood,Somalia,Sub-Saharan Africa,africa,Hirshabelle,4.0,1.0,2018,5.0,31.0,3.78,45.6723945
+riverine flood,2018,Flood,Somalia,Sub-Saharan Africa,africa,Gedo,4.0,1.0,2018,5.0,31.0,3.0,42.0
+riverine flood,2019,Flood,Democratic Republic of the Congo,Sub-Saharan Africa,africa,Maniema,11.0,19.0,2019,11.0,26.0,-2.4956685,25.9520292
+riverine flood,2019,Flood,Democratic Republic of the Congo,Sub-Saharan Africa,africa,Nord - Ubangi,11.0,19.0,2019,11.0,26.0,4.0175656,21.3779242
+riverine flood,2019,Flood,Congo,Sub-Saharan Africa,africa,Cuvette,11.0,20.0,2019,11.0,25.0,-0.4936855,16.1602013
+riverine flood,2020,Flood,Somalia,Sub-Saharan Africa,africa,Hirshabelle,6.0,15.0,2020,7.0,20.0,3.78,45.6723945
+riverine flood,2020,Flood,Benin,Sub-Saharan Africa,africa,Kandi,10.0,1.0,2020,10.0,2.0,11.1311029,2.9322321
+riverine flood,2020,Flood,Somalia,Sub-Saharan Africa,africa,South West,6.0,15.0,2020,7.0,20.0,5.3356587,100.2389496
+severe weather,2009,Storm,Benin,Sub-Saharan Africa,africa,Collines province),5.0,6.0,2009,5.0,7.0,-68.5413291,78.2779618
+severe weather,2009,Storm,Central African Republic,Sub-Saharan Africa,africa,Mboki,3.0,23.0,2009,4.0,7.0,2.5056482,16.0841517
+severe weather,2009,Storm,Gambia,Sub-Saharan Africa,africa,Lower River,7.0,2.0,2009,7.0,2.0,13.3978304,-15.7263312
+severe weather,2011,Storm,Central African Republic,Sub-Saharan Africa,africa,Pétévo,6.0,11.0,2011,6.0,19.0,4.3454013,18.5432165
+severe weather,2011,Storm,South Africa,Sub-Saharan Africa,africa,KwaZulu-Natal province,12.0,31.0,2011,12.0,31.0,-29.4870163,30.2224876
+severe weather,2011,Storm,Central African Republic,Sub-Saharan Africa,africa,Bogbaya,6.0,11.0,2011,6.0,19.0,4.4487119,18.7884559
+severe weather,2017,Storm,Central African Republic,Sub-Saharan Africa,africa,Mingala,1.0,1.0,2017,4.0,3.0,5.101097,21.8057021
+severe weather,2017,Storm,Rwanda,Sub-Saharan Africa,africa,Gatsibo district (Eastern Province),4.0,1.0,2017,4.0,1.0,-1.6674502,30.361037
+severe weather,2017,Storm,Mauritania,Sub-Saharan Africa,africa,Kiffa,9.0,4.0,2017,9.0,4.0,16.6161559,-11.4002038
+severe weather,2021,Storm,Gambia,Sub-Saharan Africa,africa,Central River Region,7.0,2.0,2021,7.0,8.0,13.5750738,-14.7797147
+severe weather,2021,Storm,Gambia,Sub-Saharan Africa,africa,West Coast Region,7.0,2.0,2021,7.0,8.0,13.258513,-16.4997039
+severe weather,2021,Storm,Gambia,Sub-Saharan Africa,africa,North Bank Region,7.0,2.0,2021,7.0,8.0,13.4731283,-16.1334359
+severe weather,2023,Storm,South Africa,Sub-Saharan Africa,africa,Phoenix,6.0,27.0,2023,6.0,29.0,33.4484367,-112.074141
+severe weather,2023,Storm,South Africa,Sub-Saharan Africa,africa,Inanda,6.0,27.0,2023,6.0,29.0,-26.1186111,28.0591667
+severe weather,2023,Storm,South Africa,Sub-Saharan Africa,africa,Folweni,6.0,27.0,2023,6.0,29.0,-29.9894444,30.8233333
+storm (general),2000,Storm,Nigeria,Sub-Saharan Africa,africa,Edo province),10.0,9.0,2000,10.0,9.0,-12.0848654,-76.9747377
+storm (general),2000,Storm,Mozambique,Sub-Saharan Africa,africa,Zambezia,11.0,18.0,2000,11.0,18.0,-16.6460178,36.991932
+storm (general),2000,Storm,Mozambique,Sub-Saharan Africa,africa,Pebane,11.0,26.0,2000,11.0,26.0,-17.2655997,38.1419334
+storm (general),2001,Storm,Central African Republic,Sub-Saharan Africa,africa,Bangui district (Bangui province),3.0,1.0,2001,3.0,27.0,18.5332795,120.7619636
+storm (general),2001,Storm,Lesotho,Sub-Saharan Africa,africa,Maseru province,12.0,19.0,2001,12.0,19.0,-25.874612,25.6417437
+storm (general),2001,Storm,Lesotho,Sub-Saharan Africa,africa,Berea province,12.0,19.0,2001,12.0,19.0,-32.9902778,27.9172222
+storm (general),2003,Storm,Algeria,Northern Africa,africa,Bejaia,1.0,31.0,2003,1.0,31.0,36.7511783,5.0643687
+storm (general),2003,Storm,Gambia,Sub-Saharan Africa,africa,Mansajang Kunda,8.0,24.0,2003,8.0,24.0,13.295947,-14.209516
+storm (general),2003,Storm,Algeria,Northern Africa,africa,Alger,1.0,31.0,2003,1.0,31.0,36.7729333,3.0588445
+storm (general),2004,Storm,Egypt,Northern Africa,africa,Alexandria,1.0,22.0,2004,1.0,26.0,44.8349533,8.7450304
+storm (general),2004,Storm,Egypt,Northern Africa,africa,Luxor,1.0,22.0,2004,1.0,26.0,25.702096,32.647186
+storm (general),2004,Storm,Egypt,Northern Africa,africa,Fayoum,1.0,22.0,2004,1.0,26.0,29.340737,30.6201045
+storm (general),2005,Storm,Algeria,Northern Africa,africa,Alger,2.0,25.0,2005,2.0,25.0,36.7729333,3.0588445
+storm (general),2005,Storm,Eswatini,Sub-Saharan Africa,africa,Shiselweni,1.0,23.0,2005,1.0,23.0,-27.036022,31.3321298
+storm (general),2005,Storm,Algeria,Northern Africa,africa,Annaba,2.0,25.0,2005,2.0,25.0,36.8982165,7.7549272
+storm (general),2006,Storm,Burundi,Sub-Saharan Africa,africa,Bujumbura Rural province),1.0,31.0,2006,1.0,31.0,-3.4759817,29.4535702
+storm (general),2006,Storm,Eswatini,Sub-Saharan Africa,africa,Mbabane,8.0,1.0,2006,8.0,3.0,-3.3638125,29.3675028
+storm (general),2006,Storm,Eswatini,Sub-Saharan Africa,africa,Manzini province,8.0,1.0,2006,8.0,3.0,-25.1763889,31.1380556
+storm (general),2009,Storm,United Republic of Tanzania,Sub-Saharan Africa,africa,Dodoma province),1.0,16.0,2009,1.0,16.0,-34.6473777,-58.7922845
+storm (general),2009,Storm,Central African Republic,Sub-Saharan Africa,africa,Berbérati,1.0,17.0,2009,1.0,18.0,4.2593379,15.7877826
+storm (general),2009,Storm,United Republic of Tanzania,Sub-Saharan Africa,africa,Chamwino district,1.0,16.0,2009,1.0,16.0,-6.1212687,36.01883
+storm (general),2010,Storm,Egypt,Northern Africa,africa,Tanta,12.0,12.0,2010,12.0,12.0,-24.7761086,134.755
+storm (general),2010,Storm,Egypt,Northern Africa,africa,Tanta 1,12.0,12.0,2010,12.0,12.0,30.795153,30.9843837
+storm (general),2010,Storm,Gabon,Sub-Saharan Africa,africa,Ngounie province),12.0,15.0,2011,1.0,12.0,-1.5910727,10.978503
+storm (general),2013,Storm,South Africa,Sub-Saharan Africa,africa,Hout Bay,6.0,1.0,2013,6.0,1.0,-34.043093,18.355645
+storm (general),2013,Storm,South Africa,Sub-Saharan Africa,africa,Western Cape province),6.0,1.0,2013,6.0,1.0,-33.546977,20.72753
+storm (general),2013,Storm,South Africa,Sub-Saharan Africa,africa,Gugulethu,6.0,1.0,2013,6.0,1.0,-27.2209073,31.6152371
+storm (general),2017,Storm,Rwanda,Sub-Saharan Africa,africa,Rubavu,9.0,17.0,2017,9.0,17.0,-1.6416815,29.3335613
+storm (general),2017,Storm,Rwanda,Sub-Saharan Africa,africa,Nyamasheke,9.0,17.0,2017,9.0,17.0,-2.3580197,29.1545909
+storm (general),2017,Storm,Rwanda,Sub-Saharan Africa,africa,Ngoma,9.0,17.0,2017,9.0,17.0,-1.8136061,29.9868456
+storm (general),2018,Storm,Guinea-Bissau,Sub-Saharan Africa,africa,Oio,6.0,27.0,2018,6.0,27.0,12.2876092,-15.3387658
+storm (general),2018,Storm,Guinea-Bissau,Sub-Saharan Africa,africa,Militar,6.0,27.0,2018,6.0,27.0,45.3257205,14.796463
+storm (general),2018,Storm,Guinea-Bissau,Sub-Saharan Africa,africa,Bubaque,6.0,27.0,2018,6.0,27.0,11.3000802,-15.8312425
+storm (general),2021,Storm,United Republic of Tanzania,Sub-Saharan Africa,africa,Kilimanjaro,4.0,24.0,2021,4.0,26.0,-3.0786534,37.4198556
+storm (general),2021,Storm,Malawi,Sub-Saharan Africa,africa,Zomba,7.0,12.0,2021,11.0,28.0,-15.3863208,35.3268273
+storm (general),2021,Storm,Malawi,Sub-Saharan Africa,africa,Machinga,7.0,12.0,2021,11.0,28.0,-14.9027497,35.6025816
+storm (general),2023,Storm,Libya,Northern Africa,africa,Bayada,9.0,10.0,2023,9.0,11.0,17.5436849,76.478797
+storm (general),2023,Storm,Gabon,Sub-Saharan Africa,africa,Haut Ogoue,5.0,15.0,2023,5.0,15.0,-1.231544,13.8309713
+storm (general),2023,Storm,Central African Republic,Sub-Saharan Africa,africa,Amameu,10.0,31.0,2023,11.0,1.0,6.5488288,21.969621
+storm (general),2024,Storm,South Africa,Sub-Saharan Africa,africa,Cape Winelands,4.0,8.0,2024,4.0,8.0,-33.6357743,19.4574432
+storm (general),2024,Storm,Botswana,Sub-Saharan Africa,africa,Francistown,11.0,25.0,2024,11.0,25.0,-21.16636,27.502515
+storm (general),2024,Storm,Nigeria,Sub-Saharan Africa,africa,Nasarawa State,4.0,3.0,2024,4.0,3.0,8.4387868,8.2382849
+storm (general),2025,Storm,Canary Islands,Northern Africa,africa,Lanzarote,4.0,12.0,2025,4.0,13.0,29.0397081,-13.6362916
+storm (general),2025,Storm,Canary Islands,Northern Africa,africa,Teneriffe,4.0,12.0,2025,4.0,13.0,-27.4561795,153.0475748
+storm (general),2025,Storm,Canary Islands,Northern Africa,africa,Fuerteventura,4.0,12.0,2025,4.0,13.0,28.4003769,-14.0048697
+tropical cyclone,2000,Storm,Mozambique,Sub-Saharan Africa,africa,Angoche,4.0,2.0,2000,4.0,2.0,-16.0962442,39.7616724
+tropical cyclone,2000,Storm,Mozambique,Sub-Saharan Africa,africa,Gaza,2.0,18.0,2000,2.0,23.0,-23.328398,32.8066057
+tropical cyclone,2000,Storm,Madagascar,Sub-Saharan Africa,africa,Morondava,2.0,17.0,2000,3.0,11.0,-20.2951102,44.2786121
+tropical cyclone,2002,Storm,Seychelles,Sub-Saharan Africa,africa,Ste Anne,9.0,5.0,2002,9.0,5.0,49.6711222,-96.6536701
+tropical cyclone,2002,Storm,Seychelles,Sub-Saharan Africa,africa,Bel Air,9.0,5.0,2002,9.0,5.0,34.0827278,-118.4479802
+tropical cyclone,2002,Storm,Seychelles,Sub-Saharan Africa,africa,Plaisance,9.0,5.0,2002,9.0,5.0,45.0534751,9.6947461
+tropical cyclone,2003,Storm,Mozambique,Sub-Saharan Africa,africa,Inhambane,3.0,3.0,2003,3.0,3.0,-22.779116,34.5661741
+tropical cyclone,2003,Storm,Madagascar,Sub-Saharan Africa,africa,Analanjirofo,1.0,29.0,2003,1.0,29.0,-17.0009915,49.1781884
+tropical cyclone,2003,Storm,Zimbabwe,Sub-Saharan Africa,africa,Masvingo,3.0,7.0,2003,3.0,7.0,-20.7453957,31.334138
+tropical cyclone,2004,Storm,Madagascar,Sub-Saharan Africa,africa,Mampikony,3.0,7.0,2004,3.0,12.0,-16.093117,47.642735
+tropical cyclone,2004,Storm,Madagascar,Sub-Saharan Africa,africa,Ambilobe,3.0,7.0,2004,3.0,12.0,-13.194439,49.049956
+tropical cyclone,2004,Storm,Madagascar,Sub-Saharan Africa,africa,Antananarivo I,1.0,26.0,2004,2.0,4.0,-21.743247,46.6145685
+tropical cyclone,2007,Storm,Madagascar,Sub-Saharan Africa,africa,Mananjary,1.0,3.0,2007,1.0,3.0,-21.2385393,48.3463035
+tropical cyclone,2007,Storm,Zimbabwe,Sub-Saharan Africa,africa,Vumba,2.0,27.0,2007,2.0,27.0,0.3616351,32.2688075
+tropical cyclone,2007,Storm,Mauritius,Sub-Saharan Africa,africa,Flacq,2.0,25.0,2007,2.0,25.0,-20.2217312,57.7223251
+tropical cyclone,2008,Storm,Madagascar,Sub-Saharan Africa,africa,Melaky,1.0,27.0,2008,1.0,27.0,-17.7541481,44.9790052
+tropical cyclone,2008,Storm,Madagascar,Sub-Saharan Africa,africa,Alaotra Mangoro,2.0,17.0,2008,3.0,3.0,-18.0165539,48.371333
+tropical cyclone,2008,Storm,Madagascar,Sub-Saharan Africa,africa,Bongolava,2.0,17.0,2008,3.0,3.0,-18.6122398,46.2984071
+tropical cyclone,2009,Storm,Madagascar,Sub-Saharan Africa,africa,Menabe,1.0,19.0,2009,1.0,22.0,-20.0355933,45.1084888
+tropical cyclone,2009,Storm,Madagascar,Sub-Saharan Africa,africa,Sofia,1.0,19.0,2009,1.0,22.0,42.6977028,23.3217359
+tropical cyclone,2009,Storm,Madagascar,Sub-Saharan Africa,africa,Anosy,3.0,17.0,2009,3.0,27.0,-23.9408038,46.1469315
+tropical cyclone,2011,Storm,Madagascar,Sub-Saharan Africa,africa,Morafenobe,2.0,14.0,2011,2.0,16.0,-17.8189515,44.9251181
+tropical cyclone,2011,Storm,Madagascar,Sub-Saharan Africa,africa,Bekily,2.0,14.0,2011,2.0,16.0,-24.2220541,45.3189359
+tropical cyclone,2011,Storm,Madagascar,Sub-Saharan Africa,africa,Vohipeno,2.0,14.0,2011,2.0,16.0,-22.3548744,47.8399542
+tropical cyclone,2012,Storm,Madagascar,Sub-Saharan Africa,africa,Analamanga,2.0,26.0,2012,2.0,26.0,-18.6340317,47.4872346
+tropical cyclone,2012,Storm,Madagascar,Sub-Saharan Africa,africa,Antananarivo II,2.0,14.0,2012,2.0,15.0,-18.9100122,47.5255809
+tropical cyclone,2012,Storm,Mozambique,Sub-Saharan Africa,africa,Zambezia,1.0,18.0,2012,1.0,18.0,-16.6460178,36.991932
+tropical cyclone,2013,Storm,Madagascar,Sub-Saharan Africa,africa,Menabe,2.0,22.0,2013,2.0,22.0,-20.0355933,45.1084888
+tropical cyclone,2013,Storm,Madagascar,Sub-Saharan Africa,africa,Atsimo Atsinanana,1.0,30.0,2013,2.0,2.0,-23.2153105,47.2913342
+tropical cyclone,2013,Storm,Seychelles,Sub-Saharan Africa,africa,Au Cap,2.0,7.0,2013,2.0,7.0,-4.7075642,55.512501
+tropical cyclone,2014,Storm,Réunion,Sub-Saharan Africa,africa,Arrondissement du vent,1.0,2.0,2014,1.0,2.0,43.6728535,1.2850631
+tropical cyclone,2014,Storm,Comoros,Sub-Saharan Africa,africa,Ngazidja,3.0,27.0,2014,3.0,29.0,-11.6525688,43.3309706
+tropical cyclone,2014,Storm,Madagascar,Sub-Saharan Africa,africa,Diana,3.0,29.0,2014,4.0,1.0,-13.1088118,49.1389
+tropical cyclone,2015,Storm,Somalia,Sub-Saharan Africa,africa,Bander,11.0,2.0,2015,11.0,2.0,57.4815453,18.3094132
+tropical cyclone,2015,Storm,Madagascar,Sub-Saharan Africa,africa,Atsimo Andrefana,2.0,7.0,2015,2.0,8.0,-23.0906739,44.4192535
+tropical cyclone,2015,Storm,Cabo Verde,Sub-Saharan Africa,africa,Boa Vista,8.0,31.0,2015,8.0,31.0,2.8208478,-60.6719582
+tropical cyclone,2017,Storm,Mozambique,Sub-Saharan Africa,africa,Vilankulo,2.0,15.0,2017,2.0,15.0,-22.2986932,35.0366556
+tropical cyclone,2017,Storm,Mozambique,Sub-Saharan Africa,africa,Homoine,2.0,15.0,2017,2.0,15.0,-23.9142795,35.0947803
+tropical cyclone,2017,Storm,Zimbabwe,Sub-Saharan Africa,africa,Chegutu,1.0,1.0,2017,3.0,1.0,-18.1867654,30.39756
+tropical cyclone,2018,Storm,Somalia,Sub-Saharan Africa,africa,Somaliland,5.0,21.0,2018,5.0,21.0,9.7277474,46.0099127
+tropical cyclone,2018,Storm,Mauritius,Sub-Saharan Africa,africa,Rivière du Rempart,1.0,15.0,2018,1.0,21.0,-20.0669943,57.65063
+tropical cyclone,2018,Storm,Madagascar,Sub-Saharan Africa,africa,Analanjirofo,3.0,14.0,2018,3.0,20.0,-17.0009915,49.1781884
+tropical cyclone,2019,Storm,Zimbabwe,Sub-Saharan Africa,africa,Nyanga,3.0,14.0,2019,3.0,14.0,-3.0080415,10.9964746
+tropical cyclone,2019,Storm,Zimbabwe,Sub-Saharan Africa,africa,Ngundu,3.0,14.0,2019,3.0,14.0,-20.8015291,30.8008761
+tropical cyclone,2019,Storm,Madagascar,Sub-Saharan Africa,africa,Besalampy (Melaky),3.0,15.0,2019,3.0,15.0,-16.7484406,44.4908675
+tropical cyclone,2020,Storm,Somalia,Sub-Saharan Africa,africa,Foocaar,11.0,22.0,2020,11.0,23.0,10.3141182,50.8972064
+tropical cyclone,2020,Storm,Somalia,Sub-Saharan Africa,africa,Puntland state),11.0,22.0,2020,11.0,23.0,8.4098511,48.4691003
+tropical cyclone,2020,Storm,Somalia,Sub-Saharan Africa,africa,Gumbax,11.0,22.0,2020,11.0,23.0,10.8836553,51.1138919
+tropical cyclone,2021,Storm,Madagascar,Sub-Saharan Africa,africa,Antalaha,1.0,23.0,2021,1.0,23.0,-14.9012302,50.2810433
+tropical cyclone,2021,Storm,Madagascar,Sub-Saharan Africa,africa,Maroantsetra,1.0,23.0,2021,1.0,23.0,-15.4348742,49.7422912
+tropical cyclone,2021,Storm,South Africa,Sub-Saharan Africa,africa,Umkhanyakude,1.0,24.0,2021,1.0,24.0,-27.6622207,32.3027758
+tropical cyclone,2022,Storm,Madagascar,Sub-Saharan Africa,africa,Morombe,4.0,26.0,2022,4.0,27.0,-21.7440435,43.3593054
+tropical cyclone,2022,Storm,Mozambique,Sub-Saharan Africa,africa,Tete,2.0,18.0,2022,2.0,18.0,-15.5205193,32.7682742
+tropical cyclone,2022,Storm,Malawi,Sub-Saharan Africa,africa,Phalombe,3.0,11.0,2022,3.0,14.0,-15.6922071,35.6650523
+tropical cyclone,2023,Storm,Malawi,Sub-Saharan Africa,africa,Thyolo,3.0,11.0,2023,3.0,13.0,-16.1287747,35.1449132
+tropical cyclone,2023,Storm,Mozambique,Sub-Saharan Africa,africa,Zambezia,2.0,24.0,2023,3.0,11.0,-16.6460178,36.991932
+tropical cyclone,2023,Storm,Malawi,Sub-Saharan Africa,africa,Mulanje,3.0,11.0,2023,3.0,13.0,-15.91088,35.541255
+tropical cyclone,2024,Storm,Mozambique,Sub-Saharan Africa,africa,Ancuabe,12.0,13.0,2024,12.0,16.0,-12.9437776,39.7441693
+tropical cyclone,2024,Storm,Mozambique,Sub-Saharan Africa,africa,Nacala Velha,12.0,13.0,2024,12.0,16.0,-14.5346272,40.6187897
+tropical cyclone,2024,Storm,Mozambique,Sub-Saharan Africa,africa,Marrupa,12.0,13.0,2024,12.0,16.0,-13.0396984,37.3217801
+tropical cyclone,2025,Storm,Madagascar,Sub-Saharan Africa,africa,Vohémar,1.0,11.0,2025,1.0,12.0,-13.3721237,50.0000818
+tropical cyclone,2025,Storm,Malawi,Sub-Saharan Africa,africa,Nsanje,3.0,11.0,2025,3.0,11.0,-16.7199917,35.1011088
+tropical cyclone,2025,Storm,Madagascar,Sub-Saharan Africa,africa,Belo sur Tsiribihina,2.0,27.0,2025,3.0,2.0,-19.6898203,44.5448105
+wildfire (general),2021,Wildfire,Algeria,Northern Africa,africa,Tizi-Ouzou,8.0,9.0,2021,8.0,16.0,36.6816175,4.237186
+wildfire (general),2021,Wildfire,Algeria,Northern Africa,africa,Bouira,8.0,9.0,2021,8.0,16.0,36.2316481,3.9082579
+wildfire (general),2021,Wildfire,Algeria,Northern Africa,africa,Bejaïa,8.0,9.0,2021,8.0,16.0,36.7511783,5.0643687
+wildfire (general),2023,Wildfire,Algeria,Northern Africa,africa,Bouira,7.0,23.0,2023,7.0,24.0,36.2316481,3.9082579
+wildfire (general),2023,Wildfire,Algeria,Northern Africa,africa,Tizi Ouzou,7.0,23.0,2023,7.0,24.0,36.6816175,4.237186
+wildfire (general),2023,Wildfire,Algeria,Northern Africa,africa,Béjaïa,7.0,23.0,2023,7.0,24.0,36.7511783,5.0643687
+wildfire (general),2025,Wildfire,Sierra Leone,Sub-Saharan Africa,africa,Freetown,1.0,11.0,2025,4.0,11.0,8.479004,-13.26795
+wildfire (general),2025,Wildfire,Sierra Leone,Sub-Saharan Africa,africa,Kpetema,1.0,11.0,2025,4.0,11.0,7.8543731,-11.7551463
+wildfire (general),2025,Wildfire,Sierra Leone,Sub-Saharan Africa,africa,Bo,1.0,11.0,2025,4.0,11.0,-17.0568696,-64.9912286
