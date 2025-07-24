@@ -102,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, fullName: string, location: string, userType: string) => {
-    setLoading(true);
+    // This function no longer manages the global loading state.
     try {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -112,7 +112,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (authError) throw authError;
       if (!authData.user) throw new Error('No user returned from signup');
 
-      // Create user profile
       const { error: profileError } = await supabase
         .from('users')
         .insert({
@@ -124,13 +123,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           profile_completed: false,
         });
 
-      if (profileError) throw profileError;
-
-      // The onAuthStateChange listener will handle loading the profile
+      if (profileError) {
+        if (profileError.message.includes('users_email_key')) {
+          throw new Error('An account with this email address already exists. Please sign in instead.');
+        }
+        throw profileError;
+      }
     } catch (error: any) {
+      // Re-throw the error for the UI component to handle.
       throw new Error(error.message || 'Failed to create account');
-    } finally {
-      // Don't set loading to false here; let the listener handle it
     }
   };
 

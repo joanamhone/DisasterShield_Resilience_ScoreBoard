@@ -5,7 +5,8 @@ import { useAuth } from '../contexts/AuthContext'
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate()
-  const { signUp, signInWithGoogle, loading } = useAuth()
+  // 1. Remove 'loading' from useAuth, it's no longer needed here
+  const { signUp, signInWithGoogle } = useAuth()
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -20,6 +21,9 @@ const SignUp: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  
+  // 2. Add a local state to manage the form submission
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateEmail = (email: string, userType: string) => {
     const emailRegex = /\S+@\S+\.\S+/
@@ -27,9 +31,8 @@ const SignUp: React.FC = () => {
       return 'Please enter a valid email'
     }
     
-    // School admins and disaster coordinators must use official emails
     if (userType === 'school_admin' || userType === 'disaster_coordinator') {
-      const officialDomains = ['.edu', '.gov', '.org', 'school', 'district', 'emergency', 'disaster']
+      const officialDomains = ['.edu', '.gov', '.org', '.ac', 'school', 'district', 'emergency', 'disaster']
       const hasOfficialDomain = officialDomains.some(domain => email.toLowerCase().includes(domain))
       if (!hasOfficialDomain) {
         const roleLabel = userType === 'school_admin' ? 'School Administrators' : 'Disaster Coordinators'
@@ -100,25 +103,34 @@ const SignUp: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
+  // 3. Update handleSubmit to use the local state
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!validateForm()) return
 
+    setIsSubmitting(true);
     try {
       await signUp(formData.email, formData.password, formData.fullName, formData.location, userType as any)
       navigate('/profile-setup')
     } catch (error) {
       setErrors({ submit: (error as Error).message })
+    } finally {
+      setIsSubmitting(false); // This guarantees the loading state will stop
     }
   }
 
   const handleGoogleSignUp = async () => {
+    setIsSubmitting(true);
     try {
       await signInWithGoogle()
+      // The onAuthStateChange listener in AuthContext will handle navigation
+      // or you can navigate here if a profile setup step is always required.
       navigate('/profile-setup')
     } catch (error) {
       setErrors({ submit: (error as Error).message })
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -143,7 +155,7 @@ const SignUp: React.FC = () => {
         <div className="mb-6">
           <button
             onClick={handleGoogleSignUp}
-            disabled={loading}
+            disabled={isSubmitting} // 4. Update the buttons to use the local state
             className="w-full flex items-center justify-center px-4 py-3 border border-border rounded-lg hover:bg-surface transition-colors duration-200 disabled:opacity-50"
           >
             <svg className="mr-3" width="20" height="20" viewBox="0 0 24 24">
@@ -168,6 +180,8 @@ const SignUp: React.FC = () => {
 
         {/* Sign Up Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Form fields remain the same */}
+          {/* ... */}
           {/* User Type Selection */}
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-2">
@@ -338,10 +352,10 @@ const SignUp: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-3 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Creating Account...' : 'Create Account'}
+            {isSubmitting ? 'Creating Account...' : 'Create Account'}
           </button>
 
           {errors.submit && (

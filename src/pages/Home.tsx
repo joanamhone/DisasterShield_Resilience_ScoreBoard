@@ -1,5 +1,15 @@
 import React, { useState } from 'react'
-import { ClipboardCheck, AlertCircle, BarChart3, TrendingUp, Shield, Bell, MapPin } from 'lucide-react'
+import { 
+  ClipboardCheck, 
+  AlertCircle, 
+  BarChart3, 
+  TrendingUp, 
+  Shield, 
+  Bell, 
+  MapPin, 
+  Users, 
+  AlertTriangle 
+} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useReadiness } from '../contexts/ReadinessContext'
 import { useRoleAccess } from '../hooks/useRoleAccess'
@@ -12,8 +22,8 @@ import { useLocation } from '../hooks/useLocation'
 const Home: React.FC = () => {
   const navigate = useNavigate()
   const { currentScore } = useReadiness()
-  const { user, canAccessCommunityFeatures, canAccessSchoolFeatures, canAccessCoordinatorFeatures, isIndividualUser } = useRoleAccess()
-  const [userName] = useState('Alex Johnson')
+  const { user, isIndividualUser } = useRoleAccess()
+  const [userName] = useState('Alex Johnson') // Fallback name
   const location = useLocation()
 
   const handleReadinessScoreClick = () => {
@@ -25,7 +35,6 @@ const Home: React.FC = () => {
   }
 
   // Show role-specific dashboard for non-individual users
-  // Only show individual dashboard for individual users
   if (!isIndividualUser()) {
     return (
       <div className="space-y-6 sm:space-y-8">
@@ -36,7 +45,7 @@ const Home: React.FC = () => {
               Welcome back, {user?.fullName || userName}
             </h2>
             <p className="text-base sm:text-lg text-text-secondary mb-2">
-              Access your role-specific dashboard from the navigation menu
+              Here is your dashboard overview.
             </p>
             {/* Location display */}
             <div className="flex items-center text-sm text-text-tertiary">
@@ -52,47 +61,9 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* Role-specific dashboard links */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {canAccessCoordinatorFeatures() && (
-            <button 
-              onClick={() => navigate('/coordinator-dashboard')}
-              className="card p-6 hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center group"
-            >
-              <div className="w-12 h-12 bg-error/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-error/30 transition-colors">
-                <AlertTriangle className="text-error" size={24} />
-              </div>
-              <h4 className="font-semibold text-text-primary mb-2">Coordinator Dashboard</h4>
-              <p className="text-sm text-text-secondary">Manage regional emergency response</p>
-            </button>
-          )}
-          
-          {canAccessSchoolFeatures() && (
-            <button 
-              onClick={() => navigate('/school-dashboard')}
-              className="card p-6 hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center group"
-            >
-              <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-secondary/30 transition-colors">
-                <Users className="text-secondary" size={24} />
-              </div>
-              <h4 className="font-semibold text-text-primary mb-2">School Dashboard</h4>
-              <p className="text-sm text-text-secondary">Manage school emergency preparedness</p>
-            </button>
-          )}
-          
-          {canAccessCommunityFeatures() && (
-            <button 
-              onClick={() => navigate('/community-dashboard')}
-              className="card p-6 hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center group"
-            >
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
-                <Users className="text-primary" size={24} />
-              </div>
-              <h4 className="font-semibold text-text-primary mb-2">Community Dashboard</h4>
-              <p className="text-sm text-text-secondary">Lead community preparedness efforts</p>
-            </button>
-          )}
-        </div>
+        {/* Render the RoleDashboard component */}
+        <RoleDashboard />
+
       </div>
     )
   }
