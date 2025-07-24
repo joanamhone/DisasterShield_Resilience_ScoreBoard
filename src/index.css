@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-text-primary font-inter;
+  }
+  
+  /* Ensure proper touch targets on mobile */
+  button, input, select, textarea {
+    @apply min-h-[44px] sm:min-h-[40px];
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card rounded-xl shadow-sm border border-border;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center justify-center;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface hover:bg-border text-text-primary font-medium px-4 py-2 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center justify-center;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+  .card {
+    @apply rounded-lg;
+  }
+  
+  /* Improve touch targets on mobile */
+  button {
+    @apply min-h-[48px];
+  }
+  
+  /* Better spacing on mobile */
+  .space-y-6 > * + * {
+    @apply mt-4;
+  }
+  
+  .space-y-8 > * + * {
+    @apply mt-6;
+  }
+}
+
+/* Ensure proper layout on all screen sizes */
+@media (min-width: 1024px) {
+  .main-content {
+    margin-left: 16rem; /* 64 * 0.25rem = 16rem for sidebar width */
+  }
+}
+
+/* Notification improvements */
+.notification-panel {
+  @apply max-h-[80vh] overflow-y-auto;
+}
+
+/* Smooth transitions for interactive elements */
+.card {
+  transition: box-shadow 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid #2E7D32;
+  outline-offset: 2px;
+}
+
+/* Mobile navigation improvements */
+@media (max-width: 1023px) {
+  .mobile-nav-item {
+    @apply min-h-[56px] flex items-center;
+  }
+  
+  .mobile-sidebar {
+    @apply fixed inset-y-0 left-0 z-50 w-full max-w-sm transform transition-transform duration-300 ease-in-out;
+  }
+  
+  .mobile-sidebar.closed {
+    @apply -translate-x-full;
+  }
+  
+  .mobile-sidebar.open {
+    @apply translate-x-0;
+  }
+}
+
+/* Chart responsiveness */
+.recharts-wrapper {
+  @apply w-full;
+}
+
+/* Notification improvements */
+.notification-panel {
+  @apply max-h-[80vh] overflow-y-auto;
+}
+
+/* Mobile-optimized form inputs */
+@media (max-width: 640px) {
+  input, select, textarea {
+    @apply text-base; /* Prevents zoom on iOS */
+  }
+}
+
+/* Loading animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Improved mobile sidebar */
+@media (max-width: 1023px) {
+  .mobile-sidebar {
+    @apply fixed inset-y-0 left-0 z-50 w-full max-w-sm transform transition-transform duration-300 ease-in-out;
+  }
+  
+  .mobile-sidebar.closed {
+    @apply -translate-x-full;
+  }
+  
+  .mobile-sidebar.open {
+    @apply translate-x-0;
+  }
+}
+
+/* Better mobile typography */
+@media (max-width: 640px) {
+  h1 {
+    @apply text-xl;
+  }
+  
+  h2 {
+    @apply text-lg;
+  }
+  
+  h3 {
+    @apply text-base;
+  }
+}
