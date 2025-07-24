@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { Settings, MapPin, Bell, Shield, ChevronRight, User, Phone, Mail, Globe, Camera, LogOut } from 'lucide-react'
+import { Settings, User, Phone, Mail, ChevronRight, LogOut, Bell, Shield, MapPin } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom' // 1. Import useNavigate
 
 const Profile: React.FC = () => {
   const { user, updateProfile, signOut } = useAuth()
+  const navigate = useNavigate() // 2. Initialize navigate
+
   const [editing, setEditing] = useState(false)
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
@@ -17,6 +20,34 @@ const Profile: React.FC = () => {
   const [languageInput, setLanguageInput] = useState('')
 
   if (!user) return null
+
+  // 3. Define menuItems WITH the 'icon' property
+  const menuItems = [
+    {
+      id: 1,
+      title: 'Emergency Contacts',
+      icon: Phone, // Use the icon component directly
+      color: 'text-primary',
+      bgColor: 'bg-primary/20',
+      action: () => navigate('/settings/emergency-contacts')
+    },
+    {
+      id: 2,
+      title: 'Notification Settings',
+      icon: Bell, // Use the icon component directly
+      color: 'text-accent',
+      bgColor: 'bg-accent/20',
+      action: () => navigate('/settings/notifications')
+    },
+    {
+      id: 3,
+      title: 'App Settings',
+      icon: Settings, // Use the icon component directly
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/20',
+      action: () => navigate('/settings/app')
+    },
+  ]
 
   const getUserTypeLabel = (userType?: string) => {
     const types: Record<string, string> = {
@@ -68,39 +99,12 @@ const Profile: React.FC = () => {
   const handleSignOut = async () => {
     try {
       await signOut()
-      // Navigate to sign-in
-      window.location.href = '/signin'
+      // Use navigate for SPA navigation instead of full page reload
+      navigate('/signin')
     } catch (error) {
       console.error('Sign out error:', error)
     }
   }
-
-  const menuItems = [
-    { 
-      id: 1, 
-      title: 'Emergency Contacts', 
-      href: '/settings',
-      color: 'text-primary',
-      bgColor: 'bg-primary/20',
-      action: () => navigate('/settings') 
-    },
-    { 
-      id: 2, 
-      title: 'Notification Settings', 
-      href: '/settings',
-      color: 'text-accent',
-      bgColor: 'bg-accent/20',
-      action: () => navigate('/settings') 
-    },
-    { 
-      id: 3, 
-      title: 'App Settings', 
-      href: '/settings',
-      color: 'text-secondary',
-      bgColor: 'bg-secondary/20',
-      action: () => navigate('/settings') 
-    },
-  ]
 
   return (
     <div className="space-y-6 pb-6">
@@ -148,7 +152,7 @@ const Profile: React.FC = () => {
         <h3 className="text-lg font-bold text-text-primary mb-4">
           Personal Information
         </h3>
-        
+
         {editing ? (
           <div className="space-y-4">
             {/* Full Name */}
@@ -349,12 +353,12 @@ const Profile: React.FC = () => {
               onClick={() => setNotificationsEnabled(!notificationsEnabled)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
                 notificationsEnabled ? 'bg-primary' : 'bg-border'
-              }`}
+                }`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
                   notificationsEnabled ? 'translate-x-6' : 'translate-x-1'
-                }`}
+                  }`}
               />
             </button>
           </div>
@@ -364,12 +368,12 @@ const Profile: React.FC = () => {
               onClick={() => setPrivateProfileEnabled(!privateProfileEnabled)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
                 privateProfileEnabled ? 'bg-primary' : 'bg-border'
-              }`}
+                }`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
                   privateProfileEnabled ? 'translate-x-6' : 'translate-x-1'
-                }`}
+                  }`}
               />
             </button>
           </div>
@@ -383,7 +387,7 @@ const Profile: React.FC = () => {
         </h3>
         <div className="space-y-3">
           {menuItems.map((item) => {
-            const Icon = item.icon
+            const Icon = item.icon // Now this works because item.icon is defined
             return (
               <button
                 key={item.id}
@@ -404,7 +408,7 @@ const Profile: React.FC = () => {
       </div>
 
       {/* Sign Out */}
-      <button 
+      <button
         onClick={handleSignOut}
         className="w-full card p-4 flex items-center justify-center hover:bg-surface transition-colors duration-200"
       >
