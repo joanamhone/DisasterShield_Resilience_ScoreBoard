@@ -34,7 +34,7 @@ const WeatherParameters: React.FC<WeatherParametersProps> = ({ location, season 
         rainfall: 120,
         windSpeed: 15,
         pressure: 1008,
-        pressure: 1008,
+      //  pressure: 1008,
         uvIndex: 4,
         visibility: 12
       },

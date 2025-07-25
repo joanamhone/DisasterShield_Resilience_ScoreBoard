@@ -23,6 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Risk Assessment', href: '/assessment', icon: AlertTriangle },
     { name: 'Readiness Check', href: '/readiness', icon: Clipboard },
     { name: 'Track Progress', href: '/progress', icon: TrendingUp },
+      { name: 'Track flood', href: '/floodriskmap', icon: TrendingUp },
     { name: 'Emergency Kit', href: '/emergency-kit', icon: Package },
   ]
 

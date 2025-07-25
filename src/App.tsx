@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Assessment from './pages/Assessment'
+import FloodRiskMap from './pages/map'
 import Readiness from './pages/Readiness'
 import Progress from './pages/Progress'
 import EmergencyKit from './pages/EmergencyKit'
@@ -35,7 +36,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            
+         
             {/* Protected Routes */}
             <Route path="/profile-setup" element={
               <ProtectedRoute>
@@ -51,6 +52,7 @@ function App() {
                     <Route path="/assessment" element={<Assessment />} />
                     <Route path="/readiness" element={<Readiness />} />
                     <Route path="/progress" element={<Progress />} />
+                    <Route path="/floodriskmap" element={<FloodRiskMap />} />
                     <Route path="/emergency-kit" element={<EmergencyKit />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/community-dashboard" element={
