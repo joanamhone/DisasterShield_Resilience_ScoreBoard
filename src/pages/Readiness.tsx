@@ -6,6 +6,8 @@ import { format } from 'date-fns'
 import LocationSeasonForm from '../components/readiness/LocationSeasonForm'
 import ReadinessQuiz from '../components/readiness/ReadinessQuiz'
 import SeasonalReadinessQuiz from '../components/readiness/SeasonalReadinessQuiz'
+import SchoolReadinessQuiz from '../components/readiness/SchoolReadinessQuiz'
+import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz' // ✅ NEW IMPORT
 import ScoreOverview from '../components/readiness/ScoreOverview'
 import SeasonalRecommendations from '../components/readiness/SeasonalRecommendations'
 
@@ -18,6 +20,7 @@ const Readiness: React.FC = () => {
   const [newItem, setNewItem] = useState('')
   const [isSeasonalAssessment, setIsSeasonalAssessment] = useState(false)
   const [currentAnswers, setCurrentAnswers] = useState<number[]>([])
+  const [quizType, setQuizType] = useState<'general' | 'seasonal' | 'school' | 'community'>('general')
 
   const [checklist, setChecklist] = useState([
     { id: 1, name: 'Emergency kit prepared', completed: true },
@@ -27,7 +30,8 @@ const Readiness: React.FC = () => {
     { id: 5, name: 'Emergency contacts updated', completed: true },
   ])
 
-  const handleAssessmentChoice = (seasonal: boolean) => {
+  const handleAssessmentChoice = (seasonal: boolean, type: 'general' | 'school' | 'community' = 'general') => {
+    setQuizType(type)
     setIsSeasonalAssessment(seasonal)
     if (seasonal) {
       setCurrentStep('form')
@@ -44,7 +48,7 @@ const Readiness: React.FC = () => {
 
   const handleQuizComplete = (score: number) => {
     updateScore(
-      score, 
+      score,
       isSeasonalAssessment ? 'seasonal' : 'general',
       isSeasonalAssessment ? location : undefined,
       isSeasonalAssessment ? season : undefined,
@@ -80,63 +84,49 @@ const Readiness: React.FC = () => {
     setLocation('')
     setSeason('')
     setIsSeasonalAssessment(false)
+    setQuizType('general')
   }
 
-  // Assessment Choice Screen
+  // === VIEW LOGIC ===
+
   if (currentStep === 'choice') {
     return (
       <div className="space-y-6 pb-6">
         <div className="card p-6">
           <h3 className="text-xl font-bold text-text-primary mb-4">
-            Choose Your Assessment Type
+            Disaster Readiness and Preparedness Assessment
           </h3>
           <p className="text-text-secondary mb-6">
-            Select the type of readiness assessment you'd like to take.
+            Are You Ready for a Disaster?
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button
-              onClick={() => handleAssessmentChoice(false)}
-              className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left"
-            >
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
-                  <AlertCircle className="text-primary" size={24} />
+            <div className="md:col-span-2">
+              <button
+                onClick={() => handleAssessmentChoice(false, 'general')}
+                className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+                    <AlertCircle className="text-primary" size={24} />
+                  </div>
+                  <h4 className="font-bold text-text-primary">Individual/Household Assessment</h4>
                 </div>
-                <h4 className="font-bold text-text-primary">General Assessment</h4>
-              </div>
-              <p className="text-text-secondary text-sm leading-relaxed">
-                Take a comprehensive readiness assessment covering all basic emergency preparedness areas.
-              </p>
-              <div className="mt-4 flex items-center text-primary">
-                <span className="text-sm font-medium">Start Assessment</span>
-                <ChevronRight size={16} className="ml-1" />
-              </div>
-            </button>
-
-            <button
-              onClick={() => handleAssessmentChoice(true)}
-              className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-secondary/20 text-left"
-            >
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-secondary text-xl">🌍</span>
+                <p className="text-text-secondary text-sm leading-relaxed">
+                  For Individuals & Families. Evaluate how prepared you and your household are for storms, floods, and other emergencies across key readiness areas.
+                </p>
+                <div className="mt-4 flex items-center text-primary">
+                  <span className="text-sm font-medium">Start Assessment</span>
+                  <ChevronRight size={16} className="ml-1" />
                 </div>
-                <h4 className="font-bold text-text-primary">Seasonal Assessment</h4>
-              </div>
-              <p className="text-text-secondary text-sm leading-relaxed">
-                Get personalized recommendations based on your location and current season.
-              </p>
-              <div className="mt-4 flex items-center text-secondary">
-                <span className="text-sm font-medium">Start Seasonal Assessment</span>
-                <ChevronRight size={16} className="ml-1" />
-              </div>
-            </button>
+              </button>
+            </div>
 
-            {/* Role-specific assessment card */}
             {(user?.userType === 'community_leader' || user?.userType === 'school_admin') && (
               <button
-                onClick={() => handleAssessmentChoice(false)}
+                onClick={() =>
+                  handleAssessmentChoice(false, user.userType === 'school_admin' ? 'school' : 'community')
+                }
                 className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-accent/20 text-left md:col-span-2"
               >
                 <div className="flex items-center mb-4">
@@ -148,14 +138,15 @@ const Readiness: React.FC = () => {
                     )}
                   </div>
                   <h4 className="font-bold text-text-primary">
-                    {user.userType === 'community_leader' ? 'Community Readiness Check' : 'School Readiness Check'}
+                    {user.userType === 'community_leader'
+                      ? 'Community Readiness Check'
+                      : 'School Readiness Check'}
                   </h4>
                 </div>
                 <p className="text-text-secondary text-sm leading-relaxed">
-                  {user.userType === 'community_leader' 
-                    ? 'Assess your community\'s overall disaster preparedness and identify areas for improvement.'
-                    : 'Evaluate your school\'s emergency preparedness across all safety protocols and procedures.'
-                  }
+                  {user.userType === 'community_leader'
+                    ? "Assess your community's overall disaster preparedness and identify areas for improvement."
+                    : "Evaluate your school's emergency preparedness across all safety protocols and procedures."}
                 </p>
                 <div className="mt-4 flex items-center text-accent">
                   <span className="text-sm font-medium">
@@ -168,35 +159,48 @@ const Readiness: React.FC = () => {
           </div>
         </div>
 
-        {/* Previous Results (if any) */}
         {assessmentHistory.length > 0 && (
           <div className="card p-4">
-            <h3 className="font-bold text-text-primary mb-2">
-              Assessment History
-            </h3>
+            <h3 className="font-bold text-text-primary mb-2">Assessment History</h3>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {assessmentHistory.slice(0, 5).map((assessment) => (
-                <div key={assessment.id} className="flex items-center justify-between p-3 bg-surface rounded-lg">
+                <div
+                  key={assessment.id}
+                  className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                >
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        assessment.type === 'seasonal' 
-                          ? 'bg-secondary/20 text-secondary' 
-                          : 'bg-primary/20 text-primary'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          assessment.type === 'seasonal'
+                            ? 'bg-secondary/20 text-secondary'
+                            : 'bg-primary/20 text-primary'
+                        }`}
+                      >
                         {assessment.type === 'seasonal' ? 'Seasonal' : 'General'}
                       </span>
-                      <span className="font-bold text-lg" style={{ 
-                        color: assessment.score < 30 ? '#D32F2F' :
-                               assessment.score < 60 ? '#FFA000' :
-                               assessment.score < 80 ? '#F57C00' : '#43A047'
-                      }}>
+                      <span
+                        className="font-bold text-lg"
+                        style={{
+                          color:
+                            assessment.score < 30
+                              ? '#D32F2F'
+                              : assessment.score < 60
+                              ? '#FFA000'
+                              : assessment.score < 80
+                              ? '#F57C00'
+                              : '#43A047',
+                        }}
+                      >
                         {assessment.score}%
                       </span>
                     </div>
                     <div className="text-sm text-text-secondary">
                       {assessment.location && assessment.season ? (
-                        <>{assessment.location} • {assessment.season.charAt(0).toUpperCase() + assessment.season.slice(1)}</>
+                        <>
+                          {assessment.location} •{' '}
+                          {assessment.season.charAt(0).toUpperCase() + assessment.season.slice(1)}
+                        </>
                       ) : (
                         'General Assessment'
                       )}
@@ -209,18 +213,12 @@ const Readiness: React.FC = () => {
                 </div>
               ))}
             </div>
-            {assessmentHistory.length > 5 && (
-              <p className="text-xs text-text-tertiary text-center mt-3">
-                Showing 5 most recent assessments
-              </p>
-            )}
           </div>
         )}
       </div>
     )
   }
 
-  // Location & Season Form (for seasonal assessment)
   if (currentStep === 'form') {
     return (
       <div className="space-y-6 pb-6">
@@ -229,23 +227,43 @@ const Readiness: React.FC = () => {
     )
   }
 
-  // General Quiz
   if (currentStep === 'quiz') {
-    return (
-      <ReadinessQuiz 
-        onComplete={(score, answers) => {
-          setCurrentAnswers(answers)
-          handleQuizComplete(score)
-        }}
-        onCancel={handleQuizCancel}
-      />
-    )
+    if (quizType === 'school') {
+      return (
+        <SchoolReadinessQuiz
+          onComplete={(score, answers) => {
+            setCurrentAnswers(answers)
+            handleQuizComplete(score)
+          }}
+          onCancel={handleQuizCancel}
+        />
+      )
+    } else if (quizType === 'community') {
+      return (
+        <CommunityReadinessQuiz
+          onComplete={(score, answers) => {
+            setCurrentAnswers(answers)
+            handleQuizComplete(score)
+          }}
+          onCancel={handleQuizCancel}
+        />
+      )
+    } else {
+      return (
+        <ReadinessQuiz
+          onComplete={(score, answers) => {
+            setCurrentAnswers(answers)
+            handleQuizComplete(score)
+          }}
+          onCancel={handleQuizCancel}
+        />
+      )
+    }
   }
 
-  // Seasonal Quiz
   if (currentStep === 'seasonal-quiz') {
     return (
-      <SeasonalReadinessQuiz 
+      <SeasonalReadinessQuiz
         location={location}
         season={season}
         onComplete={(score, answers) => {
@@ -257,44 +275,36 @@ const Readiness: React.FC = () => {
     )
   }
 
-  // Results Screen
   return (
     <div className="space-y-6 pb-6">
-      {/* Score Overview */}
       <ScoreOverview score={currentScore} />
 
-      {/* Assessment Info */}
       <div className="card p-4 flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-text-primary">
-            Assessment Details
-          </h3>
+          <h3 className="font-bold text-text-primary">Assessment Details</h3>
           <p className="text-text-secondary">
             {isSeasonalAssessment && location && season ? (
-              <>{location} • {season.charAt(0).toUpperCase() + season.slice(1)} Season</>
+              <>
+                {location} • {season.charAt(0).toUpperCase() + season.slice(1)} Season
+              </>
             ) : (
               'General Readiness Assessment'
             )}
           </p>
         </div>
-        <button
-          onClick={startNewAssessment}
-          className="btn-primary"
-        >
+        <button onClick={startNewAssessment} className="btn-primary">
           New Assessment
         </button>
       </div>
 
-      {/* Seasonal Recommendations (only for seasonal assessments) */}
       {isSeasonalAssessment && location && season && (
-        <SeasonalRecommendations 
+        <SeasonalRecommendations
           season={season}
           location={location}
           score={currentScore}
         />
       )}
 
-      {/* Preparedness Checklist */}
       <div>
         <h3 className="text-lg font-bold text-text-primary mb-3">
           General Preparedness Checklist
@@ -316,11 +326,7 @@ const Readiness: React.FC = () => {
                   <X size={16} className="text-text-tertiary" />
                 )}
               </button>
-              <span
-                className={`text-text-primary ${
-                  item.completed ? 'line-through text-text-secondary' : ''
-                }`}
-              >
+              <span className={`text-text-primary ${item.completed ? 'line-through text-text-secondary' : ''}`}>
                 {item.name}
               </span>
             </div>
@@ -328,11 +334,8 @@ const Readiness: React.FC = () => {
         </div>
       </div>
 
-      {/* Add to Checklist */}
       <div>
-        <h3 className="text-lg font-bold text-text-primary mb-3">
-          Add to Checklist
-        </h3>
+        <h3 className="text-lg font-bold text-text-primary mb-3">Add to Checklist</h3>
         <div className="flex gap-3">
           <input
             type="text"
@@ -342,10 +345,7 @@ const Readiness: React.FC = () => {
             className="flex-1 card px-3 py-2 text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
             onKeyPress={(e) => e.key === 'Enter' && addChecklistItem()}
           />
-          <button
-            onClick={addChecklistItem}
-            className="btn-primary px-6"
-          >
+          <button onClick={addChecklistItem} className="btn-primary px-6">
             Add
           </button>
         </div>
