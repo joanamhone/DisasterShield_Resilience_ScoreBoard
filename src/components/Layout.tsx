@@ -60,6 +60,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         return 'Emergency Readiness'
       case '/progress':
         return 'Track Progress'
+         case '/floodriskmap':
+        return 'Flood Risk Map Viewer'
       case '/emergency-kit':
         return 'Emergency Kit'
       case '/community-dashboard':
