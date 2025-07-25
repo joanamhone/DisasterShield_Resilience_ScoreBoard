@@ -26,62 +26,112 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
   const questions: Question[] = [
     {
       id: 1,
-      text: 'To what degree has your family developed comprehensive emergency communication plans?',
+      text: 'How many people are currently living in your household?',
       options: [
-        { id: 1, text: 'Fully developed with multiple contact methods and meeting points', value: 10 },
-        { id: 2, text: 'Partially developed with basic contact information', value: 7 },
-        { id: 3, text: 'We have discussed it but no formal plan exists', value: 4 },
-        { id: 4, text: 'No communication plan has been established', value: 0 },
+        { id: 1, text: '1 person', value: 2 },
+        { id: 2, text: '2–3 people', value: 4 },
+        { id: 3, text: '4–5 people', value: 6 },
+        { id: 4, text: '6–8 people', value: 8 },
+        { id: 5, text: 'More than 8', value: 10 },
       ],
     },
     {
       id: 2,
-      text: 'How well-stocked is your emergency supply kit with essential items?',
+      text: 'Are there vulnerable individuals in your household (e.g., babies, elderly, disabled)?',
       options: [
-        { id: 1, text: 'Fully stocked with 2+ weeks of supplies, regularly maintained', value: 10 },
-        { id: 2, text: 'Well-stocked with 1 week of supplies, occasionally updated', value: 8 },
-        { id: 3, text: 'Basic supplies available but incomplete or outdated', value: 5 },
-        { id: 4, text: 'Minimal or no emergency supplies prepared', value: 0 },
+        { id: 1, text: 'Yes, more than one', value: 10 },
+        { id: 2, text: 'Yes, one', value: 8 },
+        { id: 3, text: 'No, but often care for visitors who are', value: 5 },
+        { id: 4, text: 'Not sure', value: 2 },
+        { id: 5, text: 'No', value: 0 },
       ],
     },
     {
       id: 3,
-      text: 'How extensively have family members received emergency response training?',
+      text: 'What type of home do you live in?',
       options: [
-        { id: 1, text: 'All members trained in first aid, CPR, and emergency procedures', value: 10 },
-        { id: 2, text: 'Some members have basic first aid or emergency training', value: 7 },
-        { id: 3, text: 'Limited training, mostly from online resources or reading', value: 4 },
-        { id: 4, text: 'No formal emergency response training received', value: 0 },
+        { id: 1, text: 'Brick or cement house with strong roof', value: 10 },
+        { id: 2, text: 'Semi-permanent house (brick and thatch/iron sheet)', value: 7 },
+        { id: 3, text: 'Traditional hut or mud house', value: 4 },
+        { id: 4, text: 'Makeshift shelter or temporary housing', value: 2 },
+        { id: 5, text: 'Other', value: 5 },
       ],
     },
     {
       id: 4,
-      text: 'How prepared are you for extended power outages and utility disruptions?',
+      text: 'How close is your home to a flood-prone or high-risk area?',
       options: [
-        { id: 1, text: 'Multiple backup power sources and alternative utilities ready', value: 10 },
-        { id: 2, text: 'Some backup power options and basic utility alternatives', value: 7 },
-        { id: 3, text: 'Limited backup options, mostly battery-powered devices', value: 4 },
-        { id: 4, text: 'No backup power or utility alternatives prepared', value: 0 },
+        { id: 1, text: 'Within 100 meters', value: 0 },
+        { id: 2, text: 'Nearby (100–500 meters)', value: 2 },
+        { id: 3, text: 'Slightly distant (0.5–1 km)', value: 4 },
+        { id: 4, text: 'Far from danger zones', value: 8 },
+        { id: 5, text: 'I don’t know', value: 1 },
       ],
     },
     {
       id: 5,
-      text: 'How secure and accessible are your important documents and financial resources?',
+      text: 'Do you have a household emergency plan (evacuation, meeting point, communication)?',
       options: [
-        { id: 1, text: 'Multiple copies stored securely with easy emergency access', value: 10 },
-        { id: 2, text: 'Digital and physical copies stored in secure locations', value: 8 },
-        { id: 3, text: 'Some copies made but storage could be more secure', value: 5 },
-        { id: 4, text: 'No secure copies or emergency financial preparations', value: 0 },
+        { id: 1, text: 'Yes, and we’ve practiced it', value: 10 },
+        { id: 2, text: 'Yes, but not practiced', value: 7 },
+        { id: 3, text: 'Talked about it only', value: 4 },
+        { id: 4, text: 'Planning to make one', value: 2 },
+        { id: 5, text: 'No plan at all', value: 0 },
       ],
     },
     {
       id: 6,
-      text: 'How well do you understand and prepare for the specific risks in your area?',
+      text: 'Have you stored emergency supplies (food, water, flashlight, battery, etc.) for disasters?',
       options: [
-        { id: 1, text: 'Thoroughly researched local risks with specific preparations', value: 10 },
-        { id: 2, text: 'Good understanding of major risks with some preparations', value: 7 },
-        { id: 3, text: 'Basic awareness of risks but limited specific preparations', value: 4 },
-        { id: 4, text: 'Little knowledge of local risks or specific preparations', value: 0 },
+        { id: 1, text: 'Yes, supplies for 3+ days', value: 10 },
+        { id: 2, text: 'Yes, for 1–2 days', value: 8 },
+        { id: 3, text: 'Some basic items only', value: 5 },
+        { id: 4, text: 'Planning to collect', value: 2 },
+        { id: 5, text: 'None', value: 0 },
+      ],
+    },
+    {
+      id: 7,
+      text: 'How confident are you in performing basic first aid in an emergency?',
+      options: [
+        { id: 1, text: 'Very confident (trained)', value: 10 },
+        { id: 2, text: 'Somewhat confident', value: 7 },
+        { id: 3, text: 'Know a few basic things', value: 5 },
+        { id: 4, text: 'Not confident', value: 2 },
+        { id: 5, text: 'No knowledge at all', value: 0 },
+      ],
+    },
+    {
+      id: 8,
+      text: 'How do you usually receive emergency information or alerts?',
+      options: [
+        { id: 1, text: 'Phone (SMS or apps)', value: 10 },
+        { id: 2, text: 'Radio', value: 8 },
+        { id: 3, text: 'Neighbors or community leaders', value: 5 },
+        { id: 4, text: 'I don’t usually receive alerts', value: 1 },
+        { id: 5, text: 'I rely on social media', value: 3 },
+      ],
+    },
+    {
+      id: 9,
+      text: 'Do you know where the nearest emergency shelter or safe area is?',
+      options: [
+        { id: 1, text: 'Yes, and we’ve practiced going there', value: 10 },
+        { id: 2, text: 'Yes, but never visited', value: 7 },
+        { id: 3, text: 'Heard about it, unsure where it is', value: 4 },
+        { id: 4, text: 'No shelter nearby', value: 1 },
+        { id: 5, text: 'I don’t know about any', value: 0 },
+      ],
+    },
+    {
+      id: 10,
+      text: 'Do you have digital or physical copies of important documents (IDs, health records, etc.) stored safely?',
+      options: [
+        { id: 1, text: 'Yes, both digital and physical', value: 10 },
+        { id: 2, text: 'Only physical', value: 7 },
+        { id: 3, text: 'Only digital', value: 5 },
+        { id: 4, text: 'Some, but not all documents', value: 3 },
+        { id: 5, text: 'No backup at all', value: 0 },
       ],
     },
   ]
@@ -110,12 +160,10 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
 
   const calculateScore = () => {
     setQuizComplete(true)
-    
     setTimeout(() => {
       const totalPoints = answers.reduce((sum, value) => sum + value, 0)
       const maxPossiblePoints = questions.length * 10
       const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
-      
       onComplete(scorePercentage, answers)
     }, 1500)
   }
@@ -138,7 +186,6 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
 
   return (
     <div className="card overflow-hidden">
-      {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-divider">
         <h2 className="text-lg font-bold text-text-primary">
           Comprehensive Readiness Assessment
@@ -151,7 +198,6 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
         </button>
       </div>
 
-      {/* Progress */}
       <div className="p-4 pb-2">
         <div className="w-full bg-border h-2 rounded-full mb-2">
           <div 
@@ -164,7 +210,6 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
         </p>
       </div>
 
-      {/* Question */}
       <div className="p-4 space-y-6">
         <h3 className="text-lg font-bold text-text-primary leading-relaxed">
           {currentQuestion.text}
@@ -192,7 +237,6 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
         </div>
       </div>
 
-      {/* Footer */}
       <div className="flex justify-between items-center p-4 border-t border-divider">
         <button
           onClick={goToPreviousQuestion}
