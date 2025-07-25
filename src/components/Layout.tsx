@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, AlertTriangle, Clipboard, User, Menu, X, Bell, TrendingUp, Package, Users } from 'lucide-react'
+import { Home, AlertTriangle, Clipboard, User, Map, Menu, X, Bell, TrendingUp, Package, Users } from 'lucide-react'
 import { clsx } from 'clsx'
 import NotificationCenter from './notifications/NotificationCenter'
 import ProfileDropdown from './ProfileDropdown'
@@ -23,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Risk Assessment', href: '/assessment', icon: AlertTriangle },
     { name: 'Readiness Check', href: '/readiness', icon: Clipboard },
     { name: 'Track Progress', href: '/progress', icon: TrendingUp },
-    { name: 'Flood Risk Areas', href: '/floodriskmap', icon: TrendingUp },
+    { name: 'Flood Risk Areas', href: '/floodriskmap', icon: Map },
     { name: 'Emergency Kit', href: '/emergency-kit', icon: Package },
   ]
 
