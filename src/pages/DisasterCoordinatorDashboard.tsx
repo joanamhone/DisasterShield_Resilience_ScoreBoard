@@ -181,4 +181,5 @@ const DisasterCoordinatorDashboard: React.FC = () => {
   );
 };
 
+// This line fixes the error
 export default DisasterCoordinatorDashboard;
