@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 import ee
-ee.Authenticate()
+
 # Authenticate and initialize Earth Engine
+ee.Authenticate()
 ee.Initialize(project='disastershield-466814')
 
 app = Flask(__name__)
@@ -18,3 +19,7 @@ def get_flood_risk_map():
     map_url = image.getMapId(vis_params)['tile_fetcher'].url_format
 
     return jsonify({'map_url': map_url})
+
+# 👇 ADD THIS
+if __name__ == '__main__':
+    app.run(debug=True)
