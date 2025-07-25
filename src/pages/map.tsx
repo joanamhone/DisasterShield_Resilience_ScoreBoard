@@ -167,7 +167,7 @@ useEffect(() => {
 
   <button
     onClick={handleFetchMap}
-    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded w-full"
+    className="mt-4 bg-green-600 text-white px-4 py-2 rounded w-full"
   >
     {loading ? 'Loading...' : 'Get Flood Map'}
   </button>
