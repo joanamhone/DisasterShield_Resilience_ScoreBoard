@@ -1,15 +1,5 @@
-// This service handles all API calls to external services like OpenWeather and your Hugging Face model.
+// --- Interfaces ---
 
-// IMPORTANT: Add this to a .env.local file in your project's root folder
-// VITE_OPENWEATHER_API_KEY=your_openweather_api_key_here
-const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
-
-// The full URL of your Hugging Face Space API endpoint
-const HUGGINGFACE_API_URL = 'https://huggingface.co/spaces/joanamhone/DisasterShield/api/predict/';
-
-// --- Interfaces for the data we expect from the APIs ---
-
-// Defines the structure of the weather data from OpenWeather
 export interface WeatherData {
   temperature: number;
   humidity: number;
@@ -19,16 +9,19 @@ export interface WeatherData {
   pressure: number;
 }
 
-// Defines the structure of the prediction data from your Hugging Face model
 export interface PredictionResult {
-  [key: string]: number; // e.g., { "Drought": 0.1, "Floods": 0.8, ... }
+  [key: string]: number;
 }
 
+// --- Environment Variables ---
+
+const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+// The URL for your new Flask proxy server
+const FLASK_PROXY_URL = 'https://disaster-prediction-api-485908055275.us-central1.run.app/predict';
+// --- API Functions ---
+
 /**
- * Fetches the current weather data from the OpenWeatherMap API for a given location.
- * @param lat - Latitude of the location.
- * @param lon - Longitude of the location.
- * @returns A promise that resolves to the formatted WeatherData object.
+ * Fetches the current weather data from the OpenWeather API.
  */
 export const getWeather = async (lat: number, lon: number): Promise<WeatherData> => {
   const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`;
@@ -37,77 +30,64 @@ export const getWeather = async (lat: number, lon: number): Promise<WeatherData>
 
   try {
     const response = await fetch(url);
-
     if (!response.ok) {
-      throw new Error('Failed to fetch weather data from OpenWeather API.');
+      // Throw a specific error for the UI to catch
+      throw new Error(`OpenWeather API responded with status: ${response.status}`);
     }
-
     const data = await response.json();
+    console.log("Received weather data:", data);
 
-    // *** NEW LINE: Log the raw data received from the API ***
-    console.log("Raw Weather Data Received:", data);
-
-    // Transform the raw API response into our clean WeatherData format
-    const weatherData: WeatherData = {
+    // Map the API response to our WeatherData interface
+    return {
       temperature: data.main.temp,
       humidity: data.main.humidity,
-      pressure: data.main.pressure,
+      precipitation: data.rain?.['1h'] || 0, // Use rain.1h if available, otherwise 0
+      windGust: data.wind.gust || data.wind.speed, // Use gust if available, otherwise speed
       windSpeed: data.wind.speed,
-      windGust: data.wind.gust || data.wind.speed, // Use gust if available, otherwise fallback to speed
-      precipitation: data.rain ? data.rain['1h'] : 0, // Precipitation in the last hour, default to 0
+      pressure: data.main.pressure,
     };
-
-    return weatherData;
   } catch (error) {
     console.error("OpenWeather API Error:", error);
-    throw error;
+    throw new Error('Failed to fetch weather data from OpenWeather API.');
   }
 };
 
 /**
- * Sends weather data to your Hugging Face model to get a disaster prediction.
- * @param weatherData - The weather data object.
- * @returns A promise that resolves to the prediction result from the model.
+ * Sends weather data to the Flask proxy to get a disaster prediction.
  */
 export const getPredictions = async (weatherData: WeatherData): Promise<PredictionResult> => {
-  const inputData = {
-    // Ensure these keys match EXACTLY what your Gradio app expects
-    "Temperature": weatherData.temperature,
-    "Humidity": weatherData.humidity,
-    "Precipitation": weatherData.precipitation,
-    "Wind Gust": weatherData.windGust,
-    "Wind Speed": weatherData.windSpeed,
-    "Pressure": weatherData.pressure
+  // The input for your Flask server is slightly different
+  const inputForFlask = {
+    temp: weatherData.temperature,
+    humidity: weatherData.humidity,
+    precipitation: weatherData.precipitation,
+    windgust: weatherData.windGust,
+    windspeed: weatherData.windSpeed,
+    pressure: weatherData.pressure,
   };
 
-  // *** NEW LINE: Log the data being sent to Hugging Face ***
-  console.log("Sending to Hugging Face API:", inputData);
+  console.log("Sending to Flask Proxy:", inputForFlask);
 
   try {
-    const response = await fetch(HUGGINGFACE_API_URL, {
+    const response = await fetch(FLASK_PROXY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: Object.values(inputData) }), // Gradio API expects a 'data' array with the input values
+      body: JSON.stringify(inputForFlask),
     });
 
     if (!response.ok) {
-      throw new Error('Prediction API error from Hugging Face.');
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Flask proxy responded with status: ${response.status}`);
     }
 
     const result = await response.json();
-    
-    // *** NEW LINE: Log the raw prediction data received from Hugging Face ***
-    console.log("Raw Prediction Received:", result);
-    
-    // The actual prediction dictionary is in the first element of the 'data' array in the response
-    if (result.data && Array.isArray(result.data) && result.data.length > 0) {
-      return result.data[0]; 
-    } else {
-      throw new Error("Invalid response format from prediction API.");
-    }
+    console.log("Received prediction from Flask:", result);
+
+    // The Flask server wraps the result in a "prediction" key
+    return result.prediction;
 
   } catch (error) {
-    console.error("Hugging Face API Error:", error);
-    throw error;
+    console.error("Flask Proxy API Error:", error);
+    throw new Error('Failed to fetch prediction from the Flask proxy server.');
   }
 };

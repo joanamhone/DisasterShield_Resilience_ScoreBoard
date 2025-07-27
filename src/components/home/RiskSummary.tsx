@@ -12,7 +12,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-// A helper to map disaster names from the model to icons and colors
+// Helper function to map each risk type to its icon and color
 const getRiskDetails = (riskName: string) => {
   const lowerCaseName = riskName.toLowerCase();
   if (lowerCaseName.includes('flood')) return { icon: Droplets, color: 'text-risk-medium' };
@@ -24,10 +24,8 @@ const getRiskDetails = (riskName: string) => {
 };
 
 const RiskSummary: React.FC = () => {
-  // Get live data from the context instead of using static data
   const { prediction, isLoading, error, retryFetch } = useDisasterPrediction();
 
-  // --- Render Loading State ---
   if (isLoading) {
     return (
       <div className="card p-4 flex flex-col items-center justify-center text-center h-full">
@@ -37,7 +35,6 @@ const RiskSummary: React.FC = () => {
     );
   }
 
-  // --- Render Error State ---
   if (error) {
     return (
       <div className="card p-4 flex flex-col items-center justify-center text-center h-full bg-error/10">
@@ -51,21 +48,20 @@ const RiskSummary: React.FC = () => {
     );
   }
 
-  // Convert the prediction object into an array of risks
   const currentRisks = prediction 
     ? Object.entries(prediction)
         .map(([name, probability]) => ({
           type: name,
-          probability: probability,
+          probability,
           ...getRiskDetails(name),
         }))
-        // Sort by probability to show the most likely risks first
         .sort((a, b) => b.probability - a.probability)
-        // Only show risks with a meaningful probability
         .filter(risk => risk.probability > 0.01)
     : [];
 
-  const topRisk = currentRisks.length > 0 ? currentRisks[0] : { type: 'None', probability: 0, color: 'text-success' };
+  const topRisk = currentRisks.length > 0 
+    ? currentRisks[0] 
+    : { type: 'None', probability: 0, color: 'text-success' };
 
   return (
     <div className="card p-4">
@@ -82,7 +78,7 @@ const RiskSummary: React.FC = () => {
       
       <div className="space-y-2">
         {currentRisks.length > 0 ? (
-          currentRisks.slice(0, 3).map((risk, index) => { // Show top 3 risks
+          currentRisks.map((risk, index) => {
             const Icon = risk.icon;
             const percentage = (risk.probability * 100).toFixed(1);
             return (
@@ -100,7 +96,9 @@ const RiskSummary: React.FC = () => {
             );
           })
         ) : (
-          <p className="text-sm text-text-secondary">No significant disaster risks detected at the moment.</p>
+          <p className="text-sm text-text-secondary">
+            No significant disaster risks detected at the moment.
+          </p>
         )}
       </div>
     </div>
