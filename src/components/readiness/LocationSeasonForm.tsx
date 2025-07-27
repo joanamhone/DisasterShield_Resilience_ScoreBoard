@@ -11,12 +11,12 @@ const LocationSeasonForm: React.FC<LocationSeasonFormProps> = ({ onSubmit }) => 
   const [showSeasonDropdown, setShowSeasonDropdown] = useState(false)
 
   const seasons = [
-    { value: 'spring', label: 'Spring (March - May)', icon: '🌸' },
-    { value: 'summer', label: 'Summer (June - August)', icon: '☀️' },
-    { value: 'autumn', label: 'Autumn (September - November)', icon: '🍂' },
-    { value: 'winter', label: 'Winter (December - February)', icon: '❄️' },
-    { value: 'rainy', label: 'Rainy Season', icon: '🌧️' },
-    { value: 'dry', label: 'Dry Season', icon: '🏜️' },
+    { value: 'winter', label: 'Cold & Dry (May - July)', icon: '🌸' },
+    { value: 'summer', label: 'Hot & Dry (August - November)', icon: '☀️' },
+    { value: 'rainy', label: 'Hot & Wet (December - April)', icon: '🍂' },
+    //{ value: 'winter', label: 'Winter (December - February)', icon: '❄️' },
+    //{ value: 'rainy', label: 'Rainy Season', icon: '🌧️' },
+    //{ value: 'dry', label: 'Dry Season', icon: '🏜️' },
   ]
 
   const handleSubmit = (e: React.FormEvent) => {

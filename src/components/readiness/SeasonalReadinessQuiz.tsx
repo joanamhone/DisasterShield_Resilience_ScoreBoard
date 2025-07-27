@@ -30,220 +30,247 @@ const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
   const [answers, setAnswers] = useState<number[]>([])
   const [quizComplete, setQuizComplete] = useState(false)
 
-  const getSeasonalQuestions = (): Question[] => {
+    const getSeasonalQuestions = (): Question[] => {
+    // Mandatory 4 questions (same for all seasons)
     const baseQuestions: Question[] = [
       {
         id: 1,
-        text: 'How comprehensive is your emergency communication plan for your household?',
+        text: 'Has your household ever experienced seasonal shocks (flood, drought, cold) and how significant was the damage?',
         options: [
-          { id: 1, text: 'Complete plan with multiple contact methods and designated meeting points', value: 10 },
-          { id: 2, text: 'Basic plan established but could use more detail or practice', value: 7 },
-          { id: 3, text: 'Informal discussions held but no written plan exists', value: 4 },
-          { id: 4, text: 'No emergency communication plan has been developed', value: 0 },
+          { id: 1, text: 'Yes, major damage (homes, crops, health)', value: 10 },
+          { id: 2, text: 'Yes, moderate damage', value: 7 },
+          { id: 3, text: 'Minor damage only', value: 4 },
+          { id: 4, text: 'No, not affected', value: 0 },
         ],
       },
       {
         id: 2,
-        text: 'How well-prepared is your emergency supply kit for extended disruptions?',
+        text: 'Do you receive seasonal warnings (radio, SMS, or community alerts) before high-risk weather?',
         options: [
-          { id: 1, text: 'Fully stocked with 2+ weeks of supplies, regularly updated and organized', value: 10 },
-          { id: 2, text: 'Well-stocked with 1 week of supplies, occasionally maintained', value: 7 },
-          { id: 3, text: 'Basic supplies available but incomplete or needs updating', value: 4 },
-          { id: 4, text: 'Minimal emergency supplies or no organized kit', value: 0 },
+          { id: 1, text: 'Regular warnings through multiple channels', value: 10 },
+          { id: 2, text: 'Occasional warnings, sometimes too late', value: 7 },
+          { id: 3, text: 'Rare warnings, not always reliable', value: 4 },
+          { id: 4, text: 'Never receive warnings', value: 0 },
+        ],
+      },
+      {
+        id: 3,
+        text: 'Have you taken physical steps to protect your home (reinforce walls/roof, clear gutters, insulate) for seasonal risks?',
+        options: [
+          { id: 1, text: 'Yes – well-prepared for all seasons', value: 10 },
+          { id: 2, text: 'Some reinforcement done', value: 7 },
+          { id: 3, text: 'Minimal reinforcement', value: 4 },
+          { id: 4, text: 'None at all', value: 0 },
+        ],
+      },
+      {
+        id: 4,
+        text: 'Does your household have a plan for evacuation or relocation during seasonal emergencies?',
+        options: [
+          { id: 1, text: 'Yes, with clear route and meeting place', value: 10 },
+          { id: 2, text: 'Yes, but route/meeting place is informal', value: 7 },
+          { id: 3, text: 'Informal plan only', value: 4 },
+          { id: 4, text: 'No plan at all', value: 0 },
         ],
       },
     ]
 
+    // Season-specific sets with added questions 8, 9, 10
     const seasonalQuestions: Record<string, Question[]> = {
-      summer: [
-        {
-          id: 3,
-          text: 'How prepared are you for extreme heat events and potential power outages during hot weather?',
-          options: [
-            { id: 1, text: 'Multiple cooling strategies, backup power, and heat emergency plan ready', value: 10 },
-            { id: 2, text: 'Some cooling alternatives and basic heat safety measures in place', value: 7 },
-            { id: 3, text: 'Limited heat preparations, mostly relying on air conditioning', value: 4 },
-            { id: 4, text: 'No specific preparations for extreme heat events', value: 0 },
-          ],
-        },
-        {
-          id: 4,
-          text: 'How adequate is your water storage and conservation plan for hot, dry conditions?',
-          options: [
-            { id: 1, text: 'Extensive water storage (1+ gallon per person per day for 2+ weeks) with conservation plan', value: 10 },
-            { id: 2, text: 'Good water storage (1 week supply) with some conservation measures', value: 7 },
-            { id: 3, text: 'Basic water storage but limited conservation planning', value: 4 },
-            { id: 4, text: 'Minimal water storage and no conservation plan', value: 0 },
-          ],
-        },
+      rainy: [
         {
           id: 5,
-          text: 'How well-prepared are you for wildfire risks and evacuation scenarios?',
+          text: 'Have you stocked emergency supplies (food, water, documents) before the rainy season?',
           options: [
-            { id: 1, text: 'Comprehensive wildfire plan with defensible space, evacuation routes, and go-bags ready', value: 10 },
-            { id: 2, text: 'Some wildfire preparations including cleared vegetation and evacuation planning', value: 7 },
-            { id: 3, text: 'Basic awareness of wildfire risk with minimal specific preparations', value: 4 },
-            { id: 4, text: 'No specific wildfire preparedness measures taken', value: 0 },
+            { id: 1, text: 'Yes – full kit ready before season', value: 10 },
+            { id: 2, text: 'Mostly stocked but missing items', value: 7 },
+            { id: 3, text: 'Bare minimum supplies', value: 4 },
+            { id: 4, text: 'No supplies stored', value: 0 },
+          ],
+        },
+        {
+          id: 6,
+          text: 'Do you know where to evacuate (safe ground, community center) in case of floods?',
+          options: [
+            { id: 1, text: 'Yes – clear location known by all household members', value: 10 },
+            { id: 2, text: 'Yes – but some family members are unsure', value: 7 },
+            { id: 3, text: 'General idea, no formal planning', value: 4 },
+            { id: 4, text: 'No evacuation knowledge', value: 0 },
+          ],
+        },
+        {
+          id: 7,
+          text: 'Is your home well protected through barriers, drainage, or waterproof storage?',
+          options: [
+            { id: 1, text: 'Yes – effective physical measures in place', value: 10 },
+            { id: 2, text: 'Some measures taken', value: 7 },
+            { id: 3, text: 'Minimal protection', value: 4 },
+            { id: 4, text: 'None', value: 0 },
+          ],
+        },
+        // New rainy season questions 8,9,10
+        {
+          id: 8,
+          text: 'Do you know if your home is located in a flood-prone area?',
+          options: [
+            { id: 1, text: 'Yes', value: 10 },
+            { id: 2, text: 'No', value: 0 },
+            { id: 3, text: 'Not sure', value: 4 },
+            { id: 4, text: 'I’ve heard rumors, but nothing official', value: 2 },
+            { id: 5, text: 'I’ve experienced floods but didn’t get official information', value: 3 },
+          ],
+        },
+        {
+          id: 9,
+          text: 'Have you made any changes to your home to protect it from heavy rain or flooding?',
+          options: [
+            { id: 1, text: 'Elevated home/foundation', value: 10 },
+            { id: 2, text: 'Improved drainage', value: 7 },
+            { id: 3, text: 'None', value: 0 },
+            { id: 4, text: "I want to but can't afford it", value: 3 },
+            { id: 5, text: 'I don’t think it’s necessary', value: 1 },
+          ],
+        },
+        {
+          id: 10,
+          text: 'Do you have an evacuation plan in case of flooding?',
+          options: [
+            { id: 1, text: 'Yes, and we’ve practiced it', value: 10 },
+            { id: 2, text: 'Yes, but never practiced', value: 7 },
+            { id: 3, text: 'No', value: 0 },
+            { id: 4, text: 'I rely on community response', value: 4 },
+            { id: 5, text: 'I don’t think we’ll need it', value: 2 },
+          ],
+        },
+      ],
+      summer: [
+        {
+          id: 5,
+          text: 'Have you secured reliable water sources or storage for the hot dry season?',
+          options: [
+            { id: 1, text: 'Yes – multiple storage options and conservation plan', value: 10 },
+            { id: 2, text: 'Yes – adequate storage but no plan', value: 7 },
+            { id: 3, text: 'Minimal storage', value: 4 },
+            { id: 4, text: 'No storage at all', value: 0 },
+          ],
+        },
+        {
+          id: 6,
+          text: 'Have you lost crops due to dry spells or drought in past seasons?',
+          options: [
+            { id: 1, text: 'Yes – major crop loss', value: 10 },
+            { id: 2, text: 'Moderate loss', value: 7 },
+            { id: 3, text: 'Minor loss', value: 4 },
+            { id: 4, text: 'No loss', value: 0 },
+          ],
+        },
+        {
+          id: 7,
+          text: 'Do you have shading, fans, or other methods to manage heat for household members?',
+          options: [
+            { id: 1, text: 'Yes – good heat mitigation in place', value: 10 },
+            { id: 2, text: 'Some shade or cooling available', value: 7 },
+            { id: 3, text: 'Minimal heat relief', value: 4 },
+            { id: 4, text: 'None', value: 0 },
+          ],
+        },
+        // New summer questions 8,9,10
+        {
+          id: 8,
+          text: 'How do you protect your family from extreme heat during heatwaves?',
+          options: [
+            { id: 1, text: 'Stay indoors', value: 10 },
+            { id: 2, text: 'Drink lots of water', value: 7 },
+            { id: 3, text: 'Use fans/shade', value: 7 },
+            { id: 4, text: 'Nothing specific', value: 0 },
+            { id: 5, text: 'Didn’t know it was a risk', value: 1 },
+          ],
+        },
+        {
+          id: 9,
+          text: 'Have you experienced water shortages in this season?',
+          options: [
+            { id: 1, text: 'Frequently', value: 10 },
+            { id: 2, text: 'Occasionally', value: 7 },
+            { id: 3, text: 'Rarely', value: 4 },
+            { id: 4, text: 'Never', value: 0 },
+            { id: 5, text: 'We rely on stored water', value: 6 },
+          ],
+        },
+        {
+          id: 10,
+          text: 'Do you keep an emergency supply of water and food during this season?',
+          options: [
+            { id: 1, text: 'Yes, at least 3 days’ worth', value: 10 },
+            { id: 2, text: 'Some food but not water', value: 5 },
+            { id: 3, text: 'No', value: 0 },
+            { id: 4, text: 'I rely on nearby shops/markets', value: 3 },
+            { id: 5, text: 'I can\'t afford to store', value: 1 },
           ],
         },
       ],
       winter: [
         {
-          id: 3,
-          text: 'How prepared are you for severe winter weather and extended power outages?',
-          options: [
-            { id: 1, text: 'Multiple heating sources, winterized home, and comprehensive cold weather supplies', value: 10 },
-            { id: 2, text: 'Some backup heating options and basic winter emergency supplies', value: 7 },
-            { id: 3, text: 'Limited winter preparations, mostly relying on central heating', value: 4 },
-            { id: 4, text: 'No specific winter weather emergency preparations', value: 0 },
-          ],
-        },
-        {
-          id: 4,
-          text: 'How well-stocked are you with food and supplies for potential winter isolation?',
-          options: [
-            { id: 1, text: 'Extensive food storage (2+ weeks) with winter-specific supplies and medications', value: 10 },
-            { id: 2, text: 'Good food storage (1+ week) with some winter emergency supplies', value: 7 },
-            { id: 3, text: 'Basic food storage but limited winter-specific preparations', value: 4 },
-            { id: 4, text: 'Minimal food storage and no winter isolation planning', value: 0 },
-          ],
-        },
-        {
           id: 5,
-          text: 'How well-winterized is your home and property for cold weather emergencies?',
+          text: 'Does everyone in your household have warm clothing or blankets for the cold season?',
           options: [
-            { id: 1, text: 'Fully winterized with insulated pipes, sealed air leaks, and emergency heating plan', value: 10 },
-            { id: 2, text: 'Most winterization completed with some emergency heating preparations', value: 7 },
-            { id: 3, text: 'Basic winterization but limited emergency cold weather planning', value: 4 },
-            { id: 4, text: 'Minimal winterization and no cold weather emergency preparations', value: 0 },
-          ],
-        },
-      ],
-      rainy: [
-        {
-          id: 3,
-          text: 'How prepared are you for flooding and water damage in your area?',
-          options: [
-            { id: 1, text: 'Comprehensive flood plan with barriers, waterproof storage, and evacuation routes', value: 10 },
-            { id: 2, text: 'Some flood preparations including elevated storage and basic barriers', value: 7 },
-            { id: 3, text: 'Basic flood awareness with minimal specific preparations', value: 4 },
-            { id: 4, text: 'No specific flood preparedness measures in place', value: 0 },
+            { id: 1, text: 'Yes – adequate for all members', value: 10 },
+            { id: 2, text: 'Mostly covered, a few missing items', value: 7 },
+            { id: 3, text: 'Minimal warm clothing', value: 4 },
+            { id: 4, text: 'None', value: 0 },
           ],
         },
         {
-          id: 4,
-          text: 'How effective is your property drainage and water management system?',
+          id: 6,
+          text: 'Do you experience frequent colds or respiratory issues during these months?',
           options: [
-            { id: 1, text: 'Excellent drainage with maintained gutters, proper grading, and water diversion systems', value: 10 },
-            { id: 2, text: 'Good drainage with regular gutter maintenance and adequate grading', value: 7 },
-            { id: 3, text: 'Basic drainage but some areas prone to water accumulation', value: 4 },
-            { id: 4, text: 'Poor drainage with frequent water accumulation issues', value: 0 },
+            { id: 1, text: 'Yes – several household members affected', value: 10 },
+            { id: 2, text: 'A few get sick', value: 7 },
+            { id: 3, text: 'Rarely get sick', value: 4 },
+            { id: 4, text: 'Never', value: 0 },
           ],
         },
         {
-          id: 5,
-          text: 'How well-protected are your important documents and electronics from water damage?',
+          id: 7,
+          text: 'What heating or warmth methods do you use at night (e.g. firewood, charcoal)? Are they safe?',
           options: [
-            { id: 1, text: 'All important items in waterproof containers with digital backups stored securely', value: 10 },
-            { id: 2, text: 'Most important items protected with some digital backups available', value: 7 },
-            { id: 3, text: 'Some protection measures but not comprehensive coverage', value: 4 },
-            { id: 4, text: 'No specific water damage protection for important items', value: 0 },
+            { id: 1, text: 'Safe, reliable heating for all', value: 10 },
+            { id: 2, text: 'Heating used but some concerns', value: 7 },
+            { id: 3, text: 'Minimal heating or safety concerns', value: 4 },
+            { id: 4, text: 'No heating', value: 0 },
           ],
         },
-      ],
-      spring: [
+        // New winter questions 8,9,10
         {
-          id: 3,
-          text: 'How prepared are you for severe thunderstorms and tornado risks?',
+          id: 8,
+          text: 'How do you keep your home warm and safe during cold nights?',
           options: [
-            { id: 1, text: 'Designated safe room, weather radio, and comprehensive severe weather plan', value: 10 },
-            { id: 2, text: 'Identified safe areas and basic severe weather preparations', value: 7 },
-            { id: 3, text: 'Basic storm awareness but limited specific safety preparations', value: 4 },
-            { id: 4, text: 'No specific severe weather or tornado preparedness measures', value: 0 },
-          ],
-        },
-        {
-          id: 4,
-          text: 'How well-protected is your property from hail and wind damage?',
-          options: [
-            { id: 1, text: 'Comprehensive protection with covered parking, secured outdoor items, and impact-resistant features', value: 10 },
-            { id: 2, text: 'Good protection measures with most outdoor items secured', value: 7 },
-            { id: 3, text: 'Basic protection but some vulnerable areas remain', value: 4 },
-            { id: 4, text: 'No specific hail or wind damage protection measures', value: 0 },
+            { id: 1, text: 'Blankets & clothing', value: 10 },
+            { id: 2, text: 'Charcoal fire', value: 7 },
+            { id: 3, text: 'No special action', value: 0 },
+            { id: 4, text: 'I sleep outside due to housing issues', value: 2 },
+            { id: 5, text: 'I didn’t think cold was a risk', value: 1 },
           ],
         },
         {
-          id: 5,
-          text: 'How prepared are you for spring flooding from rapid snowmelt or heavy rains?',
+          id: 9,
+          text: 'Do you or your family suffer from cold-related illnesses (e.g. pneumonia) during this season?',
           options: [
-            { id: 1, text: 'Comprehensive flood insurance, emergency supplies, and detailed evacuation plan', value: 10 },
-            { id: 2, text: 'Some flood preparations including insurance and basic emergency supplies', value: 7 },
-            { id: 3, text: 'Basic flood awareness with minimal specific preparations', value: 4 },
-            { id: 4, text: 'No specific spring flood preparedness measures', value: 0 },
-          ],
-        },
-      ],
-      autumn: [
-        {
-          id: 3,
-          text: 'How prepared are you for hurricane/typhoon season and severe storms?',
-          options: [
-            { id: 1, text: 'Comprehensive storm plan with shutters, secured property, and evacuation preparations', value: 10 },
-            { id: 2, text: 'Good storm preparations with most property secured and basic evacuation plan', value: 7 },
-            { id: 3, text: 'Basic storm awareness with some preparation measures taken', value: 4 },
-            { id: 4, text: 'No specific hurricane or severe storm preparedness measures', value: 0 },
+            { id: 1, text: 'Frequently', value: 10 },
+            { id: 2, text: 'Occasionally', value: 7 },
+            { id: 3, text: 'Rarely', value: 4 },
+            { id: 4, text: 'Never', value: 0 },
+            { id: 5, text: 'I’m not sure', value: 3 },
           ],
         },
         {
-          id: 4,
-          text: 'How reliable is your backup power system for extended outages?',
+          id: 10,
+          text: 'Do you keep your heating methods safe and well-ventilated?',
           options: [
-            { id: 1, text: 'Multiple backup power sources including generator with proper installation and fuel storage', value: 10 },
-            { id: 2, text: 'Reliable backup power system with generator or substantial battery backup', value: 7 },
-            { id: 3, text: 'Basic backup power with portable batteries and small devices', value: 4 },
-            { id: 4, text: 'No backup power system for extended outages', value: 0 },
-          ],
-        },
-        {
-          id: 5,
-          text: 'How well-maintained is your property for storm season (trees, gutters, roof)?',
-          options: [
-            { id: 1, text: 'Comprehensive maintenance with trimmed trees, clean gutters, and storm-ready property', value: 10 },
-            { id: 2, text: 'Good maintenance with most storm preparations completed', value: 7 },
-            { id: 3, text: 'Basic maintenance but some storm vulnerabilities remain', value: 4 },
-            { id: 4, text: 'Minimal property maintenance for storm season', value: 0 },
-          ],
-        },
-      ],
-      dry: [
-        {
-          id: 3,
-          text: 'How prepared are you for extended drought conditions and water scarcity?',
-          options: [
-            { id: 1, text: 'Comprehensive water conservation system with storage, recycling, and drought-resistant landscaping', value: 10 },
-            { id: 2, text: 'Good water conservation practices with some storage and efficient landscaping', value: 7 },
-            { id: 3, text: 'Basic water conservation awareness with minimal specific preparations', value: 4 },
-            { id: 4, text: 'No specific drought or water scarcity preparations', value: 0 },
-          ],
-        },
-        {
-          id: 4,
-          text: 'How prepared are you for dust storms and poor air quality conditions?',
-          options: [
-            { id: 1, text: 'Comprehensive air filtration system, sealed home, and dust storm emergency supplies', value: 10 },
-            { id: 2, text: 'Good air filtration with some dust storm preparation measures', value: 7 },
-            { id: 3, text: 'Basic air quality awareness with minimal specific preparations', value: 4 },
-            { id: 4, text: 'No specific dust storm or air quality preparedness measures', value: 0 },
-          ],
-        },
-        {
-          id: 5,
-          text: 'How prepared are you for extreme heat and increased fire risk during dry conditions?',
-          options: [
-            { id: 1, text: 'Comprehensive heat and fire plan with cooling systems, defensible space, and evacuation preparations', value: 10 },
-            { id: 2, text: 'Good heat and fire preparations with cooling options and some fire prevention measures', value: 7 },
-            { id: 3, text: 'Basic heat and fire awareness with minimal specific preparations', value: 4 },
-            { id: 4, text: 'No specific extreme heat or fire risk preparations', value: 0 },
+            { id: 1, text: 'Yes, always safe and ventilated', value: 10 },
+            { id: 2, text: 'Usually safe but sometimes concerns', value: 7 },
+            { id: 3, text: 'Rarely safe or ventilated', value: 4 },
+            { id: 4, text: 'No safety measures', value: 0 },
           ],
         },
       ],

@@ -78,3 +78,5 @@ CREATE INDEX IF NOT EXISTS emergency_alerts_created_at_idx ON emergency_alerts(c
 CREATE INDEX IF NOT EXISTS emergency_alerts_expires_at_idx ON emergency_alerts(expires_at);
 CREATE INDEX IF NOT EXISTS emergency_alerts_severity_idx ON emergency_alerts(severity);
 CREATE INDEX IF NOT EXISTS emergency_alerts_type_idx ON emergency_alerts(type);
+
+
