@@ -1,5 +1,5 @@
 export const fetchFloodRiskMap = async (latitude: number, longitude: number) => {
-  const response = await fetch('http://localhost:5000/get_flood_risk_map', {
+  const response = await fetch('https://gee-api-server-485908055275.us-central1.run.app/get_flood_risk_map', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
