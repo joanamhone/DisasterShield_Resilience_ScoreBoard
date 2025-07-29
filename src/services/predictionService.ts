@@ -13,11 +13,15 @@ export interface PredictionResult {
   [key: string]: number;
 }
 
-// --- Environment Variables ---
+// --- Environment Variables & API URLs ---
 
 const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
-// The URL for your new Flask proxy server
+// The URL for your Flask proxy server (kept for disaster predictions)
 const FLASK_PROXY_URL = 'https://disaster-prediction-api-485908055275.us-central1.run.app/predict';
+// The URL for your new Google Cloud Function for flood maps
+const CLOUD_FUNCTION_URL = "https://us-central1-quick-function-425810-r8.cloudfunctions.net/generate-flood-map";
+
+
 // --- API Functions ---
 
 /**
@@ -31,18 +35,16 @@ export const getWeather = async (lat: number, lon: number): Promise<WeatherData>
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      // Throw a specific error for the UI to catch
       throw new Error(`OpenWeather API responded with status: ${response.status}`);
     }
     const data = await response.json();
     console.log("Received weather data:", data);
 
-    // Map the API response to our WeatherData interface
     return {
       temperature: data.main.temp,
       humidity: data.main.humidity,
-      precipitation: data.rain?.['1h'] || 0, // Use rain.1h if available, otherwise 0
-      windGust: data.wind.gust || data.wind.speed, // Use gust if available, otherwise speed
+      precipitation: data.rain?.['1h'] || 0,
+      windGust: data.wind.gust || data.wind.speed,
       windSpeed: data.wind.speed,
       pressure: data.main.pressure,
     };
@@ -56,7 +58,6 @@ export const getWeather = async (lat: number, lon: number): Promise<WeatherData>
  * Sends weather data to the Flask proxy to get a disaster prediction.
  */
 export const getPredictions = async (weatherData: WeatherData): Promise<PredictionResult> => {
-  // The input for your Flask server is slightly different
   const inputForFlask = {
     temp: weatherData.temperature,
     humidity: weatherData.humidity,
@@ -83,7 +84,6 @@ export const getPredictions = async (weatherData: WeatherData): Promise<Predicti
     const result = await response.json();
     console.log("Received prediction from Flask:", result);
 
-    // The Flask server wraps the result in a "prediction" key
     return result.prediction;
 
   } catch (error) {
@@ -91,3 +91,37 @@ export const getPredictions = async (weatherData: WeatherData): Promise<Predicti
     throw new Error('Failed to fetch prediction from the Flask proxy server.');
   }
 };
+
+
+/**
+ * Calls the Google Cloud Function to generate and retrieve a flood map URL.
+ */
+export async function getFloodMapUrl(latitude: number, longitude: number): Promise<string> {
+  console.log("Requesting flood map from Google Cloud Function...");
+
+  try {
+    const response = await fetch(CLOUD_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude, longitude }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Cloud Function responded with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("✅ Received map URL:", data.mapUrl);
+    
+    if (!data.mapUrl) {
+        throw new Error("Cloud Function did not return a map URL.");
+    }
+
+    return data.mapUrl;
+
+  } catch(error) {
+    console.error("Google Cloud Function Error:", error);
+    throw new Error('Failed to generate or retrieve flood map.');
+  }
+}
