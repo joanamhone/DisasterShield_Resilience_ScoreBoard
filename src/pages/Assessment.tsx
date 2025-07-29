@@ -1,67 +1,93 @@
-import React, { useState } from 'react'
-import { MapPin, RefreshCw, AlertTriangle, Calendar, BarChart3, TrendingUp } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import DisasterMap from '../components/assessment/DisasterMap'
-import RiskLevelCard from '../components/assessment/RiskLevelCard'
-import HistoricalData from '../components/assessment/HistoricalData'
-import WeatherParameters from '../components/assessment/WeatherParameters'
-import HistoricalTrendsChart from '../components/charts/HistoricalTrendsChart'
-import EnvironmentalChart from '../components/charts/EnvironmentalChart'
-import { useLocation } from '../hooks/useLocation'
+import React, { useState, useEffect } from 'react';
+import { MapPin, RefreshCw, AlertTriangle, BarChart3, TrendingUp } from 'lucide-react';
+
+// Assuming these are correctly set up in your project
+import { useAuth } from '../contexts/AuthContext';
+import { useLocation } from '../hooks/useLocation';
+
+// Import the service that gets weather for the model
+import { getWeather } from '../services/predictionService'; 
+// Import the component's data interface
+import WeatherParameters, { WeatherData } from '../components/assessment/WeatherParameters';
+
+// Other component imports
+import DisasterMap from '../components/assessment/DisasterMap';
+import HistoricalTrendsChart from '../components/charts/HistoricalTrendsChart';
+import EnvironmentalChart from '../components/charts/EnvironmentalChart';
+
 
 const Assessment: React.FC = () => {
-  const userLocation = useLocation()
-  const { user } = useAuth()
-  const [location, setLocation] = useState('San Francisco, CA')
-  const [season, setSeason] = useState('summer')
-  const [lastUpdated, setLastUpdated] = useState('Just now')
-  const [loading, setLoading] = useState(false)
-  const [showSeasonDropdown, setShowSeasonDropdown] = useState(false)
-  const [trendsTimeRange, setTrendsTimeRange] = useState<'hour' | 'month' | 'year'>('month')
-  const [environmentalTimeRange, setEnvironmentalTimeRange] = useState<'hour' | 'month' | 'year'>('month')
-  const [environmentalParameter, setEnvironmentalParameter] = useState<'temperature' | 'rainfall' | 'humidity' | 'windspeed'>('temperature')
+  // Custom hooks
+  const userLocation = useLocation(); // Provides { city, country, latitude, longitude, loading, error }
+  const { user } = useAuth();
 
-  const seasons = [
-    { value: 'spring', label: 'Spring', icon: '🌸' },
-    { value: 'summer', label: 'Summer', icon: '☀️' },
-    { value: 'autumn', label: 'Autumn', icon: '🍂' },
-    { value: 'winter', label: 'Winter', icon: '❄️' },
-    { value: 'rainy', label: 'Rainy Season', icon: '🌧️' },
-    { value: 'dry', label: 'Dry Season', icon: '🏜️' },
-  ]
+  // State
+  const [location, setLocation] = useState('Loading location...');
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null); // State to hold weather data
+  const [lastUpdated, setLastUpdated] = useState('N/A');
+  const [loading, setLoading] = useState(true); // Start with loading true
+  
+  // Chart-related state remains the same
+  const [trendsTimeRange, setTrendsTimeRange] = useState<'hour' | 'month' | 'year'>('month');
+  const [environmentalTimeRange, setEnvironmentalTimeRange] = useState<'hour' | 'month' | 'year'>('month');
+  const [environmentalParameter, setEnvironmentalParameter] = useState<'temperature' | 'rainfall' | 'humidity' | 'windspeed'>('temperature');
 
-  const selectedSeason = seasons.find(s => s.value === season)
+  // Effect to fetch weather data once location is available
+  useEffect(() => {
+    // Only proceed if we have coordinates
+    if (userLocation.latitude && userLocation.longitude) {
+      setLoading(true);
 
-  // Update location when user location is available
-  React.useEffect(() => {
-    if (user?.location) {
-      setLocation(user.location)
-    } else if (!userLocation.loading && !userLocation.error && userLocation.city) {
-      setLocation(`${userLocation.city}, ${userLocation.country}`)
+      // Set the display location name
+      if (user?.location) {
+        setLocation(user.location);
+      } else if (userLocation.city && userLocation.country) {
+        setLocation(`${userLocation.city}, ${userLocation.country}`);
+      }
+
+      // Fetch weather using the service
+      getWeather(userLocation.latitude, userLocation.longitude)
+        .then(data => {
+          // On success, update the weatherData state
+          setWeatherData(data);
+          setLastUpdated(new Date().toLocaleTimeString());
+        })
+        .catch(error => {
+          // On error, log it and update UI accordingly
+          console.error("Failed to fetch weather for assessment:", error);
+          setLocation("Could not fetch weather data.");
+        })
+        .finally(() => {
+          // Once done, set loading to false
+          setLoading(false);
+        });
+    } else if (userLocation.error) {
+        setLocation(userLocation.error);
+        setLoading(false);
     }
-  }, [userLocation, user])
+  }, [userLocation.latitude, userLocation.longitude, userLocation.error, userLocation.city, userLocation.country, user]);
 
-  const riskLevels = [
-    { type: 'Flood', level: 'Medium' as const, description: 'Heavy rainfall expected this week' },
-    { type: 'Wildfire', level: 'High' as const, description: 'Dry conditions and high temperatures' },
-    { type: 'Earthquake', level: 'Low' as const, description: 'No significant seismic activity recently' },
-    { type: 'Severe Weather', level: 'Medium' as const, description: 'Potential thunderstorms later this week' },
-  ]
 
+  // Refresh function can now re-trigger the weather fetch
   const refreshData = () => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setLastUpdated('Just now')
-    }, 1500)
-  }
+    if (userLocation.latitude && userLocation.longitude) {
+        setLoading(true);
+        getWeather(userLocation.latitude, userLocation.longitude)
+          .then(data => {
+            setWeatherData(data);
+            setLastUpdated(new Date().toLocaleTimeString());
+          })
+          .catch(error => console.error("Failed to refresh weather:", error))
+          .finally(() => setLoading(false));
+    }
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-6">
-      {/* Location and Season Header */}
+      {/* --- Location and Update Header --- */}
       <div className="card p-4">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex-1">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex-grow">
             <label className="block text-sm font-medium text-text-secondary mb-2">
               <MapPin size={16} className="inline mr-1" />
               Location
@@ -72,51 +98,15 @@ const Assessment: React.FC = () => {
               onChange={(e) => setLocation(e.target.value)}
               className="w-full bg-surface rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary border border-border"
               placeholder="Enter your location"
+              disabled={userLocation.loading || loading}
             />
-          </div>
-
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              <Calendar size={16} className="inline mr-1" />
-              Season
-            </label>
-            <div className="relative">
-              <button
-                onClick={() => setShowSeasonDropdown(!showSeasonDropdown)}
-                className="w-full bg-surface rounded-lg px-3 py-2 text-left border border-border focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between"
-              >
-                <span className="text-text-primary">
-                  <span className="mr-2">{selectedSeason?.icon}</span>
-                  {selectedSeason?.label}
-                </span>
-                <RefreshCw size={16} className="text-text-tertiary" />
-              </button>
-
-              {showSeasonDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-10">
-                  {seasons.map((seasonOption) => (
-                    <button
-                      key={seasonOption.value}
-                      onClick={() => {
-                        setSeason(seasonOption.value)
-                        setShowSeasonDropdown(false)
-                      }}
-                      className="w-full px-3 py-2 text-left hover:bg-surface transition-colors flex items-center"
-                    >
-                      <span className="mr-2">{seasonOption.icon}</span>
-                      <span className="text-text-primary">{seasonOption.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
 
           <div className="flex items-end">
             <button
               onClick={refreshData}
-              disabled={loading}
-              className="flex items-center bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+              disabled={loading || !userLocation.latitude}
+              className="flex items-center bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 w-full sm:w-auto"
             >
               <RefreshCw 
                 className={`mr-2 ${loading ? 'animate-spin' : ''}`} 
@@ -126,16 +116,19 @@ const Assessment: React.FC = () => {
             </button>
           </div>
         </div>
-
         <p className="text-xs text-text-tertiary mt-3">Last updated: {lastUpdated}</p>
       </div>
 
-      {/* Weather Parameters */}
-      <WeatherParameters location={location} season={season} />
+      {/* --- Weather Parameters --- 
+          Now passes the fetched data down as a prop.
+      */}
+      <WeatherParameters 
+        location={location} 
+        weatherData={weatherData}
+      />
 
-      {/* Interactive Charts Section */}
+      {/* --- Interactive Charts Section (No Changes Needed Here) --- */}
       <div className="space-y-4 sm:space-y-6">
-        {/* Historical Trends Chart */}
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h3 className="text-lg font-bold text-text-primary flex items-center">
@@ -161,7 +154,6 @@ const Assessment: React.FC = () => {
           <HistoricalTrendsChart timeRange={trendsTimeRange} location={location} />
         </div>
 
-        {/* Environmental Parameters Chart */}
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h3 className="text-lg font-bold text-text-primary flex items-center">
@@ -169,7 +161,6 @@ const Assessment: React.FC = () => {
               Environmental Data
             </h3>
             <div className="flex flex-col sm:flex-row gap-2">
-              {/* Parameter selector */}
               <select
                 value={environmentalParameter}
                 onChange={(e) => setEnvironmentalParameter(e.target.value as any)}
@@ -180,8 +171,6 @@ const Assessment: React.FC = () => {
                 <option value="humidity">Humidity</option>
                 <option value="windspeed">Wind Speed</option>
               </select>
-              
-              {/* Time range selector */}
               <div className="flex bg-surface rounded-lg p-1">
                 {(['hour', 'month', 'year'] as const).map((range) => (
                   <button
@@ -207,10 +196,11 @@ const Assessment: React.FC = () => {
         </div>
       </div>
 
-      {/* Disaster Map */}
-      <DisasterMap location={location} />
+      {/* --- Other Components (No Changes Needed) --- */}
+      {userLocation.latitude && userLocation.longitude && (
+        <DisasterMap latitude={userLocation.latitude} longitude={userLocation.longitude} />
+      )}
 
-      {/* Overall Risk */}
       <div className="card p-4 flex items-center">
         <AlertTriangle className="text-risk-high mr-3" size={24} />
         <span className="font-medium text-text-primary">
@@ -218,7 +208,7 @@ const Assessment: React.FC = () => {
         </span>
       </div>
     </div>
-  )
+  );
 }
 
-export default Assessment
+export default Assessment;
