@@ -95,7 +95,7 @@ const CommunityDashboard: React.FC = () => {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Choose Assessment</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
-            onClick={() => navigate('/assessment')}
+            onClick={() => navigate('/readiness')}
             className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
           >
             <Shield className="h-8 w-8 text-blue-600 mb-3" />
@@ -103,7 +103,7 @@ const CommunityDashboard: React.FC = () => {
             <p className="text-sm text-gray-600">Take your individual readiness assessment</p>
           </button>
           <button
-            onClick={() => navigate('/assessment?type=community')}
+            onClick={() => navigate('/readiness?type=community')}
             className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
           >
             <Users className="h-8 w-8 text-green-600 mb-3" />
