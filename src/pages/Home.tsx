@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react';
 import { 
   ClipboardCheck, 
   AlertCircle, 
@@ -6,90 +6,66 @@ import {
   TrendingUp, 
   Shield, 
   Bell, 
-  MapPin, 
-  Users, 
-  AlertTriangle 
-} from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useReadiness } from '../contexts/ReadinessContext'
-import { useRoleAccess } from '../hooks/useRoleAccess'
-import RecentAlerts from '../components/home/RecentAlerts'
-import ReadinessScore from '../components/home/ReadinessScore'
-import RiskSummary from '../components/home/RiskSummary'
-import RoleDashboard from '../components/dashboard/RoleDashboard'
-import { useLocation } from '../hooks/useLocation'
+  MapPin,
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useReadiness } from '../contexts/ReadinessContext';
+import { useRoleAccess } from '../hooks/useRoleAccess';
+import RecentAlerts from '../components/home/RecentAlerts';
+import ReadinessScore from '../components/home/ReadinessScore';
+import RiskSummary from '../components/home/RiskSummary';
+import RoleDashboard from '../components/dashboard/RoleDashboard';
+import { useLocation } from '../hooks/useLocation';
+import { useNotifications } from '../hooks/useNotifications'; // Import the hook
 
 const Home: React.FC = () => {
-  const navigate = useNavigate()
-  const { currentScore } = useReadiness()
-  const { user, isIndividualUser } = useRoleAccess()
-  const [userName] = useState('Alex Johnson') // Fallback name
-  const location = useLocation()
+  const navigate = useNavigate();
+  const { currentScore } = useReadiness();
+  const { user, isIndividualUser } = useRoleAccess();
+  const location = useLocation();
+  const { unreadCount } = useNotifications(); // Get the unread count
 
-  const handleReadinessScoreClick = () => {
-    navigate('/readiness')
-  }
+  const handleReadinessScoreClick = () => navigate('/readiness');
+  const handleRiskSummaryClick = () => navigate('/assessment');
 
-  const handleRiskSummaryClick = () => {
-    navigate('/assessment')
-  }
-
-  // Show role-specific dashboard for non-individual users
+  // Role-specific dashboard
   if (!isIndividualUser()) {
     return (
       <div className="space-y-6 sm:space-y-8">
-        {/* Welcome Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
           <div className="mb-4 lg:mb-0">
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
-              Welcome back, {user?.fullName || userName}
+              Welcome back, {user?.fullName || 'User'}
             </h2>
             <p className="text-base sm:text-lg text-text-secondary mb-2">
               Here is your dashboard overview.
             </p>
-            {/* Location display */}
             <div className="flex items-center text-sm text-text-tertiary">
               <MapPin size={16} className="mr-1" />
-              {location.loading ? (
-                <span>Getting your location...</span>
-              ) : location.error ? (
-                <span>Location unavailable</span>
-              ) : (
-                <span>{location.city}, {location.country}</span>
-              )}
+              {location.loading ? 'Getting your location...' : location.error || `${location.city}, ${location.country}`}
             </div>
           </div>
         </div>
-
-        {/* Render the RoleDashboard component */}
         <RoleDashboard />
-
       </div>
-    )
+    );
   }
 
-  // Individual user dashboard (existing layout)
+  // Individual user dashboard
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Welcome Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div className="mb-4 lg:mb-0">
           <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
-            Welcome back, {user?.fullName || userName}
+            Welcome back, {user?.fullName || 'User'}
           </h2>
           <p className="text-base sm:text-lg text-text-secondary mb-2">
             Stay prepared and informed about climate risks in your area
           </p>
-          {/* Location display */}
           <div className="flex items-center text-sm text-text-tertiary">
             <MapPin size={16} className="mr-1" />
-            {location.loading ? (
-              <span>Getting your location...</span>
-            ) : location.error ? (
-              <span>Location unavailable</span>
-            ) : (
-              <span>{location.city}, {location.country}</span>
-            )}
+            {location.loading ? 'Getting your location...' : location.error || `${location.city}, ${location.country}`}
           </div>
         </div>
       </div>
@@ -100,18 +76,21 @@ const Home: React.FC = () => {
           <ReadinessScore score={currentScore} />
         </div>
         <div onClick={handleRiskSummaryClick} className="cursor-pointer">
-          {/* Use the 'summary' display mode on the home page */}
           <RiskSummary displayMode="summary" />
         </div>
         
-        {/* Additional metric card */}
+        {/* DYNAMIC Active Alerts card */}
         <div className="card p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-text-primary">Active Alerts</h3>
-            <Bell className="text-warning" size={24} />
+            <Bell className={unreadCount > 0 ? 'text-warning' : 'text-text-tertiary'} size={24} />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-warning mb-2">3</div>
-          <p className="text-sm text-text-secondary">2 weather, 1 air quality</p>
+          <div className={`text-2xl sm:text-3xl font-bold ${unreadCount > 0 ? 'text-warning' : 'text-text-tertiary'} mb-2`}>
+            {unreadCount}
+          </div>
+          <p className="text-sm text-text-secondary">
+            {unreadCount > 0 ? `${unreadCount} unread notification(s)` : 'No new alerts'}
+          </p>
         </div>
       </div>
 
@@ -169,15 +148,12 @@ const Home: React.FC = () => {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
-        {/* Recent Alerts - Takes up 2 columns on xl screens */}
         <div className="xl:col-span-2">
           <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-4">
             Recent Climate Alerts
           </h3>
           <RecentAlerts />
         </div>
-
-        {/* Tips & Resources */}
         <div>
           <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-4">
             Tips & Resources
@@ -194,7 +170,6 @@ const Home: React.FC = () => {
                   </h4>
                   <p className="text-text-secondary text-sm leading-relaxed mb-4">
                     Having a well-thought-out emergency plan can significantly improve your readiness.
-                    Make sure everyone in your household knows what to do.
                   </p>
                   <button className="btn-primary text-sm">
                     Learn More
@@ -202,7 +177,6 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </div>
-
             <div className="card p-4 sm:p-6">
               <div className="flex items-start">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-accent/20 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
@@ -214,7 +188,6 @@ const Home: React.FC = () => {
                   </h4>
                   <p className="text-text-secondary text-sm leading-relaxed mb-4">
                     Essential supplies can make all the difference during an emergency.
-                    Start with the basics and build from there.
                   </p>
                   <button 
                     onClick={() => navigate('/emergency-kit')}
@@ -229,7 +202,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

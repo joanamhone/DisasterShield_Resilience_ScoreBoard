@@ -1,68 +1,51 @@
-import React from 'react'
-import { Bell, X, AlertTriangle, Info, Clock } from 'lucide-react'
-import { useNotifications } from '../../hooks/useNotifications'
-import { format } from 'date-fns'
+import React from 'react';
+import { Bell, X, AlertTriangle, Info, Clock } from 'lucide-react';
+import { useNotifications } from '../../hooks/useNotifications';
+import { format } from 'date-fns';
 
 interface NotificationCenterProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose }) => {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   // Close notifications when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element
+      const target = event.target as Element;
       if (isOpen && !target.closest('.notification-center')) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'alert':
-        return <AlertTriangle className="text-error" size={20} />
+        return <AlertTriangle className="text-error" size={20} />;
       case 'warning':
-        return <Clock className="text-warning" size={20} />
+        return <Clock className="text-warning" size={20} />;
       case 'info':
-        return <Info className="text-secondary" size={20} />
+        return <Info className="text-secondary" size={20} />;
       default:
-        return <Bell className="text-primary" size={20} />
+        return <Bell className="text-primary" size={20} />;
     }
-  }
-
-  const getNotificationBg = (type: string, read: boolean) => {
-    const opacity = read ? '10' : '20'
-    switch (type) {
-      case 'alert':
-        return `bg-error/${opacity}`
-      case 'warning':
-        return `bg-warning/${opacity}`
-      case 'info':
-        return `bg-secondary/${opacity}`
-      default:
-        return `bg-primary/${opacity}`
-    }
-  }
+  };
 
   return (
     <div className="fixed inset-0 z-50 lg:absolute lg:inset-auto lg:top-full lg:right-0 lg:mt-2">
-      {/* Mobile overlay */}
       <div className="fixed inset-0 bg-black/50 lg:hidden" onClick={onClose} />
       
-      {/* Notification panel */}
-      <div className="notification-center fixed right-0 top-0 h-full w-full max-w-md bg-card shadow-xl lg:relative lg:w-80 lg:h-auto lg:max-h-96 lg:rounded-lg lg:border lg:border-border lg:shadow-lg">
-        {/* Header */}
+      <div className="notification-center fixed right-0 top-0 h-full w-full max-w-md bg-card shadow-xl lg:relative lg:w-80 lg:h-auto lg:max-h-[80vh] lg:rounded-lg lg:border lg:border-border lg:shadow-lg">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center">
             <h3 className="font-bold text-text-primary">Notifications</h3>
@@ -90,8 +73,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose
           </div>
         </div>
 
-        {/* Notifications list */}
-        <div className="max-h-80 overflow-y-auto lg:max-h-72">
+        <div className="overflow-y-auto" style={{maxHeight: 'calc(80vh - 60px)'}}>
           {notifications.length === 0 ? (
             <div className="p-8 text-center">
               <Bell className="mx-auto mb-3 text-text-tertiary" size={48} />
@@ -104,11 +86,11 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose
                   key={notification.id}
                   onClick={() => markAsRead(notification.id)}
                   className={`w-full p-4 text-left hover:bg-surface transition-colors ${
-                    !notification.read ? 'bg-surface/50' : ''
+                    !notification.read ? 'bg-primary/5' : ''
                   }`}
                 >
                   <div className="flex items-start space-x-3">
-                    <div className={`p-2 rounded-full ${getNotificationBg(notification.type, notification.read)}`}>
+                    <div className={`p-2 rounded-full ${!notification.read ? 'bg-primary/20' : 'bg-gray-100'}`}>
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -124,7 +106,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose
                         {notification.message}
                       </p>
                       <div className="flex items-center justify-between text-xs text-text-tertiary">
-                        <span>{format(notification.timestamp, 'MMM dd, HH:mm')}</span>
+                        <span>{format(new Date(notification.timestamp), 'MMM dd, HH:mm')}</span>
                         {notification.location && (
                           <span>{notification.location}</span>
                         )}
@@ -138,7 +120,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NotificationCenter
+export default NotificationCenter;
