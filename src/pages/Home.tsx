@@ -100,7 +100,8 @@ const Home: React.FC = () => {
           <ReadinessScore score={currentScore} />
         </div>
         <div onClick={handleRiskSummaryClick} className="cursor-pointer">
-          <RiskSummary />
+          {/* Use the 'summary' display mode on the home page */}
+          <RiskSummary displayMode="summary" />
         </div>
         
         {/* Additional metric card */}

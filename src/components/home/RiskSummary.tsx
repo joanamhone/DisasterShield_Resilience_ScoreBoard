@@ -12,6 +12,11 @@ import {
   RefreshCw
 } from 'lucide-react';
 
+// Define the component's props
+interface RiskSummaryProps {
+  displayMode?: 'summary' | 'full';
+}
+
 // Helper to determine the risk level class based on probability
 const getRiskLevelClass = (probability: number): 'text-risk-low' | 'text-risk-medium' | 'text-risk-high' => {
   if (probability > 0.5) return 'text-risk-high'; // Over 50%
@@ -30,7 +35,7 @@ const getRiskIcon = (riskName: string) => {
   return AlertOctagon;
 };
 
-const RiskSummary: React.FC = () => {
+const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
   const { prediction, isLoading, error, retryFetch } = useDisasterPrediction();
 
   if (isLoading) {
@@ -55,21 +60,27 @@ const RiskSummary: React.FC = () => {
     );
   }
 
-  const currentRisks = prediction 
+  const allCurrentRisks = prediction 
     ? Object.entries(prediction)
         .map(([name, probability]) => ({
           type: name,
           probability,
           icon: getRiskIcon(name),
-          color: getRiskLevelClass(probability), // Dynamically assign color based on probability
+          color: getRiskLevelClass(probability),
         }))
         .sort((a, b) => b.probability - a.probability)
         .filter(risk => risk.probability > 0.01)
     : [];
 
-  const topRisk = currentRisks.length > 0 
-    ? currentRisks[0] 
+  const topRisk = allCurrentRisks.length > 0 
+    ? allCurrentRisks[0] 
     : { type: 'None', probability: 0, color: 'text-success', icon: AlertOctagon };
+
+  // Determine which risks to display based on the mode
+  // The summary view shows the top 2 risks in the list
+  const risksToDisplay = displayMode === 'summary' 
+    ? allCurrentRisks.slice(0, 2) 
+    : allCurrentRisks;
 
   return (
     <div className="card p-4">
@@ -78,7 +89,6 @@ const RiskSummary: React.FC = () => {
       </h3>
       
       <div className="flex items-center mb-3">
-        {/* The top risk color is now dynamic based on its probability */}
         <AlertOctagon className={topRisk.color} size={24} />
         <span className={`font-bold text-base ml-2 ${topRisk.color}`}>
           {topRisk.type} Risk
@@ -86,8 +96,8 @@ const RiskSummary: React.FC = () => {
       </div>
       
       <div className="space-y-2">
-        {currentRisks.length > 0 ? (
-          currentRisks.map((risk, index) => {
+        {risksToDisplay.length > 0 ? (
+          risksToDisplay.map((risk, index) => {
             const Icon = risk.icon;
             const percentage = (risk.probability * 100).toFixed(1);
             return (
