@@ -20,6 +20,7 @@ import CommunityOverview from './components/dashboard/CommunityOverview'; // ADD
 //import SchoolDashboard from './pages/SchoolDashboard'; // This line is correctly commented out
 import SchoolManagement from './components/dashboard/SchoolManagement'; // This is the correct import for the consolidated component
 import DisasterCoordinatorDashboard from './pages/DisasterCoordinatorDashboard';
+//import EmergencyManagement from './components/dashboard/EmergencyManagement'; // ADD THIS LINE
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';

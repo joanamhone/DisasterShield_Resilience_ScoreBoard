@@ -1,131 +1,247 @@
-import React, { useState } from 'react'
-import { AlertTriangle, MapPin, Users, Activity, Send, Eye, BarChart3 } from 'lucide-react'
+// src/components/dashboard/EmergencyManagement.tsx
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext'; // Import useAuth
+import {
+  AlertTriangle, MapPin, Users, Activity, Send, Eye, BarChart3,
+  Shield, TrendingUp, Bell, Settings, FileText, Radio, UserCheck, Megaphone
+} from 'lucide-react'; // Added new icons from DisasterCoordinatorDashboard
+import { clsx } from 'clsx'; // Utility for conditional class names
 
 const EmergencyManagement: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'alerts' | 'resources' | 'analytics'>('overview')
+  const { user } = useAuth(); // Get user for welcome message
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'overview' | 'alerts' | 'resources' | 'analytics'>('overview');
 
-  // Mock emergency management data
-  const emergencyStats = {
+  // --- Data from original EmergencyManagement ---
+  const emergencyStats = { // This can stay for specific overview tab stats if needed
     activeAlerts: 7,
     affectedPopulation: 12500,
     resourceRequests: 23,
     responseTeams: 8
   }
 
-  const activeAlerts = [
-    { 
-      id: 1, 
-      title: 'Severe Weather Warning', 
-      severity: 'high', 
-      location: 'Downtown District', 
+  const activeAlertsTab = [ // Renamed to avoid clash, used for 'alerts' tab
+    {
+      id: 1,
+      title: 'Severe Weather Warning',
+      severity: 'high',
+      location: 'Downtown District',
       affected: 3500,
       status: 'active',
       timeAgo: '2 hours ago'
     },
-    { 
-      id: 2, 
-      title: 'Flood Risk Alert', 
-      severity: 'critical', 
-      location: 'Riverside Area', 
+    {
+      id: 2,
+      title: 'Flood Risk Alert',
+      severity: 'critical',
+      location: 'Riverside Area',
       affected: 1200,
       status: 'active',
       timeAgo: '4 hours ago'
     },
-    { 
-      id: 3, 
-      title: 'Air Quality Advisory', 
-      severity: 'medium', 
-      location: 'Industrial Zone', 
+    {
+      id: 3,
+      title: 'Air Quality Advisory',
+      severity: 'medium',
+      location: 'Industrial Zone',
       affected: 2800,
       status: 'monitoring',
       timeAgo: '6 hours ago'
     }
   ]
 
-  const resourceRequests = [
+  const resourceRequests = [ // Used for 'resources' tab
     { id: 1, type: 'Medical Supplies', location: 'Community Center A', priority: 'high', requested: '50 units' },
     { id: 2, type: 'Emergency Shelter', location: 'School District 5', priority: 'critical', requested: '200 beds' },
     { id: 3, type: 'Food & Water', location: 'Riverside Evacuation', priority: 'high', requested: '500 meals' }
   ]
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'critical':
-        return 'text-error bg-error/20 border-error'
-      case 'high':
-        return 'text-warning bg-warning/20 border-warning'
-      case 'medium':
-        return 'text-accent bg-accent/20 border-accent'
-      default:
-        return 'text-text-secondary bg-surface border-border'
-    }
-  }
+  // --- Data from DisasterCoordinatorDashboard ---
+  const coordinatorStats = [ // Used for the main dashboard stats grid
+    { label: 'Regions Managed', value: '5', icon: MapPin, color: 'text-blue-600' },
+    { label: 'Communities', value: '28', icon: Users, color: 'text-green-600' },
+    { label: 'Schools', value: '12', icon: Shield, color: 'text-purple-600' },
+    { label: 'Active Alerts', value: '3', icon: AlertTriangle, color: 'text-red-600' }
+  ];
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical':
-        return 'text-error bg-error/20'
-      case 'high':
-        return 'text-warning bg-warning/20'
-      case 'medium':
-        return 'text-accent bg-accent/20'
-      default:
-        return 'text-text-secondary bg-surface'
+  const quickActionsCoordinator = [ // Combined with custom buttons
+    {
+      title: 'Send Community Alert', // Modified name, using Megaphone from common icons
+      description: 'Broadcast urgent messages to the community',
+      icon: Megaphone,
+      color: 'bg-red-600',
+      onClick: () => navigate('/alerts') // Assuming /alerts is the send alert page
+    },
+    {
+      title: 'View Risk Map',
+      description: 'Go to the comprehensive risk assessment',
+      icon: AlertTriangle,
+      color: 'bg-orange-500', // Changed color to orange
+      onClick: () => navigate('/assessment') // Changed to risk assessment page
+    },
+    {
+      title: 'Your Readiness',
+      description: 'Check your personal readiness status',
+      icon: Shield,
+      color: 'bg-blue-500',
+      onClick: () => navigate('/readiness')
+    },
+    {
+      title: 'View All Alerts',
+      description: 'View and manage all active alerts',
+      icon: Bell,
+      color: 'bg-red-500',
+      onClick: () => navigate('/all-alerts')
+    },
+    {
+      title: 'Affected Population',
+      description: 'Monitor district-wise impact statistics',
+      icon: Users,
+      color: 'bg-orange-500',
+      onClick: () => navigate('/affected-population')
+    },
+    {
+      title: 'Response Teams',
+      description: 'Manage team deployments and status',
+      icon: Radio,
+      color: 'bg-green-500',
+      onClick: () => navigate('/response-teams')
     }
-  }
+  ];
+
+  const recentAlertsMain = [ // Used for the dedicated Recent Alerts section
+    { id: 1, type: 'Flood Warning', location: 'District A', time: '2 hours ago', severity: 'High' },
+    { id: 2, type: 'Storm Alert', location: 'District B', time: '4 hours ago', severity: 'Medium' },
+    { id: 3, type: 'Heat Wave', location: 'District C', time: '6 hours ago', severity: 'Low' }
+  ];
+
+  // --- Helper Functions ---
+  const getSeverityColor = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'critical':
+      case 'high': // Included high here based on DCD's usage
+        return 'text-error bg-error/20 border-error';
+      case 'medium':
+        return 'text-warning bg-warning/20 border-warning'; // Medium maps to warning in DCD
+      case 'low': // Added low severity
+        return 'text-accent bg-accent/20 border-accent';
+      default:
+        return 'text-text-secondary bg-surface border-border';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => { // Remains from original EmergencyManagement
+    switch (priority.toLowerCase()) {
+      case 'critical':
+        return 'text-error bg-error/20';
+      case 'high':
+        return 'text-warning bg-warning/20';
+      case 'medium':
+        return 'text-accent bg-accent/20';
+      default:
+        return 'text-text-secondary bg-surface';
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-text-primary">Emergency Management Center</h2>
-        <div className="flex space-x-3">
-          <button className="btn-secondary">
-            <Eye size={16} className="mr-2" />
-            View Risk Map
-          </button>
-          <button className="btn-primary">
-            <Send size={16} className="mr-2" />
-            Send Alert
-          </button>
+      {/* Header - Blended from DisasterCoordinatorDashboard and original EmergencyManagement */}
+      <div className="bg-white rounded-lg shadow-sm p-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Regional/District Overview
+          </h1>
+          <p className="text-gray-600">
+            Regional Emergency Management Dashboard - {user?.location || 'Your Region'}
+          </p>
+        </div>
+        {/* The 'Send Alert' and 'View Risk Map' buttons are now part of Quick Actions */}
+        {/* You could add a specific 'Send Alert' button here if it's a primary call to action always visible */}
+        <button
+          onClick={() => navigate('/alerts')} // Assuming /alerts is the dedicated send alert page
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition-colors"
+        >
+          <Megaphone className="h-5 w-5" />
+          Send Regional Alert
+        </button>
+      </div>
+
+      {/* Main Stats Grid - From DisasterCoordinatorDashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {coordinatorStats.map((stat, index) => (
+          <div key={index} className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              </div>
+              <stat.icon className={`h-8 w-8 ${stat.color}`} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Actions - From DisasterCoordinatorDashboard, with added Send Alert/View Risk Map */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"> {/* Adjusted grid layout to 4 columns */}
+          {quickActionsCoordinator.map((action, index) => (
+            <button
+              key={index}
+              onClick={action.onClick}
+              className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
+            >
+              <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center mb-3`}>
+                <action.icon className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="font-medium text-gray-900 mb-1">{action.title}</h3>
+              <p className="text-sm text-gray-600">{action.description}</p>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-text-secondary">Active Alerts</h3>
-            <AlertTriangle className="text-error" size={20} />
-          </div>
-          <div className="text-2xl font-bold text-error">{emergencyStats.activeAlerts}</div>
+      {/* Recent Alerts - From DisasterCoordinatorDashboard */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Recent Alerts</h2>
+          <button
+            onClick={() => navigate('/all-alerts')}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+          >
+            View All
+          </button>
         </div>
-
-        <div className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-text-secondary">Affected Population</h3>
-            <Users className="text-warning" size={20} />
-          </div>
-          <div className="text-2xl font-bold text-warning">{emergencyStats.affectedPopulation.toLocaleString()}</div>
-        </div>
-
-        <div className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-text-secondary">Resource Requests</h3>
-            <Activity className="text-accent" size={20} />
-          </div>
-          <div className="text-2xl font-bold text-accent">{emergencyStats.resourceRequests}</div>
-        </div>
-
-        <div className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-text-secondary">Response Teams</h3>
-            <Users className="text-success" size={20} />
-          </div>
-          <div className="text-2xl font-bold text-success">{emergencyStats.responseTeams}</div>
+        <div className="space-y-3">
+          {recentAlertsMain.map((alert) => (
+            <div key={alert.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className={`h-5 w-5 ${
+                  alert.severity === 'High' ? 'text-red-500' :
+                  alert.severity === 'Medium' ? 'text-orange-500' : 'text-yellow-500'
+                }`} />
+                <div>
+                  <p className="font-medium text-gray-900">{alert.type}</p>
+                  <p className="text-sm text-gray-600">{alert.location}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-600">{alert.time}</p>
+                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                  alert.severity === 'High' ? 'bg-red-100 text-red-800' :
+                  alert.severity === 'Medium' ? 'bg-orange-100 text-orange-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {alert.severity}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Tab Navigation */}
+      {/* Original EmergencyManagement Tabs content */}
       <div className="card">
         <div className="border-b border-border">
           <nav className="flex space-x-8 px-6">
@@ -138,11 +254,12 @@ const EmergencyManagement: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={clsx(
+                  'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
                   activeTab === tab.id
                     ? 'border-primary text-primary'
                     : 'border-transparent text-text-secondary hover:text-text-primary'
-                }`}
+                )}
               >
                 {tab.label}
               </button>
@@ -154,16 +271,16 @@ const EmergencyManagement: React.FC = () => {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               <h3 className="font-bold text-text-primary">Regional Risk Overview</h3>
-              
+
               {/* Risk Heatmap Placeholder */}
               <div className="bg-surface rounded-lg p-8 text-center">
                 <MapPin className="mx-auto mb-4 text-text-tertiary" size={48} />
                 <h4 className="font-medium text-text-primary mb-2">Live Risk Heatmap</h4>
                 <p className="text-text-secondary">Interactive map showing current risk levels across regions</p>
-                <button className="btn-primary mt-4">View Full Map</button>
+                <button onClick={() => navigate('/floodriskmap')} className="btn-primary mt-4">View Full Map</button>
               </div>
 
-              {/* Recent Activity */}
+              {/* Recent Activity (from original EmergencyManagement) */}
               <div>
                 <h4 className="font-medium text-text-primary mb-3">Recent Emergency Activity</h4>
                 <div className="space-y-3">
@@ -190,6 +307,36 @@ const EmergencyManagement: React.FC = () => {
                   </div>
                 </div>
               </div>
+              {/* Regional Overview from DisasterCoordinatorDashboard is now part of this overview tab */}
+              <div className="bg-white rounded-lg shadow-sm p-6"> {/* Re-using card style */}
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Regional Preparedness Overview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <TrendingUp className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <h3 className="font-medium text-gray-900">Overall Readiness</h3>
+                    <p className="text-2xl font-bold text-blue-600">74%</p>
+                    <p className="text-sm text-gray-600">Regional Average</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Activity className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h3 className="font-medium text-gray-900">Response Time</h3>
+                    <p className="text-2xl font-bold text-green-600">12 min</p>
+                    <p className="text-sm text-gray-600">Average Response</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Users className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <h3 className="font-medium text-gray-900">Population Covered</h3>
+                    <p className="text-2xl font-bold text-purple-600">125K</p>
+                    <p className="text-sm text-gray-600">Total Population</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -197,7 +344,7 @@ const EmergencyManagement: React.FC = () => {
             <div className="space-y-4">
               <h3 className="font-bold text-text-primary">Active Emergency Alerts</h3>
               <div className="space-y-4">
-                {activeAlerts.map((alert) => (
+                {activeAlertsTab.map((alert) => (
                   <div key={alert.id} className={`border-l-4 p-4 bg-surface rounded-lg ${getSeverityColor(alert.severity)}`}>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -266,7 +413,7 @@ const EmergencyManagement: React.FC = () => {
           {activeTab === 'analytics' && (
             <div className="space-y-6">
               <h3 className="font-bold text-text-primary">Emergency Response Analytics</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="card p-4">
                   <h4 className="font-medium text-text-primary mb-3">Response Time Metrics</h4>
@@ -324,4 +471,4 @@ const EmergencyManagement: React.FC = () => {
   )
 }
 
-export default EmergencyManagement
+export default EmergencyManagement;
