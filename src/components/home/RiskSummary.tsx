@@ -12,15 +12,22 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-// Helper function to map each risk type to its icon and color
-const getRiskDetails = (riskName: string) => {
+// Helper to determine the risk level class based on probability
+const getRiskLevelClass = (probability: number): 'text-risk-low' | 'text-risk-medium' | 'text-risk-high' => {
+  if (probability > 0.5) return 'text-risk-high'; // Over 50%
+  if (probability > 0.2) return 'text-risk-medium'; // Over 20%
+  return 'text-risk-low'; // 20% or less
+};
+
+// Helper to get only the icon for a specific risk type
+const getRiskIcon = (riskName: string) => {
   const lowerCaseName = riskName.toLowerCase();
-  if (lowerCaseName.includes('flood')) return { icon: Droplets, color: 'text-risk-medium' };
-  if (lowerCaseName.includes('fire')) return { icon: Flame, color: 'text-risk-high' };
-  if (lowerCaseName.includes('drought')) return { icon: Sun, color: 'text-risk-high' };
-  if (lowerCaseName.includes('storm')) return { icon: Wind, color: 'text-risk-low' };
-  if (lowerCaseName.includes('snow')) return { icon: CloudSnow, color: 'text-risk-low' };
-  return { icon: AlertOctagon, color: 'text-text-secondary' };
+  if (lowerCaseName.includes('flood')) return Droplets;
+  if (lowerCaseName.includes('fire')) return Flame;
+  if (lowerCaseName.includes('drought')) return Sun;
+  if (lowerCaseName.includes('storm')) return Wind;
+  if (lowerCaseName.includes('snow')) return CloudSnow;
+  return AlertOctagon;
 };
 
 const RiskSummary: React.FC = () => {
@@ -53,7 +60,8 @@ const RiskSummary: React.FC = () => {
         .map(([name, probability]) => ({
           type: name,
           probability,
-          ...getRiskDetails(name),
+          icon: getRiskIcon(name),
+          color: getRiskLevelClass(probability), // Dynamically assign color based on probability
         }))
         .sort((a, b) => b.probability - a.probability)
         .filter(risk => risk.probability > 0.01)
@@ -61,7 +69,7 @@ const RiskSummary: React.FC = () => {
 
   const topRisk = currentRisks.length > 0 
     ? currentRisks[0] 
-    : { type: 'None', probability: 0, color: 'text-success' };
+    : { type: 'None', probability: 0, color: 'text-success', icon: AlertOctagon };
 
   return (
     <div className="card p-4">
@@ -70,6 +78,7 @@ const RiskSummary: React.FC = () => {
       </h3>
       
       <div className="flex items-center mb-3">
+        {/* The top risk color is now dynamic based on its probability */}
         <AlertOctagon className={topRisk.color} size={24} />
         <span className={`font-bold text-base ml-2 ${topRisk.color}`}>
           {topRisk.type} Risk
