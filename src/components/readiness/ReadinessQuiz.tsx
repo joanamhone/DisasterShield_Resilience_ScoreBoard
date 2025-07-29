@@ -1,5 +1,13 @@
 import React, { useState } from 'react'
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+
+type Answer = {
+  questionId: number
+  questionText: string
+  selectedOptionText: string
+  selectedValue: number
+}
 
 interface ReadinessQuizProps {
   onComplete: (score: number, answers: number[]) => void
@@ -20,7 +28,8 @@ interface Option {
 
 const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
+  // const [answers, setAnswers] = useState<number[]>([])
+  const [answers, setAnswers] = useState<Answer[]>([])
   const [quizComplete, setQuizComplete] = useState(false)
 
   const questions: Question[] = [
@@ -138,11 +147,27 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
 
   const currentQuestion = questions[currentQuestionIndex]
 
-  const handleAnswer = (value: number) => {
-    const newAnswers = [...answers]
-    newAnswers[currentQuestionIndex] = value
-    setAnswers(newAnswers)
+  // const handleAnswer = (value: number) => {
+  //   const newAnswers = [...answers]
+  //   newAnswers[currentQuestionIndex] = value
+  //   setAnswers(newAnswers)
+  // }
+const handleAnswer = (value: number) => {
+  const selectedOption = currentQuestion.options.find((opt) => opt.value === value)
+
+  if (!selectedOption) return
+
+  const newAnswers = [...answers]
+  newAnswers[currentQuestionIndex] = {
+    questionId: currentQuestion.id,
+    questionText: currentQuestion.text,
+    selectedOptionText: selectedOption.text,
+    selectedValue: selectedOption.value,
   }
+
+  setAnswers(newAnswers)
+}
+
 
   const goToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -158,15 +183,64 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
     }
   }
 
-  const calculateScore = () => {
-    setQuizComplete(true)
-    setTimeout(() => {
-      const totalPoints = answers.reduce((sum, value) => sum + value, 0)
-      const maxPossiblePoints = questions.length * 10
-      const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
-      onComplete(scorePercentage, answers)
-    }, 1500)
-  }
+  // const calculateScore = () => {
+  //   setQuizComplete(true)
+  //   setTimeout(() => {
+  //     const totalPoints = answers.reduce((sum, value) => sum + value, 0)
+  //     const maxPossiblePoints = questions.length * 10
+  //     const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
+  //     onComplete(scorePercentage, answers)
+  //   }, 1500)
+  // }
+  const calculateScore = async () => {
+  setQuizComplete(true)
+  setTimeout(async () => {
+    //const totalPoints = answers.reduce((sum, value) => sum + value, 0)
+    const totalPoints = answers.reduce((sum, ans) => sum + ans.selectedValue, 0)
+    const maxPossiblePoints = questions.length * 10
+    const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
+
+    // Save to Supabase
+    const { data, error } = await supabase
+      .from('readiness_responses')
+      .insert([
+        {
+          answers, // stored as JSON
+          score: scorePercentage,
+          // Optionally include: user_id, location, etc.
+        },
+      ])
+
+    if (error) {
+      console.error('Error saving readiness data:', error)
+    }
+
+    onComplete(scorePercentage, answers)
+  }, 1500)
+}
+
+//you can add user_id like:
+// const {
+//   data: { user },
+// } = await supabase.auth.getUser()
+
+// await supabase.from('readiness_responses').insert([
+//   {
+//     user_id: user?.id,
+//     answers,
+//     score: scorePercentage,
+//   },
+// ])
+//  6. Querying scores later
+// To get responses:
+
+// ts
+// Copy code
+// const { data, error } = await supabase
+//   .from('readiness_responses')
+//   .select('*')
+//   .eq('user_id', currentUserId) // optional
+//Would you like help displaying a “past scores history” component from the DB?
 
   const isAnswered = answers[currentQuestionIndex] !== undefined
   const isLastQuestion = currentQuestionIndex === questions.length - 1
