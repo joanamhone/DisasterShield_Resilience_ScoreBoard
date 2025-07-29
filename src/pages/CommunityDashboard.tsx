@@ -12,13 +12,15 @@ import {
   MessageSquare,
   Shield,
   Activity,
-  Bell
+  Bell,
+  Megaphone
 } from 'lucide-react';
 
 const CommunityDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Community Stats
   const communityStats = [
     { label: 'Community Members', value: '247', icon: Users, color: 'text-blue-600' },
     { label: 'Average Readiness', value: '72%', icon: TrendingUp, color: 'text-green-600' },
@@ -26,14 +28,15 @@ const CommunityDashboard: React.FC = () => {
     { label: 'Recent Alerts', value: '5', icon: AlertTriangle, color: 'text-red-600' }
   ];
 
+  // Quick Actions
   const quickActions = [
     {
-      title: 'Take Assessment',
-      description: 'Complete your personal readiness assessment',
-      icon: Shield,
-      color: 'bg-blue-500',
-      onClick: () => navigate('/assessment')
-    },
+    title: 'View Risk Map',
+    description: 'Explore geographic disaster risks in your area',
+    icon: AlertTriangle,
+    color: 'bg-red-500',
+    onClick: () => navigate('/map')
+  },
     {
       title: 'Track Progress',
       description: 'View your community leadership progress',
@@ -50,22 +53,46 @@ const CommunityDashboard: React.FC = () => {
     }
   ];
 
+  // Vulnerable Households
   const vulnerableHouseholds = [
     { id: 1, address: '123 Oak Street', readiness: 35, risk: 'High', lastContact: '3 days ago' },
     { id: 2, address: '456 Pine Avenue', readiness: 42, risk: 'High', lastContact: '1 week ago' },
     { id: 3, address: '789 Elm Drive', readiness: 58, risk: 'Medium', lastContact: '2 days ago' }
   ];
 
+  // Community Readiness Distribution
+  const readinessDistribution = [
+    { label: 'Well Prepared (80-100%)', color: 'bg-green-500', percentage: 75 },
+    { label: 'Moderately Prepared (60-79%)', color: 'bg-purple-500', percentage: 20 },
+    { label: 'Needs Improvement (<60%)', color: 'bg-red-500', percentage: 5 }
+  ];
+
+  // Recent Activity
+  const recentActivity = [
+    { id: 1, action: 'Emergency drill completed', participants: 45, date: '2 days ago' },
+    { id: 2, action: 'Weather alert sent', recipients: 247, date: '1 week ago' },
+    { id: 3, action: 'Preparedness workshop', participants: 32, date: '2 weeks ago' }
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Welcome back, {user?.fullName || 'Community Leader'}
-        </h1>
-        <p className="text-gray-600">
-          Community Leadership Dashboard - {user?.location || 'Your Community'}
-        </p>
+      {/* 🔹 HEADER - Styled like CommunityOverview with Alert Button */}
+      <div className="bg-white rounded-lg shadow-sm p-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Welcome back, {user?.fullName || 'Community Leader'} 👋
+          </h1>
+          <p className="text-gray-600 mt-1">
+            You’re managing <span className="font-semibold">{user?.location || 'Your Community'}</span> – stay proactive and keep your community safe.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/alerts')}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition-colors"
+        >
+          <Megaphone className="h-5 w-5" />
+          Send Community Alert
+        </button>
       </div>
 
       {/* Stats Grid */}
@@ -88,6 +115,29 @@ const CommunityDashboard: React.FC = () => {
         <ReadinessScore />
         <RecentAlerts />
         <RiskSummary />
+      </div>
+
+      {/* Community Readiness Distribution */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Community Readiness Distribution
+        </h3>
+        <div className="space-y-3">
+          {readinessDistribution.map((item, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">{item.label}</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-32 bg-gray-200 h-2 rounded-full">
+                  <div
+                    className={`${item.color} h-2 rounded-full`}
+                    style={{ width: `${item.percentage}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm font-medium">{item.percentage}%</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Choose Assessment */}
@@ -123,12 +173,37 @@ const CommunityDashboard: React.FC = () => {
               onClick={action.onClick}
               className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
             >
-              <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center mb-3`}>
+              <div
+                className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center mb-3`}
+              >
                 <action.icon className="h-5 w-5 text-white" />
               </div>
               <h3 className="font-medium text-gray-900 mb-1">{action.title}</h3>
               <p className="text-sm text-gray-600">{action.description}</p>
             </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Community Activity */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Community Activity</h3>
+        <div className="space-y-3">
+          {recentActivity.map((activity) => (
+            <div
+              key={activity.id}
+              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            >
+              <div>
+                <h4 className="font-medium text-gray-900">{activity.action}</h4>
+                <p className="text-sm text-gray-600">
+                  {activity.participants
+                    ? `${activity.participants} participants`
+                    : `${activity.recipients} recipients`}
+                </p>
+              </div>
+              <span className="text-sm text-gray-500">{activity.date}</span>
+            </div>
           ))}
         </div>
       </div>
@@ -151,14 +226,14 @@ const CommunityDashboard: React.FC = () => {
             </button>
           </nav>
         </div>
-        
+
         <div className="p-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium text-gray-900">Households Needing Support</h3>
               <span className="text-sm text-gray-500">3 households identified</span>
             </div>
-            
+
             {vulnerableHouseholds.map((household) => (
               <div key={household.id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
@@ -168,10 +243,16 @@ const CommunityDashboard: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600">Readiness: {household.readiness}%</span>
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        household.risk === 'High' ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
-                      }`}>
+                      <span className="text-sm text-gray-600">
+                        Readiness: {household.readiness}%
+                      </span>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          household.risk === 'High'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-orange-100 text-orange-800'
+                        }`}
+                      >
                         {household.risk} Risk
                       </span>
                     </div>
@@ -185,12 +266,14 @@ const CommunityDashboard: React.FC = () => {
                     <span className="text-sm text-gray-600">Needs Improvement (&lt;60%)</span>
                     <div className="flex items-center space-x-2">
                       <div className="w-32 bg-gray-200 h-2 rounded-full">
-                        <div 
-                          className="bg-red-500 h-2 rounded-full" 
+                        <div
+                          className="bg-red-500 h-2 rounded-full"
                           style={{ width: `${household.readiness}%` }}
                         ></div>
                       </div>
-                      <span className="text-sm font-medium text-gray-900">{household.readiness}%</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        {household.readiness}%
+                      </span>
                     </div>
                   </div>
                 </div>

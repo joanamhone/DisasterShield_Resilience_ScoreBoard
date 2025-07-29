@@ -38,7 +38,7 @@ const Home: React.FC = () => {
               Welcome back, {user?.fullName || 'User'}
             </h2>
             <p className="text-base sm:text-lg text-text-secondary mb-2">
-              Here is your dashboard overview.
+              {/*Here is your dashboard overview.*/}
             </p>
             <div className="flex items-center text-sm text-text-tertiary">
               <MapPin size={16} className="mr-1" />
