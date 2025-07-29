@@ -16,8 +16,9 @@ import SignIn from './pages/SignIn';
 import ProfileSetup from './pages/ProfileSetup';
 import ForgotPassword from './pages/ForgotPassword';
 // import CommunityDashboard from './pages/CommunityDashboard'; // REMOVE THIS LINE
-import CommunityOverview from './components/dashboard/CommunityOverview'; // ADD THIS LINE (assuming this is the correct path)
-import SchoolDashboard from './pages/SchoolDashboard';
+import CommunityOverview from './components/dashboard/CommunityOverview'; // ADD THIS LINE
+//import SchoolDashboard from './pages/SchoolDashboard'; // This line is correctly commented out
+import SchoolManagement from './components/dashboard/SchoolManagement'; // This is the correct import for the consolidated component
 import DisasterCoordinatorDashboard from './pages/DisasterCoordinatorDashboard';
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
@@ -59,13 +60,13 @@ function App() {
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/community-dashboard" element={
                         <ProtectedRoute allowedRoles={['community_leader']}>
-                          {/* CHANGE THIS LINE */}
-                          <CommunityOverview /> {/* RENDER CommunityOverview INSTEAD */}
+                          <CommunityOverview />
                         </ProtectedRoute>
                       } />
                       <Route path="/school-dashboard" element={
                         <ProtectedRoute allowedRoles={['school_admin']}>
-                          <SchoolDashboard />
+                          {/* THIS IS THE LINE TO CHANGE */}
+                          <SchoolManagement /> {/* Changed from <SchoolDashboard /> to <SchoolManagement /> */}
                         </ProtectedRoute>
                       } />
                       <Route path="/coordinator-dashboard" element={

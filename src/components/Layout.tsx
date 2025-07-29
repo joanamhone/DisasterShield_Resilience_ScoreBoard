@@ -36,9 +36,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       nav.push({ name: 'Coordinator Dashboard', href: '/coordinator-dashboard', icon: AlertTriangle })
     }
     
-    if (canAccessSchoolFeatures()) {
-      nav.push({ name: 'School Dashboard', href: '/school-dashboard', icon: Users })
-    }
+   // if (canAccessSchoolFeatures()) {
+   //   nav.push({ name: 'School Dashboard', href: '/school-dashboard', icon: Users })
+    //}
     
    // if (canAccessCommunityFeatures()) {
    //   nav.push({ name: 'Community Dashboard', href: '/community-dashboard', icon: Users })
