@@ -1,31 +1,41 @@
 import React, { useState, useEffect } from 'react'
-import { MapPin, RefreshCw } from 'lucide-react'
+import { MapPin, RefreshCw, BarChart3, TrendingUp } from 'lucide-react'
+
+// Import components
 import DisasterMap from '../components/assessment/DisasterMap'
 import WeatherParameters from '../components/assessment/WeatherParameters'
 import RiskSummary from '../components/home/RiskSummary'
+import EnvironmentalChart from '../components/charts/EnvironmentalChart'
+import HistoricalTrendsChart from '../components/charts/HistoricalTrendsChart'
+
+// Import hooks and services
 import { useLocation } from '../hooks/useLocation'
 import { getWeather, WeatherData } from '../services/predictionService'
 
 const Assessment: React.FC = () => {
   const userLocation = useLocation()
 
-  // State for the weather data and its loading/error status
+  // State for weather data
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [locationName, setLocationName] = useState('Loading location...')
   const [lastUpdated, setLastUpdated] = useState('N/A')
 
-  // Effect to fetch weather for the user's current location on initial load
+  // State for the charts
+  const [trendsTimeRange, setTrendsTimeRange] = useState<'hour' | 'month' | 'year'>('month')
+  const [environmentalTimeRange, setEnvironmentalTimeRange] = useState<'hour' | 'month' | 'year'>('month')
+  const [environmentalParameter, setEnvironmentalParameter] = useState<'temperature' | 'rainfall' | 'humidity' | 'windspeed'>('temperature')
+
+
+  // Effect to fetch weather on initial load
   useEffect(() => {
-    // Only run if the location hook has successfully found coordinates
     if (userLocation.latitude && userLocation.longitude) {
       setIsLoading(true)
       getWeather(userLocation.latitude, userLocation.longitude)
         .then((data) => {
           setWeatherData(data)
           setError(null)
-          // Set the display name for the location
           if (userLocation.city && userLocation.country) {
             setLocationName(`${userLocation.city}, ${userLocation.country}`)
           } else {
@@ -41,7 +51,6 @@ const Assessment: React.FC = () => {
           setIsLoading(false)
         })
     } else if (userLocation.error) {
-      // Handle errors from the location hook itself
       setError(userLocation.error)
       setLocationName('Location unavailable')
       setIsLoading(false)
@@ -54,7 +63,7 @@ const Assessment: React.FC = () => {
     userLocation.error,
   ])
 
-  // Function to manually refresh the weather data for the current location
+  // Function to manually refresh data
   const handleRefresh = () => {
     if (userLocation.latitude && userLocation.longitude) {
       setIsLoading(true)
@@ -87,7 +96,6 @@ const Assessment: React.FC = () => {
               {locationName}
             </div>
           </div>
-
           <div className="flex items-end">
             <button
               onClick={handleRefresh}
@@ -115,13 +123,81 @@ const Assessment: React.FC = () => {
         error={error}
       />
 
-      {/* Disaster Map - only shown if location is available */}
+      {/* Interactive Charts Section */}
+      <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 className="text-lg font-bold text-text-primary flex items-center">
+              <BarChart3 className="mr-2" size={20} />
+              Risk Analysis
+            </h3>
+            <div className="flex bg-surface rounded-lg p-1">
+              {(['hour', 'month', 'year'] as const).map((range) => (
+                <button
+                  key={range}
+                  onClick={() => setTrendsTimeRange(range)}
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                    trendsTimeRange === range
+                      ? 'bg-primary text-white'
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  {range === 'hour' ? '24H' : range.charAt(0).toUpperCase() + range.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <HistoricalTrendsChart timeRange={trendsTimeRange} location={locationName} />
+        </div>
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 className="text-lg font-bold text-text-primary flex items-center">
+              <TrendingUp className="mr-2" size={20} />
+              Environmental Data
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <select
+                value={environmentalParameter}
+                onChange={(e) => setEnvironmentalParameter(e.target.value as any)}
+                className="bg-surface border border-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="temperature">Temperature</option>
+                <option value="rainfall">Rainfall</option>
+                <option value="humidity">Humidity</option>
+                <option value="windspeed">Wind Speed</option>
+              </select>
+              <div className="flex bg-surface rounded-lg p-1">
+                {(['hour', 'month', 'year'] as const).map((range) => (
+                  <button
+                    key={range}
+                    onClick={() => setEnvironmentalTimeRange(range)}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                      environmentalTimeRange === range
+                        ? 'bg-primary text-white'
+                        : 'text-text-secondary hover:text-text-primary'
+                    }`}
+                  >
+                    {range === 'hour' ? '24H' : range.charAt(0).toUpperCase() + range.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <EnvironmentalChart 
+            timeRange={environmentalTimeRange} 
+            location={locationName}
+            parameter={environmentalParameter}
+          />
+        </div>
+      </div>
+
+      {/* Disaster Map */}
       {userLocation.latitude && userLocation.longitude && (
-         <DisasterMap latitude={userLocation.latitude} longitude={userLocation.longitude} />
+          <DisasterMap latitude={userLocation.latitude} longitude={userLocation.longitude} />
       )}
 
-      {/* Overall Risk Summary - Full Details */}
-      <RiskSummary />
+      {/* Overall Risk Summary */}
+      <RiskSummary displayMode="full" />
     </div>
   )
 }
