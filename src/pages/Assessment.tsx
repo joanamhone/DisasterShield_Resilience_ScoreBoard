@@ -1,214 +1,233 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, RefreshCw, AlertTriangle, BarChart3, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { MapPin, RefreshCw, BarChart3, TrendingUp } from 'lucide-react';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Assuming these are correctly set up in your project
-import { useAuth } from '../contexts/AuthContext';
-import { useLocation } from '../hooks/useLocation';
-
-// Import the service that gets weather for the model
-import { getWeather } from '../services/predictionService'; 
-// Import the component's data interface
-import WeatherParameters, { WeatherData } from '../components/assessment/WeatherParameters';
-
-// Other component imports
+// Import components
 import DisasterMap from '../components/assessment/DisasterMap';
-import HistoricalTrendsChart from '../components/charts/HistoricalTrendsChart';
+import WeatherParameters from '../components/assessment/WeatherParameters';
+import RiskSummary from '../components/home/RiskSummary';
 import EnvironmentalChart from '../components/charts/EnvironmentalChart';
+import HistoricalTrendsChart from '../components/charts/HistoricalTrendsChart';
 
+// Import hooks and services
+import { useLocation } from '../hooks/useLocation';
+import { getWeather, getPredictions, WeatherData, PredictionResult } from '../services/predictionService';
+import { useAuth } from '../contexts/AuthContext';
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Supabase URL and anon key are required.");
+}
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Assessment: React.FC = () => {
-  // Custom hooks
-  const userLocation = useLocation(); // Provides { city, country, latitude, longitude, loading, error }
-  const { user } = useAuth();
+    const userLocation = useLocation();
+    const { user } = useAuth();
 
-  // State
-  const [location, setLocation] = useState('Loading location...');
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null); // State to hold weather data
-  const [lastUpdated, setLastUpdated] = useState('N/A');
-  const [loading, setLoading] = useState(true); // Start with loading true
-  
-  // Chart-related state remains the same
-  const [trendsTimeRange, setTrendsTimeRange] = useState<'hour' | 'month' | 'year'>('month');
-  const [environmentalTimeRange, setEnvironmentalTimeRange] = useState<'hour' | 'month' | 'year'>('month');
-  const [environmentalParameter, setEnvironmentalParameter] = useState<'temperature' | 'rainfall' | 'humidity' | 'windspeed'>('temperature');
+    // State
+    const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [locationName, setLocationName] = useState('Loading location...');
+    const [lastUpdated, setLastUpdated] = useState('N/A');
 
-  // Effect to fetch weather data once location is available
-  useEffect(() => {
-    // Only proceed if we have coordinates
-    if (userLocation.latitude && userLocation.longitude) {
-      setLoading(true);
+    // Chart state
+    const [trendsTimeRange, setTrendsTimeRange] = useState<'hour' | 'day' | 'week' | 'month' | 'year'>('month');
+    const [environmentalTimeRange, setEnvironmentalTimeRange] = useState<'hour' | 'day' | 'week' | 'month' | 'year'>('month');
+    const [environmentalParameter, setEnvironmentalParameter] = useState<'temperature' | 'rainfall' | 'humidity' | 'windspeed'>('temperature');
 
-      // Set the display location name
-      if (user?.location) {
-        setLocation(user.location);
-      } else if (userLocation.city && userLocation.country) {
-        setLocation(`${userLocation.city}, ${userLocation.country}`);
-      }
+    // --- Function to save fetched data to Supabase ---
+    const saveDataToSupabase = useCallback(async (
+        weather: WeatherData,
+        prediction: PredictionResult,
+        lat: number,
+        lon: number
+    ) => {
+        if (!user) return;
 
-      // Fetch weather using the service
-      getWeather(userLocation.latitude, userLocation.longitude)
-        .then(data => {
-          // On success, update the weatherData state
-          setWeatherData(data);
-          setLastUpdated(new Date().toLocaleTimeString());
-        })
-        .catch(error => {
-          // On error, log it and update UI accordingly
-          console.error("Failed to fetch weather for assessment:", error);
-          setLocation("Could not fetch weather data.");
-        })
-        .finally(() => {
-          // Once done, set loading to false
-          setLoading(false);
-        });
-    } else if (userLocation.error) {
-        setLocation(userLocation.error);
-        setLoading(false);
-    }
-  }, [userLocation.latitude, userLocation.longitude, userLocation.error, userLocation.city, userLocation.country, user]);
+        const locationPoint = `(${lon},${lat})`;
 
+        // Save environmental data
+        await supabase
+            .from('environmental_data')
+            .insert({
+                user_id: user.id,
+                location: locationPoint,
+                temperature: weather.temperature,
+                rainfall: weather.precipitation,
+                humidity: weather.humidity,
+                wind_speed: weather.windSpeed,
+            });
 
-  // Refresh function can now re-trigger the weather fetch
-  const refreshData = () => {
-    if (userLocation.latitude && userLocation.longitude) {
-        setLoading(true);
-        getWeather(userLocation.latitude, userLocation.longitude)
-          .then(data => {
-            setWeatherData(data);
+        // Save new risk data
+        await supabase
+            .from('risk_trends')
+            .insert({
+                user_id: user.id,
+                location: locationPoint,
+                cold_wave_risk: prediction['cold wave'] || 0,
+                heat_wave_risk: prediction['heat wave'] || 0,
+                flash_flood_risk: prediction['flash flood'] || 0,
+                storm_risk: prediction['storm'] || 0,
+                forest_fire_risk: prediction['forest fire'] || 0,
+            });
+
+    }, [user]);
+
+    // Function to fetch all data
+    const fetchData = useCallback(async (lat: number, lon: number) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const weather = await getWeather(lat, lon);
+            const prediction = await getPredictions(weather);
+            setWeatherData(weather);
             setLastUpdated(new Date().toLocaleTimeString());
-          })
-          .catch(error => console.error("Failed to refresh weather:", error))
-          .finally(() => setLoading(false));
-    }
-  };
+            await saveDataToSupabase(weather, prediction, lat, lon);
+        } catch (err: any) {
+            setError(err.message || 'Failed to fetch data.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [saveDataToSupabase]);
 
-  return (
-    <div className="space-y-4 sm:space-y-6 pb-6">
-      {/* --- Location and Update Header --- */}
-      <div className="card p-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex-grow">
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              <MapPin size={16} className="inline mr-1" />
-              Location
-            </label>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full bg-surface rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary border border-border"
-              placeholder="Enter your location"
-              disabled={userLocation.loading || loading}
-            />
-          </div>
+    useEffect(() => {
+        if (userLocation.latitude && userLocation.longitude) {
+            setLocationName(userLocation.city && userLocation.country ? `${userLocation.city}, ${userLocation.country}` : 'Current Location');
+            fetchData(userLocation.latitude, userLocation.longitude);
+        } else if (userLocation.error) {
+            setError(userLocation.error);
+            setLocationName('Location unavailable');
+            setIsLoading(false);
+        }
+    }, [userLocation, fetchData]);
 
-          <div className="flex items-end">
-            <button
-              onClick={refreshData}
-              disabled={loading || !userLocation.latitude}
-              className="flex items-center bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 w-full sm:w-auto"
-            >
-              <RefreshCw 
-                className={`mr-2 ${loading ? 'animate-spin' : ''}`} 
-                size={16} 
-              />
-              Update
-            </button>
-          </div>
-        </div>
-        <p className="text-xs text-text-tertiary mt-3">Last updated: {lastUpdated}</p>
-      </div>
-
-      {/* --- Weather Parameters --- 
-          Now passes the fetched data down as a prop.
-      */}
-      <WeatherParameters 
-        location={location} 
-        weatherData={weatherData}
-      />
-
-      {/* --- Interactive Charts Section (No Changes Needed Here) --- */}
-      <div className="space-y-4 sm:space-y-6">
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h3 className="text-lg font-bold text-text-primary flex items-center">
-              <BarChart3 className="mr-2" size={20} />
-              Risk Analysis
-            </h3>
-            <div className="flex bg-surface rounded-lg p-1">
-              {(['hour', 'month', 'year'] as const).map((range) => (
-                <button
-                  key={range}
-                  onClick={() => setTrendsTimeRange(range)}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                    trendsTimeRange === range
-                      ? 'bg-primary text-white'
-                      : 'text-text-secondary hover:text-text-primary'
-                  }`}
-                >
-                  {range === 'hour' ? '24H' : range.charAt(0).toUpperCase() + range.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <HistoricalTrendsChart timeRange={trendsTimeRange} location={location} />
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h3 className="text-lg font-bold text-text-primary flex items-center">
-              <TrendingUp className="mr-2" size={20} />
-              Environmental Data
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <select
-                value={environmentalParameter}
-                onChange={(e) => setEnvironmentalParameter(e.target.value as any)}
-                className="bg-surface border border-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="temperature">Temperature</option>
-                <option value="rainfall">Rainfall</option>
-                <option value="humidity">Humidity</option>
-                <option value="windspeed">Wind Speed</option>
-              </select>
-              <div className="flex bg-surface rounded-lg p-1">
-                {(['hour', 'month', 'year'] as const).map((range) => (
+    const handleRefresh = () => {
+        if (userLocation.latitude && userLocation.longitude) {
+            fetchData(userLocation.latitude, userLocation.longitude);
+        }
+    };
+    
+    return (
+        <div className="space-y-4 sm:space-y-6 pb-6">
+            {/* Location Header */}
+            <div className="card p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    <MapPin size={16} className="inline mr-1" />
+                    Current Location
+                  </label>
+                  <div className="w-full bg-surface rounded-lg px-3 py-2 text-text-primary border border-border">
+                    {locationName}
+                  </div>
+                </div>
+                <div className="flex items-end">
                   <button
-                    key={range}
-                    onClick={() => setEnvironmentalTimeRange(range)}
-                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                      environmentalTimeRange === range
-                        ? 'bg-primary text-white'
-                        : 'text-text-secondary hover:text-text-primary'
-                    }`}
+                    onClick={handleRefresh}
+                    disabled={isLoading || !userLocation.latitude}
+                    className="flex items-center bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 w-full sm:w-auto"
                   >
-                    {range === 'hour' ? '24H' : range.charAt(0).toUpperCase() + range.slice(1)}
+                    <RefreshCw
+                      className={`mr-2 ${isLoading ? 'animate-spin' : ''}`}
+                      size={16}
+                    />
+                    Refresh
                   </button>
-                ))}
+                </div>
               </div>
+              <p className="text-xs text-text-tertiary mt-3">
+                Last updated: {lastUpdated}
+              </p>
             </div>
-          </div>
-          <EnvironmentalChart 
-            timeRange={environmentalTimeRange} 
-            location={location}
-            parameter={environmentalParameter}
-          />
+
+            <WeatherParameters
+                location={locationName}
+                weatherData={weatherData}
+                isLoading={isLoading}
+                error={error}
+            />
+
+            {/* Interactive Charts Section */}
+            <div className="space-y-4 sm:space-y-6">
+                {/* Risk Analysis Chart */}
+                <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <h3 className="text-lg font-bold text-text-primary flex items-center">
+                            <BarChart3 className="mr-2" size={20} />
+                            Risk Analysis
+                        </h3>
+                        <div className="flex bg-surface rounded-lg p-1">
+                            {(['hour', 'day', 'week', 'month', 'year'] as const).map((range) => (
+                                <button
+                                    key={range}
+                                    onClick={() => setTrendsTimeRange(range)}
+                                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                                        trendsTimeRange === range ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'
+                                    }`}
+                                >
+                                    {range.charAt(0).toUpperCase() + range.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <HistoricalTrendsChart timeRange={trendsTimeRange} location={locationName} supabase={supabase} />
+                </div>
+
+                {/* Environmental Data Chart */}
+                <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <h3 className="text-lg font-bold text-text-primary flex items-center">
+                            <TrendingUp className="mr-2" size={20} />
+                            Environmental Data
+                        </h3>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                           <select
+                             value={environmentalParameter}
+                             onChange={(e) => setEnvironmentalParameter(e.target.value as any)}
+                             className="bg-surface border border-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                           >
+                             <option value="temperature">Temperature</option>
+                             <option value="rainfall">Rainfall</option>
+                             <option value="humidity">Humidity</option>
+                             <option value="windspeed">Wind Speed</option>
+                           </select>
+                           <div className="flex bg-surface rounded-lg p-1">
+                             {(['hour', 'day', 'week', 'month', 'year'] as const).map((range) => (
+                               <button
+                                 key={range}
+                                 onClick={() => setEnvironmentalTimeRange(range)}
+                                 className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                                   environmentalTimeRange === range
+                                     ? 'bg-primary text-white'
+                                     : 'text-text-secondary hover:text-text-primary'
+                                 }`}
+                               >
+                                 {range.charAt(0).toUpperCase() + range.slice(1)}
+                               </button>
+                             ))}
+                           </div>
+                         </div>
+                    </div>
+                    <EnvironmentalChart
+                        timeRange={environmentalTimeRange}
+                        location={locationName}
+                        parameter={environmentalParameter}
+                        supabase={supabase}
+                    />
+                </div>
+            </div>
+
+            {userLocation.latitude && userLocation.longitude && (
+                <DisasterMap latitude={userLocation.latitude} longitude={userLocation.longitude} />
+            )}
+
+            <RiskSummary displayMode="full" />
         </div>
-      </div>
-
-      {/* --- Other Components (No Changes Needed) --- */}
-      {userLocation.latitude && userLocation.longitude && (
-        <DisasterMap latitude={userLocation.latitude} longitude={userLocation.longitude} />
-      )}
-
-      <div className="card p-4 flex items-center">
-        <AlertTriangle className="text-risk-high mr-3" size={24} />
-        <span className="font-medium text-text-primary">
-          Overall Risk Level: <span className="font-bold text-risk-high">High</span>
-        </span>
-      </div>
-    </div>
-  );
+    )
 }
 
 export default Assessment;

@@ -32,17 +32,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     let nav = [...baseNavigation]
     
     // Add role-specific dashboard items
-    if (canAccessCoordinatorFeatures()) {
-      nav.push({ name: 'Coordinator Dashboard', href: '/coordinator-dashboard', icon: AlertTriangle })
-    }
+    //if (canAccessCoordinatorFeatures()) {
+      //nav.push({ name: 'Coordinator Dashboard', href: '/coordinator-dashboard', icon: AlertTriangle })
+    //}
     
-    if (canAccessSchoolFeatures()) {
-      nav.push({ name: 'School Dashboard', href: '/school-dashboard', icon: Users })
-    }
+   // if (canAccessSchoolFeatures()) {
+   //   nav.push({ name: 'School Dashboard', href: '/school-dashboard', icon: Users })
+    //}
     
-    if (canAccessCommunityFeatures()) {
-      nav.push({ name: 'Community Dashboard', href: '/community-dashboard', icon: Users })
-    }
+   // if (canAccessCommunityFeatures()) {
+   //   nav.push({ name: 'Community Dashboard', href: '/community-dashboard', icon: Users })
+   // }
     
     // Add profile at the end
     nav.push({ name: 'Profile', href: '/profile', icon: User })

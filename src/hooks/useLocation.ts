@@ -1,85 +1,96 @@
 import { useState, useEffect } from 'react'
 
-interface LocationData {
-  latitude: number
-  longitude: number
+// The interface defining the shape of our location data
+// Make sure this is exported so other files like LocationContext can import it
+export interface LocationData {
+  latitude: number | null
+  longitude: number | null
   city: string
   country: string
   loading: boolean
   error: string | null
 }
 
-export const useLocation = () => {
+export const useLocation = (): LocationData => {
   const [location, setLocation] = useState<LocationData>({
-    latitude: 0,
-    longitude: 0,
+    latitude: null,
+    longitude: null,
     city: '',
     country: '',
-    loading: true,
-    error: null
+    loading: true, // Start in a loading state
+    error: null,
   })
 
   useEffect(() => {
+    // This effect runs once when the component using the hook mounts
     if (!navigator.geolocation) {
-      setLocation(prev => ({
+      setLocation((prev) => ({
         ...prev,
         loading: false,
-        error: 'Geolocation is not supported by this browser'
+        error: 'Geolocation is not supported by this browser.',
       }))
       return
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords
-        
-        try {
-          // Mock reverse geocoding - in real app, use a service like OpenCage or Google
-          const mockCities = [
-            { lat: 37.7749, lng: -122.4194, city: 'San Francisco', country: 'USA' },
-            { lat: 40.7128, lng: -74.0060, city: 'New York', country: 'USA' },
-            { lat: 34.0522, lng: -118.2437, city: 'Los Angeles', country: 'USA' },
-            { lat: 51.5074, lng: -0.1278, city: 'London', country: 'UK' },
-            { lat: 48.8566, lng: 2.3522, city: 'Paris', country: 'France' }
-          ]
-          
-          // Find closest city (simplified)
-          const closest = mockCities.reduce((prev, curr) => {
-            const prevDist = Math.abs(prev.lat - latitude) + Math.abs(prev.lng - longitude)
-            const currDist = Math.abs(curr.lat - latitude) + Math.abs(curr.lng - longitude)
-            return currDist < prevDist ? curr : prev
-          })
-          
-          setLocation({
-            latitude,
-            longitude,
-            city: closest.city,
-            country: closest.country,
-            loading: false,
-            error: null
-          })
-        } catch (error) {
-          setLocation(prev => ({
-            ...prev,
-            loading: false,
-            error: 'Failed to get location details'
-          }))
+    // Success callback for when the browser gets the coordinates
+    const handleSuccess = async (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords
+
+      try {
+        // --- Real Reverse Geocoding using OpenStreetMap Nominatim API ---
+        // This service is free and does not require an API key.
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+        )
+
+        if (!response.ok) {
+          throw new Error('Reverse geocoding failed.')
         }
-      },
-      (error) => {
-        setLocation(prev => ({
-          ...prev,
+
+        const data = await response.json()
+
+        // Extract city and country from the API response
+        const city = data.address.city || data.address.town || data.address.village || 'Unknown City'
+        const country = data.address.country || 'Unknown Country'
+        
+        // Update state with the accurate location information
+        setLocation({
+          latitude,
+          longitude,
+          city,
+          country,
           loading: false,
-          error: error.message
+          error: null,
+        })
+      } catch (err) {
+        setLocation((prev) => ({
+          ...prev,
+          latitude, // We still have the coordinates
+          longitude,
+          city: 'N/A', // But couldn't get the name
+          country: 'N/A',
+          loading: false,
+          error: 'Failed to fetch location name.',
         }))
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000 // 5 minutes
       }
-    )
-  }, [])
+    }
+
+    // Error callback for when geolocation fails
+    const handleError = (error: GeolocationPositionError) => {
+      setLocation((prev) => ({
+        ...prev,
+        loading: false,
+        error: error.message,
+      }))
+    }
+
+    // Request the user's current position with options for higher accuracy
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+      enableHighAccuracy: true, // Request the most accurate position possible
+      timeout: 15000,           // Increase timeout to 15 seconds to allow for GPS lock
+      maximumAge: 0             // **Force a fresh location, do not use a cached one**
+    })
+  }, []) // The empty dependency array ensures this effect runs only once
 
   return location
 }

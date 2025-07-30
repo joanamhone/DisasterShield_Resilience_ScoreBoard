@@ -9,7 +9,7 @@ const DisasterMap: React.FC<DisasterMapProps> = ({ location }) => {
     <div className="card overflow-hidden">
       <div className="relative">
         <img
-          src="https://images.pexels.com/photos/4386442/pexels-photo-4386442.jpeg?auto=compress&cs=tinysrgb&w=800"
+          src="https://static01.nyt.com/images/2021/03/25/learning/ClimateRiskMapLN/ClimateRiskMapLN-superJumbo.png?quality=75&auto=webp"
           alt="Disaster Risk Map"
           className="w-full h-48 object-cover"
         />

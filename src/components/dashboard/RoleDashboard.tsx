@@ -15,7 +15,7 @@ const RoleDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Role-specific welcome message */}
-      <div className="card p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+       {/*<div className="card p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
         <h2 className="text-lg font-bold text-text-primary mb-2">
           {getRoleDisplayName()} Dashboard
         </h2>
@@ -25,7 +25,7 @@ const RoleDashboard: React.FC = () => {
           {canAccessCommunityFeatures() && !canAccessSchoolFeatures() && !canAccessCoordinatorFeatures() && "Lead your community's disaster preparedness efforts and coordinate group activities."}
           {!canAccessCommunityFeatures() && !canAccessSchoolFeatures() && !canAccessCoordinatorFeatures() && "Track your personal disaster preparedness and stay informed about local risks."}
         </p>
-      </div>
+      </div>  */}
 
       {/* Role-specific dashboard components */}
       {canAccessCoordinatorFeatures() && <EmergencyManagement />}

@@ -39,11 +39,11 @@ export default {
         },
         border: '#E2E8F0',
         divider: '#CBD5E0',
+        // Updated risk colors to match the green, yellow, red scheme
         risk: {
-          low: '#43A047',
-          medium: '#FFA000',
-          high: '#F57C00',
-          severe: '#D32F2F',
+          low: '#43A047',    // Green for okay/low risk
+          medium: '#FFA000',  // Yellow for medium risk
+          high: '#D32F2F',    // Red for high risk
         }
       },
       animation: {

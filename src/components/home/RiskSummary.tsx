@@ -12,18 +12,30 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-// Helper function to map each risk type to its icon and color
-const getRiskDetails = (riskName: string) => {
-  const lowerCaseName = riskName.toLowerCase();
-  if (lowerCaseName.includes('flood')) return { icon: Droplets, color: 'text-risk-medium' };
-  if (lowerCaseName.includes('fire')) return { icon: Flame, color: 'text-risk-high' };
-  if (lowerCaseName.includes('drought')) return { icon: Sun, color: 'text-risk-high' };
-  if (lowerCaseName.includes('storm')) return { icon: Wind, color: 'text-risk-low' };
-  if (lowerCaseName.includes('snow')) return { icon: CloudSnow, color: 'text-risk-low' };
-  return { icon: AlertOctagon, color: 'text-text-secondary' };
+// Define the component's props
+interface RiskSummaryProps {
+  displayMode?: 'summary' | 'full';
+}
+
+// Helper to determine the risk level class based on probability
+const getRiskLevelClass = (probability: number): 'text-risk-low' | 'text-risk-medium' | 'text-risk-high' => {
+  if (probability > 0.5) return 'text-risk-high'; // Over 50%
+  if (probability > 0.2) return 'text-risk-medium'; // Over 20%
+  return 'text-risk-low'; // 20% or less
 };
 
-const RiskSummary: React.FC = () => {
+// Helper to get only the icon for a specific risk type
+const getRiskIcon = (riskName: string) => {
+  const lowerCaseName = riskName.toLowerCase();
+  if (lowerCaseName.includes('flood')) return Droplets;
+  if (lowerCaseName.includes('fire')) return Flame;
+  if (lowerCaseName.includes('drought')) return Sun;
+  if (lowerCaseName.includes('storm')) return Wind;
+  if (lowerCaseName.includes('snow')) return CloudSnow;
+  return AlertOctagon;
+};
+
+const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
   const { prediction, isLoading, error, retryFetch } = useDisasterPrediction();
 
   if (isLoading) {
@@ -48,20 +60,27 @@ const RiskSummary: React.FC = () => {
     );
   }
 
-  const currentRisks = prediction 
+  const allCurrentRisks = prediction 
     ? Object.entries(prediction)
         .map(([name, probability]) => ({
           type: name,
           probability,
-          ...getRiskDetails(name),
+          icon: getRiskIcon(name),
+          color: getRiskLevelClass(probability),
         }))
         .sort((a, b) => b.probability - a.probability)
         .filter(risk => risk.probability > 0.01)
     : [];
 
-  const topRisk = currentRisks.length > 0 
-    ? currentRisks[0] 
-    : { type: 'None', probability: 0, color: 'text-success' };
+  const topRisk = allCurrentRisks.length > 0 
+    ? allCurrentRisks[0] 
+    : { type: 'None', probability: 0, color: 'text-success', icon: AlertOctagon };
+
+  // Determine which risks to display based on the mode
+  // The summary view shows the top 2 risks in the list
+  const risksToDisplay = displayMode === 'summary' 
+    ? allCurrentRisks.slice(0, 2) 
+    : allCurrentRisks;
 
   return (
     <div className="card p-4">
@@ -77,8 +96,8 @@ const RiskSummary: React.FC = () => {
       </div>
       
       <div className="space-y-2">
-        {currentRisks.length > 0 ? (
-          currentRisks.map((risk, index) => {
+        {risksToDisplay.length > 0 ? (
+          risksToDisplay.map((risk, index) => {
             const Icon = risk.icon;
             const percentage = (risk.probability * 100).toFixed(1);
             return (
