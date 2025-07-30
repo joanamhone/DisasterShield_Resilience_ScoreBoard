@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { useSession } from '@supabase/auth-helpers-react'
 
 type Answer = {
   questionId: number
@@ -28,10 +29,10 @@ interface Option {
 
 const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  // const [answers, setAnswers] = useState<number[]>([])
+  
   const [answers, setAnswers] = useState<Answer[]>([])
   const [quizComplete, setQuizComplete] = useState(false)
-
+  const session = useSession()
   const questions: Question[] = [
     {
       id: 1,
@@ -146,12 +147,8 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
   ]
 
   const currentQuestion = questions[currentQuestionIndex]
-
-  // const handleAnswer = (value: number) => {
-  //   const newAnswers = [...answers]
-  //   newAnswers[currentQuestionIndex] = value
-  //   setAnswers(newAnswers)
-  // }
+  const userId = session?.user?.id
+ 
 const handleAnswer = (value: number) => {
   const selectedOption = currentQuestion.options.find((opt) => opt.value === value)
 
@@ -183,64 +180,42 @@ const handleAnswer = (value: number) => {
     }
   }
 
-  // const calculateScore = () => {
-  //   setQuizComplete(true)
-  //   setTimeout(() => {
-  //     const totalPoints = answers.reduce((sum, value) => sum + value, 0)
-  //     const maxPossiblePoints = questions.length * 10
-  //     const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
-  //     onComplete(scorePercentage, answers)
-  //   }, 1500)
-  // }
   const calculateScore = async () => {
   setQuizComplete(true)
+
   setTimeout(async () => {
-    //const totalPoints = answers.reduce((sum, value) => sum + value, 0)
     const totalPoints = answers.reduce((sum, ans) => sum + ans.selectedValue, 0)
     const maxPossiblePoints = questions.length * 10
     const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
 
-    // Save to Supabase
-    const { data, error } = await supabase
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      console.error('No user session found:', userError)
+      return
+    }
+
+    const { error: insertError } = await supabase
       .from('readiness_responses')
       .insert([
         {
-          answers, // stored as JSON
+          user_id: user.id, 
+          answers,
           score: scorePercentage,
-          // Optionally include: user_id, location, etc.
         },
       ])
 
-    if (error) {
-      console.error('Error saving readiness data:', error)
+    if (insertError) {
+      console.error('Error saving readiness data:', insertError)
     }
 
     onComplete(scorePercentage, answers)
   }, 1500)
 }
 
-//you can add user_id like:
-// const {
-//   data: { user },
-// } = await supabase.auth.getUser()
-
-// await supabase.from('readiness_responses').insert([
-//   {
-//     user_id: user?.id,
-//     answers,
-//     score: scorePercentage,
-//   },
-// ])
-//  6. Querying scores later
-// To get responses:
-
-// ts
-// Copy code
-// const { data, error } = await supabase
-//   .from('readiness_responses')
-//   .select('*')
-//   .eq('user_id', currentUserId) // optional
-//Would you like help displaying a “past scores history” component from the DB?
 
   const isAnswered = answers[currentQuestionIndex] !== undefined
   const isLastQuestion = currentQuestionIndex === questions.length - 1
