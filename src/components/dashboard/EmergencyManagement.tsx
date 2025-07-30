@@ -2,27 +2,30 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // Import useAuth
+import { useAuth } from '../../contexts/AuthContext'; // <--- ADDED THIS IMPORT
+import ReadinessScore from '../home/ReadinessScore'; // <--- ADDED THIS IMPORT
+import RecentAlerts from '../home/RecentAlerts';     // <--- ADDED THIS IMPORT
+import RiskSummary from '../home/RiskSummary';       // <--- ADDED THIS IMPORT
 import {
   AlertTriangle, MapPin, Users, Activity, Send, Eye, BarChart3,
   Shield, TrendingUp, Bell, Settings, FileText, Radio, UserCheck, Megaphone
-} from 'lucide-react'; // Added new icons from DisasterCoordinatorDashboard
-import { clsx } from 'clsx'; // Utility for conditional class names
+} from 'lucide-react';
+import { clsx } from 'clsx';
 
 const EmergencyManagement: React.FC = () => {
-  const { user } = useAuth(); // Get user for welcome message
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'alerts' | 'resources' | 'analytics'>('overview');
 
   // --- Data from original EmergencyManagement ---
-  const emergencyStats = { // This can stay for specific overview tab stats if needed
+  const emergencyStats = {
     activeAlerts: 7,
     affectedPopulation: 12500,
     resourceRequests: 23,
     responseTeams: 8
   }
 
-  const activeAlertsTab = [ // Renamed to avoid clash, used for 'alerts' tab
+  const activeAlertsTab = [
     {
       id: 1,
       title: 'Severe Weather Warning',
@@ -52,34 +55,34 @@ const EmergencyManagement: React.FC = () => {
     }
   ]
 
-  const resourceRequests = [ // Used for 'resources' tab
+  const resourceRequests = [
     { id: 1, type: 'Medical Supplies', location: 'Community Center A', priority: 'high', requested: '50 units' },
     { id: 2, type: 'Emergency Shelter', location: 'School District 5', priority: 'critical', requested: '200 beds' },
     { id: 3, type: 'Food & Water', location: 'Riverside Evacuation', priority: 'high', requested: '500 meals' }
   ]
 
   // --- Data from DisasterCoordinatorDashboard ---
-  const coordinatorStats = [ // Used for the main dashboard stats grid
+  const coordinatorStats = [
     { label: 'Regions Managed', value: '5', icon: MapPin, color: 'text-blue-600' },
     { label: 'Communities', value: '28', icon: Users, color: 'text-green-600' },
     { label: 'Schools', value: '12', icon: Shield, color: 'text-purple-600' },
     { label: 'Active Alerts', value: '3', icon: AlertTriangle, color: 'text-red-600' }
   ];
 
-  const quickActionsCoordinator = [ // Combined with custom buttons
+  const quickActionsCoordinator = [
     {
-      title: 'Send Community Alert', // Modified name, using Megaphone from common icons
+      title: 'Send Regional Alert',
       description: 'Broadcast urgent messages to the community',
       icon: Megaphone,
       color: 'bg-red-600',
-      onClick: () => navigate('/alerts') // Assuming /alerts is the send alert page
+      onClick: () => navigate('/alerts')
     },
     {
       title: 'View Risk Map',
       description: 'Go to the comprehensive risk assessment',
       icon: AlertTriangle,
-      color: 'bg-orange-500', // Changed color to orange
-      onClick: () => navigate('/assessment') // Changed to risk assessment page
+      color: 'bg-orange-500',
+      onClick: () => navigate('/assessment')
     },
     {
       title: 'Your Readiness',
@@ -111,7 +114,7 @@ const EmergencyManagement: React.FC = () => {
     }
   ];
 
-  const recentAlertsMain = [ // Used for the dedicated Recent Alerts section
+  const recentAlertsMain = [
     { id: 1, type: 'Flood Warning', location: 'District A', time: '2 hours ago', severity: 'High' },
     { id: 2, type: 'Storm Alert', location: 'District B', time: '4 hours ago', severity: 'Medium' },
     { id: 3, type: 'Heat Wave', location: 'District C', time: '6 hours ago', severity: 'Low' }
@@ -121,18 +124,18 @@ const EmergencyManagement: React.FC = () => {
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
       case 'critical':
-      case 'high': // Included high here based on DCD's usage
+      case 'high':
         return 'text-error bg-error/20 border-error';
       case 'medium':
-        return 'text-warning bg-warning/20 border-warning'; // Medium maps to warning in DCD
-      case 'low': // Added low severity
+        return 'text-warning bg-warning/20 border-warning';
+      case 'low':
         return 'text-accent bg-accent/20 border-accent';
       default:
         return 'text-text-secondary bg-surface border-border';
     }
   };
 
-  const getPriorityColor = (priority: string) => { // Remains from original EmergencyManagement
+  const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'critical':
         return 'text-error bg-error/20';
@@ -147,20 +150,18 @@ const EmergencyManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header - Blended from DisasterCoordinatorDashboard and original EmergencyManagement */}
+      {/* Header */}
       <div className="bg-white rounded-lg shadow-sm p-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Regional/District Overview
+            Welcome back, {user?.fullName || 'Disaster Coordinator'}
           </h1>
           <p className="text-gray-600">
             Regional Emergency Management Dashboard - {user?.location || 'Your Region'}
           </p>
         </div>
-        {/* The 'Send Alert' and 'View Risk Map' buttons are now part of Quick Actions */}
-        {/* You could add a specific 'Send Alert' button here if it's a primary call to action always visible */}
         <button
-          onClick={() => navigate('/alerts')} // Assuming /alerts is the dedicated send alert page
+          onClick={() => navigate('/alerts')}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition-colors"
         >
           <Megaphone className="h-5 w-5" />
@@ -168,7 +169,7 @@ const EmergencyManagement: React.FC = () => {
         </button>
       </div>
 
-      {/* Main Stats Grid - From DisasterCoordinatorDashboard */}
+      {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {coordinatorStats.map((stat, index) => (
           <div key={index} className="bg-white rounded-lg shadow-sm p-6">
@@ -183,10 +184,17 @@ const EmergencyManagement: React.FC = () => {
         ))}
       </div>
 
-      {/* Quick Actions - From DisasterCoordinatorDashboard, with added Send Alert/View Risk Map */}
+      {/* Core Dashboard Components (These components are now properly imported!) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <ReadinessScore />
+        <RecentAlerts />
+        <RiskSummary />
+      </div>
+
+      {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"> {/* Adjusted grid layout to 4 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActionsCoordinator.map((action, index) => (
             <button
               key={index}
@@ -203,7 +211,7 @@ const EmergencyManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Alerts - From DisasterCoordinatorDashboard */}
+      {/* Recent Alerts */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Recent Alerts</h2>
@@ -308,7 +316,7 @@ const EmergencyManagement: React.FC = () => {
                 </div>
               </div>
               {/* Regional Overview from DisasterCoordinatorDashboard is now part of this overview tab */}
-              <div className="bg-white rounded-lg shadow-sm p-6"> {/* Re-using card style */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Regional Preparedness Overview</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
