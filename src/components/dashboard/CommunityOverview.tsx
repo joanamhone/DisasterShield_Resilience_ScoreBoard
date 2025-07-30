@@ -45,7 +45,7 @@ const CommunityOverview: React.FC = () => {
       description: 'Explore geographic disaster risks in your area',
       icon: AlertTriangle,
       color: 'bg-red-500', // Changed
-      onClick: () => navigate('/map')
+      onClick: () => navigate('/assessment')
     },
     {
       title: 'Track Progress',
