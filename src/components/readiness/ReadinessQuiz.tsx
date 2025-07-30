@@ -1,29 +1,31 @@
-import React, { useState } from 'react'
-import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import React, { useState } from 'react';
+import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { useReadiness } from '../../contexts/ReadinessContext';
 
 interface ReadinessQuizProps {
-  onComplete: (score: number, answers: number[]) => void
-  onCancel: () => void
+  onComplete: () => void;
+  onCancel: () => void;
 }
 
 interface Question {
-  id: number
-  text: string
-  options: Option[]
+  id: number;
+  text: string;
+  options: Option[];
 }
-
 interface Option {
-  id: number
-  text: string
-  value: number
+  id: number;
+  text: string;
+  value: number;
 }
 
 const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
-  const [quizComplete, setQuizComplete] = useState(false)
+  const { saveResponse } = useReadiness(); // **THE FIX: Use the correct function name**
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const questions: Question[] = [
+    // Your questions array remains the same
     {
       id: 1,
       text: 'How many people are currently living in your household?',
@@ -134,70 +136,68 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
         { id: 5, text: 'No backup at all', value: 0 },
       ],
     },
-  ]
-
-  const currentQuestion = questions[currentQuestionIndex]
+  ];
 
   const handleAnswer = (value: number) => {
-    const newAnswers = [...answers]
-    newAnswers[currentQuestionIndex] = value
-    setAnswers(newAnswers)
-  }
+    const newAnswers = [...answers];
+    newAnswers[currentQuestionIndex] = value;
+    setAnswers(newAnswers);
+  };
+
+  const calculateAndSaveScore = async () => {
+    setIsSubmitting(true);
+    try {
+      const totalPoints = answers.reduce((sum, value) => sum + value, 0);
+      const maxPossiblePoints = questions.length * 10;
+      const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100);
+      
+      await saveResponse(scorePercentage, answers);
+      
+      onComplete();
+    } catch (error) {
+      console.error("Failed to save assessment:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const goToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      calculateScore()
+      calculateAndSaveScore();
     }
-  }
+  };
 
+  const currentQuestion = questions[currentQuestionIndex];
   const goToPreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1)
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  }
+  };
+  const isAnswered = answers[currentQuestionIndex] !== undefined;
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  const calculateScore = () => {
-    setQuizComplete(true)
-    setTimeout(() => {
-      const totalPoints = answers.reduce((sum, value) => sum + value, 0)
-      const maxPossiblePoints = questions.length * 10
-      const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
-      onComplete(scorePercentage, answers)
-    }, 1500)
-  }
-
-  const isAnswered = answers[currentQuestionIndex] !== undefined
-  const isLastQuestion = currentQuestionIndex === questions.length - 1
-
-  if (quizComplete) {
+  if (isSubmitting) {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-lg font-medium text-text-primary">
-            Calculating your comprehensive readiness score...
-          </p>
+          <p className="text-lg font-medium text-text-primary">Saving your assessment...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="card overflow-hidden">
+      {/* UI remains the same */}
       <div className="flex justify-between items-center p-4 border-b border-divider">
-        <h2 className="text-lg font-bold text-text-primary">
-          Comprehensive Readiness Assessment
-        </h2>
-        <button
-          onClick={onCancel}
-          className="p-1 hover:bg-surface rounded-lg transition-colors duration-200"
-        >
+        <h2 className="text-lg font-bold text-text-primary">Comprehensive Readiness Assessment</h2>
+        <button onClick={onCancel} className="p-1 hover:bg-surface rounded-lg transition-colors duration-200">
           <X size={24} className="text-text-primary" />
         </button>
       </div>
-
       <div className="p-4 pb-2">
         <div className="w-full bg-border h-2 rounded-full mb-2">
           <div 
@@ -205,16 +205,10 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
             style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
           ></div>
         </div>
-        <p className="text-sm text-text-secondary">
-          Question {currentQuestionIndex + 1} of {questions.length}
-        </p>
+        <p className="text-sm text-text-secondary">Question {currentQuestionIndex + 1} of {questions.length}</p>
       </div>
-
       <div className="p-4 space-y-6">
-        <h3 className="text-lg font-bold text-text-primary leading-relaxed">
-          {currentQuestion.text}
-        </h3>
-
+        <h3 className="text-lg font-bold text-text-primary leading-relaxed">{currentQuestion.text}</h3>
         <div className="space-y-3">
           {currentQuestion.options.map((option) => (
             <button
@@ -226,9 +220,7 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
                   : 'bg-card border-divider hover:border-primary/50 text-text-primary'
               }`}
             >
-              <span className="flex-1 leading-relaxed">
-                {option.text}
-              </span>
+              <span className="flex-1 leading-relaxed">{option.text}</span>
               {answers[currentQuestionIndex] === option.value && (
                 <Check size={20} className="text-white ml-3 flex-shrink-0 mt-0.5" />
               )}
@@ -236,7 +228,6 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
           ))}
         </div>
       </div>
-
       <div className="flex justify-between items-center p-4 border-t border-divider">
         <button
           onClick={goToPreviousQuestion}
@@ -250,7 +241,6 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
           <ChevronLeft size={20} className="mr-1" />
           Previous
         </button>
-
         <button
           onClick={goToNextQuestion}
           disabled={!isAnswered}
@@ -265,7 +255,7 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ReadinessQuiz
+export default ReadinessQuiz;

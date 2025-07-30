@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ReadinessProvider } from './contexts/ReadinessContext';
 import { DisasterPredictionProvider } from './contexts/DisasterPredictionContext';
+import { EmergencyKitProvider } from './contexts/EmergencyKitContext'; // 1. Import the provider
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -15,12 +16,9 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import ProfileSetup from './pages/ProfileSetup';
 import ForgotPassword from './pages/ForgotPassword';
-// import CommunityDashboard from './pages/CommunityDashboard'; // REMOVE THIS LINE
-import CommunityOverview from './components/dashboard/CommunityOverview'; // ADD THIS LINE
-//import SchoolDashboard from './pages/SchoolDashboard'; // This line is correctly commented out
-import SchoolManagement from './components/dashboard/SchoolManagement'; // This is the correct import for the consolidated component
+import CommunityOverview from './components/dashboard/CommunityOverview';
+import SchoolManagement from './components/dashboard/SchoolManagement';
 import DisasterCoordinatorDashboard from './pages/DisasterCoordinatorDashboard';
-//import EmergencyManagement from './components/dashboard/EmergencyManagement'; // ADD THIS LINE
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -34,72 +32,74 @@ function App() {
     <AuthProvider>
       <ReadinessProvider>
         <DisasterPredictionProvider>
-          <Router>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* 2. Wrap the application with the EmergencyKitProvider */}
+          <EmergencyKitProvider>
+            <Router>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
-              {/* Protected Routes */}
-              <Route path="/profile-setup" element={
-                <ProtectedRoute>
-                  <ProfileSetup />
-                </ProtectedRoute>
-              } />
+                {/* Protected Routes */}
+                <Route path="/profile-setup" element={
+                  <ProtectedRoute>
+                    <ProfileSetup />
+                  </ProtectedRoute>
+                } />
 
-              <Route path="/*" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/assessment" element={<Assessment />} />
-                      <Route path="/readiness" element={<Readiness />} />
-                      <Route path="/progress" element={<Progress />} />
-                      <Route path="/floodriskmap" element={<FloodRiskMap />} />
-                      <Route path="/emergency-kit" element={<EmergencyKit />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/community-dashboard" element={
-                        <ProtectedRoute allowedRoles={['community_leader']}>
-                          <CommunityOverview />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/school-dashboard" element={
-                        <ProtectedRoute allowedRoles={['school_admin']}>
-                          {/* THIS IS THE LINE TO CHANGE */}
-                          <SchoolManagement /> {/* Changed from <SchoolDashboard /> to <SchoolManagement /> */}
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/coordinator-dashboard" element={
-                        <ProtectedRoute allowedRoles={['disaster_coordinator']}>
-                          <DisasterCoordinatorDashboard />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/terms" element={<Terms />} />
-                      <Route path="/privacy" element={<Privacy />} />
-                      <Route path="/recommendations" element={<Recommendations />} />
-                      <Route path="/all-alerts" element={
-                        <ProtectedRoute allowedRoles={['disaster_coordinator']}>
-                          <AllAlerts />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/affected-population" element={
-                        <ProtectedRoute allowedRoles={['disaster_coordinator']}>
-                          <AffectedPopulation />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/response-teams" element={
-                        <ProtectedRoute allowedRoles={['disaster_coordinator']}>
-                          <ResponseTeams />
-                        </ProtectedRoute>
-                      } />
-                    </Routes>
-                  </Layout>
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </Router>
+                <Route path="/*" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/assessment" element={<Assessment />} />
+                        <Route path="/readiness" element={<Readiness />} />
+                        <Route path="/progress" element={<Progress />} />
+                        <Route path="/floodriskmap" element={<FloodRiskMap />} />
+                        <Route path="/emergency-kit" element={<EmergencyKit />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/community-dashboard" element={
+                          <ProtectedRoute allowedRoles={['community_leader']}>
+                            <CommunityOverview />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/school-dashboard" element={
+                          <ProtectedRoute allowedRoles={['school_admin']}>
+                            <SchoolManagement />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/coordinator-dashboard" element={
+                          <ProtectedRoute allowedRoles={['disaster_coordinator']}>
+                            <DisasterCoordinatorDashboard />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/recommendations" element={<Recommendations />} />
+                        <Route path="/all-alerts" element={
+                          <ProtectedRoute allowedRoles={['disaster_coordinator']}>
+                            <AllAlerts />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/affected-population" element={
+                          <ProtectedRoute allowedRoles={['disaster_coordinator']}>
+                            <AffectedPopulation />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/response-teams" element={
+                          <ProtectedRoute allowedRoles={['disaster_coordinator']}>
+                            <ResponseTeams />
+                          </ProtectedRoute>
+                        } />
+                      </Routes>
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </Router>
+          </EmergencyKitProvider>
         </DisasterPredictionProvider>
       </ReadinessProvider>
     </AuthProvider>

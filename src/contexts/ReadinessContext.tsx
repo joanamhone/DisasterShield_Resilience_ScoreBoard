@@ -1,143 +1,98 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
-import { useAuth } from './AuthContext'
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { supabase } from '../lib/supabase'; // Make sure you have a central supabase client
+import { useAuth } from './AuthContext';
 
-interface AssessmentHistory {
-  id: string
-  type: 'general' | 'seasonal'
-  score: number
-  date: Date
-  location?: string
-  season?: string
-  answers: number[]
+// --- Interfaces ---
+export interface ReadinessResponse {
+  id: string;
+  score: number;
+  answers: number[];
+  created_at: string;
 }
 
 interface ReadinessContextType {
-  currentScore: number
-  assessmentHistory: AssessmentHistory[]
-  updateScore: (score: number, type: 'general' | 'seasonal', location?: string, season?: string, answers?: number[]) => void
-  getLatestAssessment: () => AssessmentHistory | null
+  latestScore: number;
+  latestResponse: ReadinessResponse | null;
+  assessmentHistory: ReadinessResponse[];
+  isLoading: boolean; // Provide the loading state
+  saveResponse: (score: number, answers: number[]) => Promise<void>;
 }
 
-const ReadinessContext = createContext<ReadinessContextType | undefined>(undefined)
+const ReadinessContext = createContext<ReadinessContextType | undefined>(undefined);
 
-export const ReadinessProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth()
-  const [currentScore, setCurrentScore] = useState(65) // Default score
-  const [assessmentHistory, setAssessmentHistory] = useState<AssessmentHistory[]>([])
+export const ReadinessProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  const [assessmentHistory, setAssessmentHistory] = useState<ReadinessResponse[]>([]);
+  const [latestResponse, setLatestResponse] = useState<ReadinessResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load data from Supabase when user is available
-  useEffect(() => {
-    if (user) {
-      loadAssessments()
-    } else {
-      // Reset state when user logs out
-      setCurrentScore(65)
-      setAssessmentHistory([])
-    }
-  }, [user])
+  const fetchResponses = useCallback(async () => {
+    if (!user) {
+        setAssessmentHistory([]);
+        setLatestResponse(null);
+        setIsLoading(false);
+        return;
+    };
 
-  const loadAssessments = async () => {
-    if (!user) return
-
+    setIsLoading(true);
     try {
-      const { data: assessments, error } = await supabase
-        .from('assessments')
+      const { data, error } = await supabase
+        .from('readiness_responses')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(10)
+        .limit(10);
 
-      if (error) throw error
+      if (error) throw error;
 
-      if (assessments && assessments.length > 0) {
-        const history: AssessmentHistory[] = assessments.map(assessment => ({
-          id: assessment.id,
-          type: assessment.type,
-          score: assessment.score,
-          date: new Date(assessment.created_at),
-          location: assessment.location,
-          season: assessment.season,
-          answers: assessment.answers
-        }))
-        
-        setAssessmentHistory(history)
-        setCurrentScore(history[0].score) // Most recent score
+      if (data) {
+        setAssessmentHistory(data);
+        setLatestResponse(data[0] || null); // Set to null if no data
       }
     } catch (error) {
-      console.error('Error loading assessments:', error)
+      console.error('Error loading readiness responses:', error);
+    } finally {
+      setIsLoading(false); // Set loading to false after fetch is complete
     }
-  }
+  }, [user]);
 
-  const updateScore = (
-    score: number, 
-    type: 'general' | 'seasonal', 
-    location?: string, 
-    season?: string,
-    answers: number[] = []
-  ) => {
-    if (!user) return
+  useEffect(() => {
+    fetchResponses();
+  }, [fetchResponses]);
 
-    setCurrentScore(score)
-    
-    const newAssessment: AssessmentHistory = {
-      id: crypto.randomUUID(),
-      type,
-      score,
-      date: new Date(),
-      location,
-      season,
-      answers
+  const saveResponse = async (score: number, answers: number[]) => {
+    // Safeguard to prevent saving invalid data
+    if (!user || typeof score !== 'number' || isNaN(score)) {
+        console.error("Save aborted: Invalid data provided.", { user, score });
+        return;
     }
     
-    const updatedHistory = [newAssessment, ...assessmentHistory].slice(0, 10) // Keep last 10 assessments
-    setAssessmentHistory(updatedHistory)
-    
-    // Save to Supabase
-    saveAssessment(newAssessment)
-  }
+    const { error } = await supabase
+      .from('readiness_responses')
+      .insert({
+        user_id: user.id,
+        score,
+        answers,
+      });
 
-  const saveAssessment = async (assessment: AssessmentHistory) => {
-    if (!user) return
+    if (error) throw error;
 
-    try {
-      const { error } = await supabase
-        .from('assessments')
-        .insert({
-          user_id: user.id,
-          type: assessment.type,
-          score: assessment.score,
-          answers: assessment.answers,
-          location: assessment.location,
-          season: assessment.season
-        })
-
-      if (error) throw error
-    } catch (error) {
-      console.error('Error saving assessment:', error)
-    }
-  }
-
-  const getLatestAssessment = () => {
-    return assessmentHistory.length > 0 ? assessmentHistory[0] : null
-  }
+    await fetchResponses(); // Refresh data after saving
+  };
+  
+  const latestScore = latestResponse?.score ?? 0;
 
   return (
-    <ReadinessContext.Provider value={{
-      currentScore,
-      assessmentHistory,
-      updateScore,
-      getLatestAssessment
-    }}>
+    <ReadinessContext.Provider value={{ latestScore, latestResponse, assessmentHistory, isLoading, saveResponse }}>
       {children}
     </ReadinessContext.Provider>
-  )
-}
+  );
+};
 
 export const useReadiness = () => {
-  const context = useContext(ReadinessContext)
+  const context = useContext(ReadinessContext);
   if (context === undefined) {
-    throw new Error('useReadiness must be used within a ReadinessProvider')
+    throw new Error('useReadiness must be used within a ReadinessProvider');
   }
-  return context
-}
+  return context;
+};
