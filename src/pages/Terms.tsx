@@ -11,7 +11,7 @@ const Terms: React.FC = () => {
           <h1 className="text-2xl font-bold text-text-primary">Terms of Service</h1>
         </div>
         <p className="text-text-secondary">
-          Last updated: January 15, 2024
+          Last updated: July 1, 2025
         </p>
       </div>
 
@@ -98,7 +98,7 @@ const Terms: React.FC = () => {
           <div className="mt-3 p-4 bg-surface rounded-lg">
             <p className="text-text-primary font-medium">Disaster Shield Support</p>
             <p className="text-text-secondary">Email: support@disastershield.com</p>
-            <p className="text-text-secondary">Phone: 1-800-PREPARE</p>
+            <p className="text-text-secondary">Phone: +265 (555) 123-4567</p>
           </div>
         </section>
       </div>
@@ -107,7 +107,7 @@ const Terms: React.FC = () => {
       <div className="card p-4 text-center">
         <div className="flex items-center justify-center text-text-tertiary">
           <Calendar size={16} className="mr-2" />
-          <span className="text-sm">Effective Date: January 15, 2024</span>
+          <span className="text-sm">Effective Date: July 1, 2025</span>
         </div>
       </div>
     </div>

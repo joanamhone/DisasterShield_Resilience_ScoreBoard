@@ -11,7 +11,7 @@ const Privacy: React.FC = () => {
           <h1 className="text-2xl font-bold text-text-primary">Privacy Policy</h1>
         </div>
         <p className="text-text-secondary">
-          Last updated: January 15, 2024
+          Last updated: July 1, 2025
         </p>
       </div>
 
@@ -135,7 +135,7 @@ const Privacy: React.FC = () => {
           <div className="mt-3 p-4 bg-surface rounded-lg">
             <p className="text-text-primary font-medium">Privacy Officer</p>
             <p className="text-text-secondary">Email: privacy@disastershield.com</p>
-            <p className="text-text-secondary">Phone: 1-800-PRIVACY</p>
+            <p className="text-text-secondary">Phone: +265 (555) 123-4567</p>
           </div>
         </section>
       </div>
