@@ -13,6 +13,7 @@ export interface AssessmentAnswer {
 }
 
 export interface ReadinessResponse {
+  date(date: any, arg1: string): React.ReactNode;
   id: string;
   user_id: string;
   score: number;

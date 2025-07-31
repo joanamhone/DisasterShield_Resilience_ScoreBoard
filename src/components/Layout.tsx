@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, AlertTriangle, Clipboard, User, Map, Menu, X, Bell, TrendingUp, Package, Users } from 'lucide-react'
+import { Home, AlertTriangle, Clipboard, User, Map, Menu, X, Bell, TrendingUp, Package } from 'lucide-react'
 import { clsx } from 'clsx'
 import NotificationCenter from './notifications/NotificationCenter'
 import ProfileDropdown from './ProfileDropdown'

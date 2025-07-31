@@ -1,53 +1,24 @@
-import React from 'react'
+import React from 'react';
 
+// 1. Define the props the component expects
 interface DisasterMapProps {
-  location: string
+  latitude: number;
+  longitude: number;
 }
 
-const DisasterMap: React.FC<DisasterMapProps> = ({ location }) => {
+const DisasterMap: React.FC<DisasterMapProps> = ({ latitude, longitude }) => {
+  // This is a placeholder for your map component.
+  // The important part is that it now correctly receives the latitude and longitude.
   return (
-    <div className="card overflow-hidden">
-      <div className="relative">
-        <img
-          src="https://static01.nyt.com/images/2021/03/25/learning/ClimateRiskMapLN/ClimateRiskMapLN-superJumbo.png?quality=75&auto=webp"
-          alt="Disaster Risk Map"
-          className="w-full h-48 object-cover"
-        />
-        <div className="absolute top-0 left-0 right-0 p-4 bg-black/30">
-          <h3 className="text-lg font-bold text-white">
-            Disaster Risk Map
-          </h3>
-          <p className="text-sm text-white/80">
-            {location}
-          </p>
-        </div>
-      </div>
-      
-      <div className="p-4">
-        <h4 className="font-bold text-sm text-text-primary mb-2">
-          Risk Levels
-        </h4>
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-risk-low mr-1"></div>
-            <span className="text-xs text-text-secondary">Low</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-risk-medium mr-1"></div>
-            <span className="text-xs text-text-secondary">Medium</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-risk-high mr-1"></div>
-            <span className="text-xs text-text-secondary">High</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-risk-severe mr-1"></div>
-            <span className="text-xs text-text-secondary">Severe</span>
-          </div>
-        </div>
+    <div className="card p-4">
+      <h3 className="font-bold text-text-primary mb-2">Disaster Risk Map</h3>
+      <div className="bg-surface h-64 rounded-lg flex items-center justify-center">
+        <p className="text-text-secondary">
+          Map for location ({latitude.toFixed(4)}, {longitude.toFixed(4)}) would be displayed here.
+        </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DisasterMap
+export default DisasterMap;

@@ -10,7 +10,7 @@ interface HistoricalTrendsChartProps {
   supabase: SupabaseClient
 }
 
-const HistoricalTrendsChart: React.FC<HistoricalTrendsChartProps> = ({ timeRange, location, supabase }) => {
+const HistoricalTrendsChart: React.FC<HistoricalTrendsChartProps> = ({ timeRange, supabase }) => {
   const { user } = useAuth();
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);

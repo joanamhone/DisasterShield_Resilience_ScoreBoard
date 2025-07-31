@@ -13,7 +13,6 @@ interface EnvironmentalChartProps {
 
 const EnvironmentalChart: React.FC<EnvironmentalChartProps> = ({ 
   timeRange, 
-  location, 
   parameter,
   supabase
 }) => {

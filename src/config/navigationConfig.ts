@@ -4,9 +4,6 @@ import {
   ShieldCheck,
   ClipboardList,
   BarChart3,
-  Building,
-  Users,
-  Settings,
   HeartHandshake
 } from 'lucide-react';
 

@@ -7,8 +7,8 @@ import ReadinessScore from '../home/ReadinessScore'; // <--- ADDED THIS IMPORT
 import RecentAlerts from '../home/RecentAlerts';     // <--- ADDED THIS IMPORT
 import RiskSummary from '../home/RiskSummary';       // <--- ADDED THIS IMPORT
 import {
-  AlertTriangle, MapPin, Users, Activity, Send, Eye, BarChart3,
-  Shield, TrendingUp, Bell, Settings, FileText, Radio, UserCheck, Megaphone
+  AlertTriangle, MapPin, Users, Activity, BarChart3,
+  Shield, TrendingUp, Bell, Radio, Megaphone
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -18,12 +18,6 @@ const EmergencyManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'alerts' | 'resources' | 'analytics'>('overview');
 
   // --- Data from original EmergencyManagement ---
-  const emergencyStats = {
-    activeAlerts: 7,
-    affectedPopulation: 12500,
-    resourceRequests: 23,
-    responseTeams: 8
-  }
 
   const activeAlertsTab = [
     {
@@ -186,7 +180,7 @@ const EmergencyManagement: React.FC = () => {
 
       {/* Core Dashboard Components (These components are now properly imported!) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ReadinessScore />
+        <ReadinessScore score={0} />
         <RecentAlerts />
         <RiskSummary />
       </div>

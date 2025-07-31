@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Users, MapPin, TrendingUp, AlertTriangle, Plus, Edit, Save } from 'lucide-react'
+import { Users, MapPin, TrendingUp, AlertTriangle, Plus } from 'lucide-react'
 
 interface DistrictData {
   id: string

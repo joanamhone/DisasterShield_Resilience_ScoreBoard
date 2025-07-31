@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AlertTriangle, Bell, Filter, Search, MapPin, Clock, Users } from 'lucide-react'
+import { AlertTriangle, Bell, Search, MapPin, Clock, Users } from 'lucide-react'
 import { format, subDays, subHours } from 'date-fns'
 
 interface Alert {

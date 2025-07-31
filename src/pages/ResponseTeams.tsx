@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Users, Shield, MapPin, Clock, Plus, Edit, Phone, Mail } from 'lucide-react'
+import { Users, Shield, MapPin, Clock, Plus, Phone, Mail } from 'lucide-react'
 
 interface TeamMember {
   id: string
@@ -28,7 +28,7 @@ interface ResponseTeam {
 const ResponseTeams: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'teams' | 'members' | 'deployments'>('teams')
   const [showAddForm, setShowAddForm] = useState(false)
-  const [editingTeam, setEditingTeam] = useState<string | null>(null)
+  const [] = useState<string | null>(null)
 
   const [teams, setTeams] = useState<ResponseTeam[]>([
     {

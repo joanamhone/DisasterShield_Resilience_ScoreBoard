@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, User, Phone, Mail, ChevronRight, LogOut, Bell, Shield, MapPin, Users as HouseholdIcon, Heart, PawPrint } from 'lucide-react';
+import { Settings, User, Phone, ChevronRight, LogOut, Bell, MapPin, Users as HouseholdIcon, Heart, PawPrint } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +20,7 @@ const Profile: React.FC = () => {
     hasPets: (user?.numberOfPets || 0) > 0,
     numberOfPets: user?.numberOfPets || 0,
   });
-  const [languageInput, setLanguageInput] = useState('');
+  const [] = useState('');
   const [phoneError, setPhoneError] = useState('');
 
   if (!user) return null;
@@ -88,16 +88,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const addLanguage = () => {
-    if (languageInput.trim() && !formData.languages.includes(languageInput.trim())) {
-      setFormData(prev => ({ ...prev, languages: [...prev.languages, languageInput.trim()] }));
-      setLanguageInput('');
-    }
-  };
 
-  const removeLanguage = (language: string) => {
-    setFormData(prev => ({ ...prev, languages: prev.languages.filter(lang => lang !== language) }));
-  };
 
   return (
     <div className="space-y-6 pb-6">

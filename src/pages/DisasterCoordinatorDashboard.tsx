@@ -9,13 +9,11 @@ import {
   Activity,
   TrendingUp,
   Bell,
-  Settings,
-  FileText,
   Radio
 } from 'lucide-react';
 
 const DisasterCoordinatorDashboard: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
   const navigate = useNavigate();
 
   const stats = [
