@@ -44,10 +44,7 @@ def get_flood_risk_map():
 
     return jsonify({'map_url': map_url})
 
-#     image = ee.ImageCollection('JRC/GSW1_3/MonthlyHistory') \
-#                 .filterDate('2023-01-01', '2023-12-31') \
-#                 .select('water') \
-#                 .mean() \
-                    
+
 if __name__ == '__main__':
-    app.run(debug=True)
+   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+
