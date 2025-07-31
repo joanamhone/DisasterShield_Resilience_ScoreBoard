@@ -59,8 +59,8 @@ export const ScoreOverview: React.FC = () => {
 
   const getScoreColor = (s: number) => {
     if (s < 30) return '#D32F2F';
-    if (s < 60) return '#FFA000';
-    if (s < 80) return '#F57C00';
+    if (s < 60) return '#F57C00';
+    if (s < 80) return '#fff700ff';
     return '#43A047';
   };
 

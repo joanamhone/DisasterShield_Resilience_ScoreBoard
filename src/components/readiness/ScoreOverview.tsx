@@ -8,8 +8,8 @@ interface ScoreOverviewProps {
 const ScoreOverview: React.FC<ScoreOverviewProps> = ({ score }) => {
   const getScoreColor = (score: number) => {
     if (score < 30) return '#D32F2F' // error
-    if (score < 60) return '#FFA000' // warning
-    if (score < 80) return '#F57C00' // accent
+    if (score < 60) return '#F57C00' // warning
+    if (score < 80) return '#ffc800ff' // accent
     return '#43A047' // success
   }
 

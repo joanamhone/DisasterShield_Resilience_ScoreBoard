@@ -1,419 +1,150 @@
-import React, { useState } from 'react'
-import { Check, X, AlertCircle, ChevronRight, Users, School } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { useReadiness } from '../contexts/ReadinessContext'
-import { format, isValid, parseISO } from 'date-fns' // Import isValid and parseISO for robust date handling
-import LocationSeasonForm from '../components/readiness/LocationSeasonForm'
-import ReadinessQuiz from '../components/readiness/ReadinessQuiz'
-import SeasonalReadinessQuiz from '../components/readiness/SeasonalReadinessQuiz'
-import SchoolReadinessQuiz from '../components/readiness/SchoolReadinessQuiz'
-import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'
-import ScoreOverview from '../components/readiness/ScoreOverview'
-import SeasonalRecommendations from '../components/readiness/SeasonalRecommendations'
-import AssessmentDetails from '../components/readiness/AssessmentDetails'
+import React, { useState } from 'react';
+import { Check, X, AlertCircle, ChevronRight, Users, School, Loader2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
+import { format } from 'date-fns';
 
-// Define the structure for a single question's answer in the history
-interface AssessmentAnswer {
-  question: string; // The text of the question
-  userAnswer: string | number | string[]; // The user's selected answer(s)
-  correctAnswer: string | number | string[]; // The correct answer(s)
-  isCorrect: boolean; // Whether the user's answer was correct
-  explanation?: string; // Optional explanation for the correct answer
-  pointsAwarded?: number; // ✅ NEW: Points awarded for this specific question
-  maxPoints?: number; // Optional: Maximum possible points for this question
-}
-
-// Extend the AssessmentHistoryItem type to include the detailed answers
-interface AssessmentHistoryItem {
-  id: string;
-  score: number;
-  type: 'general' | 'seasonal' | 'school' | 'community';
-  date: Date | string; // Allow 'date' to be Date or string, as it might come from DB as string
-  location?: string;
-  season?: string;
-  answers: AssessmentAnswer[]; // Now explicitly includes detailed answers
-}
+// Import your components
+import ReadinessQuiz from '../components/readiness/ReadinessQuiz';
+import { ScoreOverview } from '../components/readiness/ScoreComponents';
+import AssessmentDetails from '../components/readiness/AssessmentDetails'; // Import the new component
+// import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'; 
 
 const Readiness: React.FC = () => {
-  const { user } = useAuth()
-  // Ensure useReadiness provides assessmentHistory with the new detailed answers type
-  const { currentScore, assessmentHistory, updateScore } = useReadiness()
+  const { user } = useAuth();
+  const { assessmentHistory, isLoading, updateScore } = useReadiness();
+  
+  // Add 'history-detail' to the possible steps
+  const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results' | 'history-detail'>('choice');
+  const [quizType, setQuizType] = useState<'general' | 'school' | 'community'>('general');
+  const [completedScore, setCompletedScore] = useState<number>(0);
+  // State to hold the assessment being viewed
+  const [selectedAssessment, setSelectedAssessment] = useState<ReadinessResponse | null>(null);
 
-  const [currentStep, setCurrentStep] = useState<'choice' | 'form' | 'quiz' | 'seasonal-quiz' | 'results' | 'history-detail'>('choice')
-  const [location, setLocation] = useState('')
-  const [season, setSeason] = useState('')
-  const [newItem, setNewItem] = useState('')
-  const [isSeasonalAssessment, setIsSeasonalAssessment] = useState(false)
-  const [currentAnswers, setCurrentAnswers] = useState<AssessmentAnswer[]>([]) // Updated type for detailed answers
-  const [quizType, setQuizType] = useState<'general' | 'seasonal' | 'school' | 'community'>('general')
-  const [selectedAssessment, setSelectedAssessment] = useState<AssessmentHistoryItem | null>(null)
-
-  const [checklist, setChecklist] = useState([
-    { id: 1, name: 'Emergency kit prepared', completed: true },
-    { id: 2, name: 'Evacuation plan created', completed: true },
-    { id: 3, name: 'Important documents secured', completed: false },
-    { id: 4, name: 'First aid training completed', completed: false },
-    { id: 5, name: 'Emergency contacts updated', completed: true },
-  ])
-
-  const handleAssessmentChoice = (seasonal: boolean, type: 'general' | 'school' | 'community' = 'general') => {
-    setQuizType(type)
-    setIsSeasonalAssessment(seasonal)
-    if (seasonal) {
-      setCurrentStep('form')
-    } else {
-      setCurrentStep('quiz')
+  const handleQuizComplete = async (score: number, answers: AssessmentAnswer[]) => {
+    try {
+      setCompletedScore(score);
+      await updateScore(score, quizType, answers);
+    } catch (error) {
+      console.error("Failed to save readiness assessment:", error);
+    } finally {
+      setCurrentStep('results');
     }
-  }
+  };
 
-  const handleLocationSeasonSubmit = (userLocation: string, userSeason: string) => {
-    setLocation(userLocation)
-    setSeason(userSeason)
-    setCurrentStep('seasonal-quiz')
-  }
-
-  // Modified handleQuizComplete to store detailed answers
-  const handleQuizComplete = (score: number) => {
-    updateScore(
-      score,
-      isSeasonalAssessment ? 'seasonal' : 'general',
-      isSeasonalAssessment ? location : undefined,
-      isSeasonalAssessment ? season : undefined,
-      currentAnswers // Pass the detailed answers array
-    )
-    setCurrentStep('results')
-  }
-
-  const handleQuizCancel = () => {
-    if (isSeasonalAssessment) {
-      setCurrentStep('form')
-    } else {
-      setCurrentStep('choice')
-    }
-  }
-
-  const toggleChecklistItem = (id: number) => {
-    setChecklist(prev => prev.map(item =>
-      item.id === id ? { ...item, completed: !item.completed } : item
-    ))
-  }
-
-  const addChecklistItem = () => {
-    if (newItem.trim()) {
-      const newId = Math.max(...checklist.map(item => item.id)) + 1
-      setChecklist(prev => [...prev, { id: newId, name: newItem.trim(), completed: false }])
-      setNewItem('')
-    }
-  }
-
+  const handleAssessmentChoice = (type: 'general' | 'school' | 'community' = 'general') => {
+    setQuizType(type);
+    setCurrentStep('quiz');
+  };
+  
   const startNewAssessment = () => {
-    setCurrentStep('choice')
-    setLocation('')
-    setSeason('')
-    setIsSeasonalAssessment(false)
-    setQuizType('general')
-    setCurrentAnswers([]) // Clear answers for new assessment
-    setSelectedAssessment(null) // Clear selected assessment
-  }
+    setCurrentStep('choice');
+    setQuizType('general');
+    setSelectedAssessment(null); // Clear selected assessment
+  };
 
-  // Function to handle clicking on a history item
-  const handleViewAssessmentDetails = (assessment: AssessmentHistoryItem) => {
-    setSelectedAssessment(assessment)
-    setCurrentStep('history-detail')
-  }
+  // Function to handle viewing the details of a past assessment
+  const handleViewAssessmentDetails = (assessment: ReadinessResponse) => {
+    setSelectedAssessment(assessment);
+    setCurrentStep('history-detail');
+  };
 
-  // === VIEW LOGIC ===
-
-  if (currentStep === 'choice') {
+  if (isLoading && currentStep !== 'quiz') {
     return (
-      <div className="space-y-6 pb-6">
-        <div className="card p-6">
-          <h3 className="text-xl font-bold text-text-primary mb-4">
-            Disaster Readiness and Preparedness Assessment
-          </h3>
-          <p className="text-text-secondary mb-6">
-            Are You Ready for a Disaster?
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <button
-                onClick={() => handleAssessmentChoice(false, 'general')}
-                className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
-                    <AlertCircle className="text-primary" size={24} />
-                  </div>
-                  <h4 className="font-bold text-text-primary">Individual/Household Assessment</h4>
-                </div>
-                <p className="text-text-secondary text-sm leading-relaxed">
-                  For Individuals & Families. Evaluate how prepared you and your household are for storms, floods, and other emergencies across key readiness areas.
-                </p>
-                <div className="mt-4 flex items-center text-primary">
-                  <span className="text-sm font-medium">Start Assessment</span>
-                  <ChevronRight size={16} className="ml-1" />
-                </div>
-              </button>
-            </div>
-
-            {(user?.userType === 'community_leader' || user?.userType === 'school_admin') && (
-              <button
-                onClick={() =>
-                  handleAssessmentChoice(false, user.userType === 'school_admin' ? 'school' : 'community')
-                }
-                className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-accent/20 text-left md:col-span-2"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mr-4">
-                    {user.userType === 'community_leader' ? (
-                      <Users className="text-accent" size={24} />
-                    ) : (
-                      <School className="text-accent" size={24} />
-                    )}
-                  </div>
-                  <h4 className="font-bold text-text-primary">
-                    {user.userType === 'community_leader'
-                      ? 'Community Readiness Check'
-                      : 'School Readiness Check'}
-                  </h4>
-                </div>
-                <p className="text-text-secondary text-sm leading-relaxed">
-                  {user.userType === 'community_leader'
-                    ? "Assess your community's overall disaster preparedness and identify areas for improvement."
-                    : "Evaluate your school's emergency preparedness across all safety protocols and procedures."}
-                </p>
-                <div className="mt-4 flex items-center text-accent">
-                  <span className="text-sm font-medium">
-                    Start {user.userType === 'community_leader' ? 'Community' : 'School'} Assessment
-                  </span>
-                  <ChevronRight size={16} className="ml-1" />
-                </div>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {assessmentHistory.length > 0 && (
-          <div className="card p-4">
-            <h3 className="font-bold text-text-primary mb-2">Assessment History</h3>
-            <div className="space-y-3 max-h-64 overflow-y-auto">
-              {assessmentHistory.slice(0, 5).map((assessment: AssessmentHistoryItem) => {
-                // Safely parse the date here
-                const assessmentDate = new Date(assessment.date);
-                const formattedDate = isValid(assessmentDate)
-                  ? format(assessmentDate, 'MMM dd, yyyy • HH:mm')
-                  : 'Invalid Date'; // Fallback for invalid dates
-
-                return (
-                  <button
-                    key={assessment.id}
-                    onClick={() => handleViewAssessmentDetails(assessment)}
-                    className="flex items-center justify-between p-3 bg-surface rounded-lg w-full text-left hover:bg-surface-hover transition-colors duration-200"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            assessment.type === 'seasonal'
-                              ? 'bg-secondary/20 text-secondary'
-                              : 'bg-primary/20 text-primary'
-                          }`}
-                        >
-                          {assessment.type === 'seasonal' ? 'Seasonal' : 'General'}
-                          {assessment.type === 'school' && ' (School)'}
-                          {assessment.type === 'community' && ' (Community)'}
-                        </span>
-                        <span
-                          className="font-bold text-lg"
-                          style={{
-                            color:
-                              assessment.score < 30
-                                ? '#D32F2F'
-                                : assessment.score < 60
-                                  ? '#FFA000'
-                                  : assessment.score < 80
-                                    ? '#F57C00'
-                                    : '#43A047',
-                          }}
-                        >
-                          {assessment.score}%
-                        </span>
-                      </div>
-                      <div className="text-sm text-text-secondary">
-                        {assessment.location && assessment.season ? (
-                          <>
-                            {assessment.location} •{' '}
-                            {assessment.season.charAt(0).toUpperCase() + assessment.season.slice(1)}
-                          </>
-                        ) : (
-                          'General Assessment'
-                        )}
-                      </div>
-                      <div className="text-xs text-text-tertiary">
-                        {formattedDate} {/* Use the safely formatted date */}
-                      </div>
-                    </div>
-                    <ChevronRight size={16} className="text-text-tertiary" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin text-primary" size={48} />
       </div>
-    )
-  }
-
-  if (currentStep === 'form') {
-    return (
-      <div className="space-y-6 pb-6">
-        <LocationSeasonForm onSubmit={handleLocationSeasonSubmit} />
-      </div>
-    )
+    );
   }
 
   if (currentStep === 'quiz') {
-    if (quizType === 'school') {
-      return (
-        <SchoolReadinessQuiz
-          onComplete={(score, answers) => {
-            setCurrentAnswers(answers)
-            handleQuizComplete(score)
-          }}
-          onCancel={handleQuizCancel}
-        />
-      )
-    } else if (quizType === 'community') {
-      return (
-        <CommunityReadinessQuiz
-          onComplete={(score, answers) => {
-            setCurrentAnswers(answers)
-            handleQuizComplete(score)
-          }}
-          onCancel={handleQuizCancel}
-        />
-      )
-    } else {
-      return (
-        <ReadinessQuiz
-          onComplete={(score, answers) => {
-            setCurrentAnswers(answers)
-            handleQuizComplete(score)
-          }}
-          onCancel={handleQuizCancel}
-        />
-      )
-    }
-  }
-
-  if (currentStep === 'seasonal-quiz') {
     return (
-      <SeasonalReadinessQuiz
-        location={location}
-        season={season}
-        onComplete={(score, answers) => {
-          setCurrentAnswers(answers)
-          handleQuizComplete(score)
-        }}
-        onCancel={handleQuizCancel}
+      <ReadinessQuiz 
+        onComplete={handleQuizComplete} 
+        onCancel={() => setCurrentStep('choice')} 
       />
-    )
+    );
   }
 
-  if (currentStep === 'history-detail') {
-    if (!selectedAssessment) {
-      return (
-        <div className="card p-6 text-center text-text-error">
-          <p>No assessment selected for details. Please go back and try again.</p>
-          <button onClick={startNewAssessment} className="btn-primary mt-4">
-            Return to Home
-          </button>
+  if (currentStep === 'results') {
+    return (
+        <div className="space-y-6 pb-6">
+            <ScoreOverview score={completedScore} />
+            <div className="card p-4 flex items-center justify-between">
+                <h3 className="font-bold text-text-primary">Assessment Complete</h3>
+                <button onClick={startNewAssessment} className="btn-primary">
+                    New Assessment
+                </button>
+            </div>
         </div>
-      );
-    }
-    return <AssessmentDetails assessment={selectedAssessment} onBack={startNewAssessment} />;
+    );
   }
 
+  if (currentStep === 'history-detail' && selectedAssessment) {
+      return <AssessmentDetails assessment={selectedAssessment} onBack={startNewAssessment} />;
+  }
 
-  // Default return (currentStep === 'results')
   return (
     <div className="space-y-6 pb-6">
-      <ScoreOverview score={currentScore} />
-
-      <div className="card p-4 flex items-center justify-between">
-        <div>
-          <h3 className="font-bold text-text-primary">Assessment Details</h3>
-          <p className="text-text-secondary">
-            {isSeasonalAssessment && location && season ? (
-              <>
-                {location} • {season.charAt(0).toUpperCase() + season.slice(1)} Season
-              </>
-            ) : (
-              'General Readiness Assessment'
-            )}
-          </p>
-        </div>
-        <button onClick={startNewAssessment} className="btn-primary">
-          New Assessment
-        </button>
-      </div>
-
-      {isSeasonalAssessment && location && season && (
-        <SeasonalRecommendations
-          season={season}
-          location={location}
-          score={currentScore}
-        />
-      )}
-
-      <div>
-        <h3 className="text-lg font-bold text-text-primary mb-3">
-          General Preparedness Checklist
+      <div className="card p-6">
+        <h3 className="text-xl font-bold text-text-primary mb-4">
+          Disaster Readiness and Preparedness Assessment
         </h3>
-        <div className="card p-4 space-y-3">
-          {checklist.map((item) => (
-            <div key={item.id} className="flex items-center py-3 border-b border-divider last:border-b-0">
-              <button
-                onClick={() => toggleChecklistItem(item.id)}
-                className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-colors duration-200 ${
-                  item.completed
-                    ? 'bg-success border-success'
-                    : 'border-text-tertiary hover:border-text-secondary'
-                }`}
-              >
-                {item.completed ? (
-                  <Check size={16} className="text-white" />
-                ) : (
-                  <X size={16} className="text-text-tertiary" />
-                )}
-              </button>
-              <span className={`text-text-primary ${item.completed ? 'line-through text-text-secondary' : ''}`}>
-                {item.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+        <p className="text-text-secondary mb-6">
+          Select an assessment to evaluate your readiness.
+        </p>
 
-      <div>
-        <h3 className="text-lg font-bold text-text-primary mb-3">Add to Checklist</h3>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            placeholder="Enter a new preparedness item"
-            className="flex-1 card px-3 py-2 text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary"
-            onKeyPress={(e) => e.key === 'Enter' && addChecklistItem()}
-          />
-          <button onClick={addChecklistItem} className="btn-primary px-6">
-            Add
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={() => handleAssessmentChoice('general')}
+            className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
+          >
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+                <AlertCircle className="text-primary" size={24} />
+              </div>
+              <h4 className="font-bold text-text-primary">Individual/Household Assessment</h4>
+            </div>
+            <p className="text-text-secondary text-sm leading-relaxed">
+              For Individuals & Families. Evaluate how prepared you and your household are.
+            </p>
+            <div className="mt-4 flex items-center text-primary">
+              <span className="text-sm font-medium">Start Assessment</span>
+              <ChevronRight size={16} className="ml-1" />
+            </div>
           </button>
         </div>
       </div>
-    </div>
-  )
-}
 
-export default Readiness
+      {assessmentHistory.length > 0 && (
+        <div className="card p-4">
+          <h3 className="text-lg font-bold text-text-primary mb-4">Assessment History</h3>
+          <div className="space-y-3">
+            {assessmentHistory.map((assessment) => (
+              <button 
+                key={assessment.id} 
+                onClick={() => handleViewAssessmentDetails(assessment)}
+                className="w-full flex justify-between items-center p-3 bg-surface rounded-lg text-left hover:bg-border transition-colors"
+              >
+                <div>
+                  <p className="font-semibold text-text-primary">
+                    Readiness Score: {assessment.score}%
+                  </p>
+                  <p className="text-sm text-text-secondary">
+                    Taken on {format(new Date(assessment.created_at), 'MMMM dd, yyyy')}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                    <span className="text-lg font-bold text-primary mr-2">{assessment.score}%</span>
+                    <ChevronRight size={16} className="text-text-tertiary" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Readiness;

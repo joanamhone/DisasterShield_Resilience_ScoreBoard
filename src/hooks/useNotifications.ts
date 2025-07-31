@@ -62,7 +62,7 @@ export const useNotifications = () => {
     const readNotificationMap = new Map(recentNotifications.map(n => [n.notification_id, new Date(n.read_at).getTime()]));
 
     const newNotifications: NotificationData[] = [];
-    const highRiskThreshold = 0.7;
+    const highRiskThreshold = 0.3;
 
     const riskChecks = [
       { key: 'heat_wave_risk', title: 'High Heat Wave Risk' },
