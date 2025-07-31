@@ -3,11 +3,11 @@ from flask_cors import CORS
 import ee
 import json
 
-ee.Authenticate()
-ee.Initialize(project='disastershield-466814')
+# ee.Authenticate()
+# ee.Initialize(project='disastershield-466814')
 
-# credentials = ee.ServiceAccountCredentials('resiliencescore@disastershield-466814.iam.gserviceaccount.com', 'disastershield-466814-700e259bbf56.json')
-# ee.Initialize(credentials)
+credentials = ee.ServiceAccountCredentials('disasteresilience@disastershield-v2.iam.gserviceaccount.com', 'disastershield-v2-97df00f86165.json')
+ee.Initialize(credentials)
 
 app = Flask(__name__)
 CORS(app) 
