@@ -1,29 +1,23 @@
 import React, { useState } from 'react';
 import { AlertCircle, ChevronRight, Loader2 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
 import { format } from 'date-fns';
 
 // Import your components
 import ReadinessQuiz from '../components/readiness/ReadinessQuiz';
 import { ScoreOverview } from '../components/readiness/ScoreComponents';
-import AssessmentDetails from '../components/readiness/AssessmentDetails'; // Import the new component
-// import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'; 
+import AssessmentDetails from '../components/readiness/AssessmentDetails';
 
 const Readiness: React.FC = () => {
-  useAuth();
   const { assessmentHistory, isLoading, updateScore } = useReadiness();
   
-  // Add 'history-detail' to the possible steps
   const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results' | 'history-detail'>('choice');
   const [quizType, setQuizType] = useState<'general' | 'school' | 'community'>('general');
-  const [completedScore, setCompletedScore] = useState<number>(0);
-  // State to hold the assessment being viewed
   const [selectedAssessment, setSelectedAssessment] = useState<ReadinessResponse | null>(null);
 
   const handleQuizComplete = async (score: number, answers: AssessmentAnswer[]) => {
     try {
-      setCompletedScore(score);
+      // Use the correct function name 'updateScore' from the context
       await updateScore(score, quizType, answers);
     } catch (error) {
       console.error("Failed to save readiness assessment:", error);
@@ -39,11 +33,9 @@ const Readiness: React.FC = () => {
   
   const startNewAssessment = () => {
     setCurrentStep('choice');
-    setQuizType('general');
-    setSelectedAssessment(null); // Clear selected assessment
+    setSelectedAssessment(null);
   };
 
-  // Function to handle viewing the details of a past assessment
   const handleViewAssessmentDetails = (assessment: ReadinessResponse) => {
     setSelectedAssessment(assessment);
     setCurrentStep('history-detail');
@@ -69,7 +61,8 @@ const Readiness: React.FC = () => {
   if (currentStep === 'results') {
     return (
         <div className="space-y-6 pb-6">
-            <ScoreOverview score={completedScore} />
+            {/* This component now gets the score from the context */}
+            <ScoreOverview />
             <div className="card p-4 flex items-center justify-between">
                 <h3 className="font-bold text-text-primary">Assessment Complete</h3>
                 <button onClick={startNewAssessment} className="btn-primary">
@@ -79,7 +72,7 @@ const Readiness: React.FC = () => {
         </div>
     );
   }
-
+  
   if (currentStep === 'history-detail' && selectedAssessment) {
       return <AssessmentDetails assessment={selectedAssessment} onBack={startNewAssessment} />;
   }
@@ -88,12 +81,11 @@ const Readiness: React.FC = () => {
     <div className="space-y-6 pb-6">
       <div className="card p-6">
         <h3 className="text-xl font-bold text-text-primary mb-4">
-          Disaster Readiness and Preparedness Assessment
+          Disaster Readiness Assessment
         </h3>
         <p className="text-text-secondary mb-6">
           Select an assessment to evaluate your readiness.
         </p>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             onClick={() => handleAssessmentChoice('general')}

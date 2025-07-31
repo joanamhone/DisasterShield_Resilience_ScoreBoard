@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Award, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { TrendingUp, Target, Award, Loader2, ChevronRight } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, subDays, subMonths, subYears, differenceInMonths } from 'date-fns';
 import { useReadiness } from '../contexts/ReadinessContext';
@@ -16,13 +17,14 @@ const defaultKitItems = [
     { name: 'Important Documents (copies)', category: 'Documents', type: 'perHousehold', amount: 1 },
     { name: 'Whistle (to signal for help)', category: 'Tools', type: 'perPerson', amount: 1 },
     { name: 'Dust Mask', category: 'First Aid', type: 'perPerson', amount: 1 },
-    { name: 'Specialized Medication', category: 'Personal', type: 'conditional', condition: 'hasVulnerableMembers' },
+    { name: 'Specialized Medication', category: 'Personal', type: 'conditional', condition: 'hasVulnerableMembers', amount: 7 },
     { name: 'Pet Food (Days)', category: 'Pets', type: 'conditional', condition: 'hasPets', amount: 3 },
     { name: 'Pet Water (Liters)', category: 'Pets', type: 'conditional', condition: 'hasPets', amount: 4 },
 ];
 
 
 const Progress: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { assessmentHistory, isLoading: isReadinessLoading } = useReadiness();
   const { kitItems, isLoading: isKitLoading } = useEmergencyKit();
@@ -59,7 +61,7 @@ const Progress: React.FC = () => {
   const previousScore = assessmentHistory[1]?.score || currentScore;
   const scoreChange = currentScore - previousScore;
 
-  // Dynamic achievements based on brainstorming ideas
+  // Dynamic achievements
   const achievements = useMemo(() => {
       const householdSize = user?.householdSize || 1;
       const hasVulnerable = !!user?.vulnerableMembersDescription;
@@ -75,9 +77,10 @@ const Progress: React.FC = () => {
       const hasBuiltKit = recommendedItems.every(item => (userItemMap.get(item.name) || 0) > 0);
       const isFullyStocked = recommendedItems.every(item => {
           let recommendation = 0;
-          if (item.type === 'perPerson') recommendation = Math.ceil(item.amount * householdSize);
-          if (item.type === 'perHousehold') recommendation = item.amount;
-          if (item.condition === 'hasPets') recommendation = Math.ceil((user?.numberOfPets || 1) * (item.amount || 1));
+          // **THE FIX: Ensure item.amount exists before using it**
+          if (item.type === 'perPerson' && item.amount) recommendation = Math.ceil(item.amount * householdSize);
+          if (item.type === 'perHousehold' && item.amount) recommendation = item.amount;
+          if (item.condition && item.amount) recommendation = Math.ceil((user?.numberOfPets || 1) * item.amount);
           return (userItemMap.get(item.name) || 0) >= recommendation;
       });
 
