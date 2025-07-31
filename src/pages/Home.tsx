@@ -3,6 +3,7 @@ import {
   ClipboardCheck, 
   AlertCircle, 
   BarChart3, 
+  TrendingUp, 
   Shield, 
   Bell, 
   MapPin,
@@ -17,19 +18,31 @@ import RoleDashboard from '../components/dashboard/RoleDashboard';
 import { useLocation } from '../hooks/useLocation';
 import { useNotifications } from '../hooks/useNotifications';
 import ActionableRecommendations from '../components/home/ActionableRecommendations';
+import { useAuth } from '../contexts/AuthContext'; // 1. Import useAuth
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user, isIndividualUser } = useRoleAccess();
   const location = useLocation();
-  // Get the new isLoading state from the hook
   const { unreadCount, isLoading: isLoadingNotifications } = useNotifications();
+  const { loading: isAuthLoading } = useAuth(); // 2. Get the loading state
+
+  // 3. While authentication is in progress, show a loading indicator.
+  // This prevents the component from rendering before the user's role is known.
+  if (isAuthLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   // Role-specific dashboard
   if (!isIndividualUser()) {
     return (
       <div className="space-y-6 sm:space-y-8">
-        {/* ... Role-specific dashboard content ... */}
+        {/* The RoleDashboard will now render correctly because isIndividualUser() is called after loading is complete */}
+        <RoleDashboard />
       </div>
     );
   }
