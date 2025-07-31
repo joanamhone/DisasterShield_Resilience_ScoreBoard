@@ -53,7 +53,7 @@ export const ReadinessScore: React.FC = () => {
 
 
 // --- ScoreOverview Component (for the readiness page) ---
-// **THE FIX: This component now accepts a 'score' prop for immediate display.**
+// This component accepts a 'score' prop for immediate display after a quiz.
 interface ScoreOverviewProps {
     score: number;
 }
