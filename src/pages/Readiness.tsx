@@ -9,16 +9,17 @@ import { ScoreOverview } from '../components/readiness/ScoreComponents';
 import AssessmentDetails from '../components/readiness/AssessmentDetails';
 
 const Readiness: React.FC = () => {
-  const { assessmentHistory, isLoading, updateScore } = useReadiness();
+  const { assessmentHistory, isLoading, saveAssessment } = useReadiness();
   
   const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results' | 'history-detail'>('choice');
   const [quizType, setQuizType] = useState<'general' | 'school' | 'community'>('general');
+  const [completedScore, setCompletedScore] = useState<number>(0);
   const [selectedAssessment, setSelectedAssessment] = useState<ReadinessResponse | null>(null);
 
   const handleQuizComplete = async (score: number, answers: AssessmentAnswer[]) => {
     try {
-      // Use the correct function name 'updateScore' from the context
-      await updateScore(score, quizType, answers);
+      setCompletedScore(score);
+      await saveAssessment(score, quizType, answers);
     } catch (error) {
       console.error("Failed to save readiness assessment:", error);
     } finally {
@@ -61,8 +62,7 @@ const Readiness: React.FC = () => {
   if (currentStep === 'results') {
     return (
         <div className="space-y-6 pb-6">
-            {/* This component now gets the score from the context */}
-            <ScoreOverview />
+            <ScoreOverview score={completedScore} />
             <div className="card p-4 flex items-center justify-between">
                 <h3 className="font-bold text-text-primary">Assessment Complete</h3>
                 <button onClick={startNewAssessment} className="btn-primary">

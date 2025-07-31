@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
 // --- Interfaces ---
-// This structure holds the detailed breakdown of each answer.
 export interface AssessmentAnswer {
   questionId: number;
   question: string;
@@ -13,7 +12,6 @@ export interface AssessmentAnswer {
   selectedOptionText: string;
 }
 
-// This matches your updated readiness_responses table.
 export interface ReadinessResponse {
   id: string;
   user_id: string;
@@ -29,13 +27,10 @@ interface ReadinessContextType {
   latestScore: number;
   assessmentHistory: ReadinessResponse[];
   isLoading: boolean;
-  // This function now accepts all the new details.
-  updateScore: (
+  saveAssessment: (
     score: number,
     type: 'general' | 'seasonal' | 'school' | 'community',
-    answers: AssessmentAnswer[],
-    location?: string,
-    season?: string
+    answers: AssessmentAnswer[]
   ) => Promise<void>;
 }
 
@@ -74,12 +69,10 @@ export const ReadinessProvider: React.FC<{ children: ReactNode }> = ({ children 
     fetchResponses();
   }, [fetchResponses]);
 
-  const updateScore = async (
+  const saveAssessment = async (
     score: number,
     type: 'general' | 'seasonal' | 'school' | 'community',
-    answers: AssessmentAnswer[],
-    location?: string,
-    season?: string
+    answers: AssessmentAnswer[]
   ) => {
     if (!user) throw new Error("User must be logged in.");
 
@@ -89,19 +82,17 @@ export const ReadinessProvider: React.FC<{ children: ReactNode }> = ({ children 
         user_id: user.id,
         score,
         type,
-        answers, // The detailed answers are saved here
-        location,
-        season,
+        answers,
       });
 
     if (error) throw error;
-    await fetchResponses(); // Refresh the history after saving
+    await fetchResponses();
   };
   
   const latestScore = assessmentHistory[0]?.score ?? 0;
 
   return (
-    <ReadinessContext.Provider value={{ latestScore, assessmentHistory, isLoading, updateScore }}>
+    <ReadinessContext.Provider value={{ latestScore, assessmentHistory, isLoading, saveAssessment }}>
       {children}
     </ReadinessContext.Provider>
   );

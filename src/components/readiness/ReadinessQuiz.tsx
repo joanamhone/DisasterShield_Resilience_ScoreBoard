@@ -1,7 +1,7 @@
 // src/components/readiness/ReadinessQuiz.tsx
 import React, { useState } from 'react';
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import { useReadiness, AssessmentAnswer } from '../../contexts/ReadinessContext'; // Import AssessmentAnswer
+import { AssessmentAnswer } from '../../contexts/ReadinessContext'; // Import AssessmentAnswer
 
 interface ReadinessQuizProps {
   // onComplete now receives score and detailed answers
