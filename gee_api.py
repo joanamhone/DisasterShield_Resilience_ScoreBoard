@@ -12,6 +12,7 @@ if service_account_base64:
     with open('service_account.json', 'wb') as f:
         f.write(base64.b64decode(service_account_base64))
 else:
+    print("GOOGLE_SERVICE_ACCOUNT_KEY exists:", service_account_base64 is not None)
     raise Exception("Service account key not found in environment variables")
 credentials = ee.ServiceAccountCredentials(
     'disasteresilience@disastershield-v2.iam.gserviceaccount.com',
