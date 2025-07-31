@@ -1,23 +1,26 @@
-import React, { useState } from 'react'
-import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+// src/components/readiness/SeasonalReadinessQuiz.tsx
+import React, { useState } from 'react';
+import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { AssessmentAnswer } from '../../contexts/ReadinessContext'; // Import AssessmentAnswer
 
 interface SeasonalReadinessQuizProps {
-  location: string
-  season: string
-  onComplete: (score: number, answers: number[]) => void
-  onCancel: () => void
+  location: string;
+  season: string;
+  // onComplete now receives score and detailed answers
+  onComplete: (score: number, answers: AssessmentAnswer[]) => void;
+  onCancel: () => void;
 }
 
 interface Question {
-  id: number
-  text: string
-  options: Option[]
+  id: number;
+  text: string;
+  options: Option[];
 }
 
 interface Option {
-  id: number
-  text: string
-  value: number
+  id: number;
+  text: string;
+  value: number;
 }
 
 const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
@@ -26,11 +29,15 @@ const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
   onComplete,
   onCancel,
 }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
-  const [quizComplete, setQuizComplete] = useState(false)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOptionValues, setSelectedOptionValues] = useState<number[]>([]); // Store selected option values
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submitting
 
   const getSeasonalQuestions = (): Question[] => {
+    // These questions are used for Seasonal Readiness and *School Readiness*
+    // It seems like you intended this to be SchoolReadinessQuiz based on the questions.
+    // If this file is indeed for seasonal, ensure the questions are seasonal-specific.
+    // For now, I'll keep them as school-related as in your original snippet.
     return [
       {
         id: 1,
@@ -131,46 +138,64 @@ const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
           { id: 3, text: 'Not involved', value: 0 },
         ],
       },
-    ]
-  }
+    ];
+  };
 
-  const questions = getSeasonalQuestions()
-  const currentQuestion = questions[currentQuestionIndex]
+  const questions = getSeasonalQuestions(); // This would be dynamic based on season/location in a real seasonal quiz
+  const currentQuestion = questions[currentQuestionIndex];
 
   const handleAnswer = (value: number) => {
-    const newAnswers = [...answers]
-    newAnswers[currentQuestionIndex] = value
-    setAnswers(newAnswers)
-  }
+    const newAnswers = [...selectedOptionValues];
+    newAnswers[currentQuestionIndex] = value;
+    setSelectedOptionValues(newAnswers);
+  };
+
+  const calculateAndProvideAnswers = () => {
+    setIsSubmitting(true);
+    // Transform numerical answers into detailed AssessmentAnswer objects
+    const detailedAnswers: AssessmentAnswer[] = questions.map((q, index) => {
+      const selectedValue = selectedOptionValues[index];
+      const selectedOption = q.options.find(opt => opt.value === selectedValue);
+      const userAnswerText = selectedOption ? selectedOption.text : 'No answer';
+
+      return {
+        questionId: q.id,
+        question: q.text,
+        userAnswer: userAnswerText,
+        // No explicit correctAnswer/isCorrect for a self-assessment,
+        // pointsAwarded is simply the value chosen.
+        pointsAwarded: selectedValue,
+        maxPoints: 10, // Max points per question is 10
+        selectedOptionText: userAnswerText
+      };
+    });
+
+    setTimeout(() => {
+      const totalPoints = selectedOptionValues.reduce((sum, value) => sum + value, 0);
+      const maxPossiblePoints = questions.length * 10;
+      const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100);
+
+      onComplete(scorePercentage, detailedAnswers); // Pass detailed answers to parent
+      setIsSubmitting(false); // End submitting state
+    }, 1500); // Simulate network delay
+  };
 
   const goToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      calculateScore()
+      calculateAndProvideAnswers(); // Call the function to calculate and pass answers
     }
-  }
+  };
 
   const goToPreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1)
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  }
+  };
 
-  const calculateScore = () => {
-    setQuizComplete(true)
-
-    setTimeout(() => {
-      const totalPoints = answers.reduce((sum, value) => sum + value, 0)
-      const maxPossiblePoints = questions.length * 10
-      const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100)
-
-      onComplete(scorePercentage, answers)
-    }, 1500)
-  }
-
-  const isAnswered = answers[currentQuestionIndex] !== undefined
-  const isLastQuestion = currentQuestionIndex === questions.length - 1
+  const isAnswered = selectedOptionValues[currentQuestionIndex] !== undefined;
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   const getSeasonEmoji = (season: string) => {
     const seasonEmojis: Record<string, string> = {
@@ -178,27 +203,27 @@ const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
       summer: '☀️',
       autumn: '🍂',
       winter: '❄️',
-      rainy: '🌧️',
-      dry: '🏜️',
-    }
-    return seasonEmojis[season] || '🌍'
-  }
+      rainy: '🌧️', // Relevant for Malawi
+      dry: '🏜️',   // Relevant for Malawi
+    };
+    return seasonEmojis[season.toLowerCase()] || '🌍'; // Use toLowerCase for consistent matching
+  };
 
   const formattedSeason = season
     ? season.charAt(0).toUpperCase() + season.slice(1)
-    : ''
+    : '';
 
-  if (quizComplete) {
+  if (isSubmitting) { // Changed from quizComplete to isSubmitting
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-lg font-medium text-text-primary">
-            Calculating your school disaster preparedness score...
+            Calculating your preparedness score...
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -247,14 +272,14 @@ const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
               key={option.id}
               onClick={() => handleAnswer(option.value)}
               className={`w-full flex justify-between items-start p-4 rounded-lg border-2 transition-all duration-200 text-left ${
-                answers[currentQuestionIndex] === option.value
+                selectedOptionValues[currentQuestionIndex] === option.value
                   ? 'bg-primary border-primary text-white'
                   : 'bg-card border-divider hover:border-primary/50 text-text-primary'
               }`}
-              aria-pressed={answers[currentQuestionIndex] === option.value}
+              aria-pressed={selectedOptionValues[currentQuestionIndex] === option.value}
             >
               <span className="flex-1 leading-relaxed">{option.text}</span>
-              {answers[currentQuestionIndex] === option.value && (
+              {selectedOptionValues[currentQuestionIndex] === option.value && (
                 <Check size={20} className="text-white ml-3 flex-shrink-0 mt-0.5" />
               )}
             </button>
@@ -293,7 +318,7 @@ const SeasonalReadinessQuiz: React.FC<SeasonalReadinessQuizProps> = ({
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SeasonalReadinessQuiz
+export default SeasonalReadinessQuiz;

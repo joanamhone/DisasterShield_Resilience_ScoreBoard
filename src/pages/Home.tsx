@@ -7,41 +7,41 @@ import {
   Shield, 
   Bell, 
   MapPin,
+  Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useRoleAccess } from '../hooks/useRoleAccess';
 import RecentAlerts from '../components/home/RecentAlerts';
-// Import the component from the correct, consolidated file
 import { ReadinessScore } from '../components/readiness/ScoreComponents'; 
 import RiskSummary from '../components/home/RiskSummary';
 import RoleDashboard from '../components/dashboard/RoleDashboard';
 import { useLocation } from '../hooks/useLocation';
 import { useNotifications } from '../hooks/useNotifications';
+import ActionableRecommendations from '../components/home/ActionableRecommendations';
+import { useAuth } from '../contexts/AuthContext'; // 1. Import useAuth
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user, isIndividualUser } = useRoleAccess();
   const location = useLocation();
-  const { unreadCount } = useNotifications();
+  const { unreadCount, isLoading: isLoadingNotifications } = useNotifications();
+  const { loading: isAuthLoading } = useAuth(); // 2. Get the loading state
+
+  // 3. While authentication is in progress, show a loading indicator.
+  // This prevents the component from rendering before the user's role is known.
+  if (isAuthLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   // Role-specific dashboard
   if (!isIndividualUser()) {
     return (
       <div className="space-y-6 sm:space-y-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
-              Welcome back, {user?.fullName || 'User'}
-            </h2>
-            <p className="text-base sm:text-lg text-text-secondary mb-2">
-              Here is your dashboard overview.
-            </p>
-            <div className="flex items-center text-sm text-text-tertiary">
-              <MapPin size={16} className="mr-1" />
-              {location.loading ? 'Getting your location...' : location.error || `${location.city}, ${location.country}`}
-            </div>
-          </div>
-        </div>
+        {/* The RoleDashboard will now render correctly because isIndividualUser() is called after loading is complete */}
         <RoleDashboard />
       </div>
     );
@@ -69,13 +69,11 @@ const Home: React.FC = () => {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         <div onClick={() => navigate('/readiness')} className="cursor-pointer">
-          {/* This component now fetches its own data from the context */}
           <ReadinessScore />
         </div>
         <div onClick={() => navigate('/assessment')} className="cursor-pointer">
           <RiskSummary displayMode="summary" />
         </div>
-        
         <div className="card p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-text-primary">Active Alerts</h3>
@@ -113,31 +111,23 @@ const Home: React.FC = () => {
         </div>
         <div>
           <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-4">
-            Tips & Resources
+            Recommendations
           </h3>
-          <div className="space-y-4">
-            <ResourceCard 
-              title="Create an Emergency Plan" 
-              description="A well-thought-out plan can significantly improve your readiness."
-              buttonText="Learn More"
-              onClick={() => {}}
-              icon={TrendingUp}
-            />
-            <ResourceCard 
-              title="Build Your Emergency Kit" 
-              description="Essential supplies can make all the difference."
-              buttonText="View Checklist"
-              onClick={() => navigate('/emergency-kit')}
-              icon={Shield}
-            />
-          </div>
+          {/* Use the isLoading state to show a placeholder */}
+          {isLoadingNotifications ? (
+            <div className="card p-6 flex justify-center items-center h-48">
+                <Loader2 className="animate-spin text-primary" />
+            </div>
+          ) : (
+            <ActionableRecommendations />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-// Helper component for Quick Action buttons to reduce repetition
+// Helper components remain the same
 const ActionButton: React.FC<{onClick: () => void, icon: React.ElementType, title: string, description: string}> = 
 ({ onClick, icon: Icon, title, description }) => (
     <button onClick={onClick} className="card p-4 sm:p-6 hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center group">
@@ -148,23 +138,5 @@ const ActionButton: React.FC<{onClick: () => void, icon: React.ElementType, titl
         <p className="text-xs sm:text-sm text-text-secondary">{description}</p>
     </button>
 );
-
-// Helper for Resource cards
-const ResourceCard: React.FC<{onClick: () => void, icon: React.ElementType, title: string, description: string, buttonText: string}> = 
-({ onClick, icon: Icon, title, description, buttonText }) => (
-    <div className="card p-4 sm:p-6">
-        <div className="flex items-start">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-accent/10 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
-                <Icon className="text-accent" size={16} />
-            </div>
-            <div>
-                <h4 className="font-bold text-text-primary mb-2">{title}</h4>
-                <p className="text-text-secondary text-sm leading-relaxed mb-4">{description}</p>
-                <button onClick={onClick} className="btn-secondary text-sm">{buttonText}</button>
-            </div>
-        </div>
-    </div>
-);
-
 
 export default Home;

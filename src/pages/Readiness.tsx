@@ -1,38 +1,36 @@
-import React, { useState, useEffect } from 'react'; // **THE FIX: Added useEffect here**
+import React, { useState } from 'react';
 import { Check, X, AlertCircle, ChevronRight, Users, School, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useReadiness } from '../contexts/ReadinessContext';
+import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
 import { format } from 'date-fns';
 
-// Assuming these components exist in your project structure
+// Import your components
 import ReadinessQuiz from '../components/readiness/ReadinessQuiz';
-import { ScoreOverview } from '../components/readiness/ScoreComponents'; 
-// import SchoolReadinessQuiz from '../components/readiness/SchoolReadinessQuiz';
-// import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz';
+import { ScoreOverview } from '../components/readiness/ScoreComponents';
+import AssessmentDetails from '../components/readiness/AssessmentDetails'; // Import the new component
+// import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'; 
 
 const Readiness: React.FC = () => {
   const { user } = useAuth();
-  const { assessmentHistory, isLoading, saveResponse } = useReadiness();
+  const { assessmentHistory, isLoading, updateScore } = useReadiness();
   
-  const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results'>('choice');
+  // Add 'history-detail' to the possible steps
+  const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results' | 'history-detail'>('choice');
   const [quizType, setQuizType] = useState<'general' | 'school' | 'community'>('general');
-  const [completedScore, setCompletedScore] = useState<number>(0); 
-  const [currentAnswers, setCurrentAnswers] = useState<number[]>([]);
+  const [completedScore, setCompletedScore] = useState<number>(0);
+  // State to hold the assessment being viewed
+  const [selectedAssessment, setSelectedAssessment] = useState<ReadinessResponse | null>(null);
 
-  // This function is now the single point of truth for completing a quiz
-  const handleQuizComplete = (score: number, answers: number[]) => {
-    setCompletedScore(score);
-    setCurrentAnswers(answers);
-    setCurrentStep('results'); // Immediately switch to the results view
+  const handleQuizComplete = async (score: number, answers: AssessmentAnswer[]) => {
+    try {
+      setCompletedScore(score);
+      await updateScore(score, quizType, answers);
+    } catch (error) {
+      console.error("Failed to save readiness assessment:", error);
+    } finally {
+      setCurrentStep('results');
+    }
   };
-  
-  // A new effect to save the score *after* the view has changed
-  useEffect(() => {
-      if(currentStep === 'results' && completedScore > 0 && currentAnswers.length > 0) {
-          saveResponse(completedScore, currentAnswers);
-      }
-  }, [currentStep, completedScore, currentAnswers, saveResponse]);
-
 
   const handleAssessmentChoice = (type: 'general' | 'school' | 'community' = 'general') => {
     setQuizType(type);
@@ -42,6 +40,13 @@ const Readiness: React.FC = () => {
   const startNewAssessment = () => {
     setCurrentStep('choice');
     setQuizType('general');
+    setSelectedAssessment(null); // Clear selected assessment
+  };
+
+  // Function to handle viewing the details of a past assessment
+  const handleViewAssessmentDetails = (assessment: ReadinessResponse) => {
+    setSelectedAssessment(assessment);
+    setCurrentStep('history-detail');
   };
 
   if (isLoading && currentStep !== 'quiz') {
@@ -75,7 +80,10 @@ const Readiness: React.FC = () => {
     );
   }
 
-  // Default view: 'choice'
+  if (currentStep === 'history-detail' && selectedAssessment) {
+      return <AssessmentDetails assessment={selectedAssessment} onBack={startNewAssessment} />;
+  }
+
   return (
     <div className="space-y-6 pb-6">
       <div className="card p-6">
@@ -113,7 +121,11 @@ const Readiness: React.FC = () => {
           <h3 className="text-lg font-bold text-text-primary mb-4">Assessment History</h3>
           <div className="space-y-3">
             {assessmentHistory.map((assessment) => (
-              <div key={assessment.id} className="flex justify-between items-center p-3 bg-surface rounded-lg">
+              <button 
+                key={assessment.id} 
+                onClick={() => handleViewAssessmentDetails(assessment)}
+                className="w-full flex justify-between items-center p-3 bg-surface rounded-lg text-left hover:bg-border transition-colors"
+              >
                 <div>
                   <p className="font-semibold text-text-primary">
                     Readiness Score: {assessment.score}%
@@ -122,8 +134,11 @@ const Readiness: React.FC = () => {
                     Taken on {format(new Date(assessment.created_at), 'MMMM dd, yyyy')}
                   </p>
                 </div>
-                <span className="text-lg font-bold text-primary">{assessment.score}%</span>
-              </div>
+                <div className="flex items-center">
+                    <span className="text-lg font-bold text-primary mr-2">{assessment.score}%</span>
+                    <ChevronRight size={16} className="text-text-tertiary" />
+                </div>
+              </button>
             ))}
           </div>
         </div>

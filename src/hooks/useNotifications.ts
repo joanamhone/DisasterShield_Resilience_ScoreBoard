@@ -14,6 +14,12 @@ export interface NotificationData {
   location?: string;
 }
 
+export interface RiskCheck {
+    key: string;
+    title: string;
+    recommendation: string[]; // Changed to an array of strings
+}
+
 // --- Supabase Client Initialization ---
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -28,15 +34,18 @@ export const useNotifications = () => {
   const { user } = useAuth();
   const location = useLocation();
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
+  const [activeRisks, setActiveRisks] = useState<RiskCheck[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [isLoading, setIsLoading] = useState(true);
 
   const checkRisksAndNotify = useCallback(async () => {
-    if (!user || !location.latitude) return;
+    if (!user || !location.latitude) {
+        setIsLoading(false);
+        return;
+    };
+    
+    setIsLoading(true);
 
-    // 1. Define the cooldown period in hours
-    const NOTIFICATION_COOLDOWN_HOURS = 6;
-
-    // 2. Fetch the latest risk data
     const { data: latestRisk, error: riskError } = await supabase
       .from('risk_trends')
       .select('*')
@@ -46,62 +55,66 @@ export const useNotifications = () => {
 
     if (riskError || !latestRisk) {
       console.error("Could not fetch latest risks for notifications:", riskError);
+      setIsLoading(false);
       return;
     }
       
-    // 3. Fetch recent notifications for this user to check timestamps
     const { data: recentNotifications, error: readError } = await supabase
         .from('user_notifications')
-        .select('notification_id, read_at') // Also get the timestamp
+        .select('notification_id, read_at')
         .eq('user_id', user.id);
 
     if (readError) {
         console.error("Error fetching recent notifications:", readError);
+        setIsLoading(false);
         return;
     }
     const readNotificationMap = new Map(recentNotifications.map(n => [n.notification_id, new Date(n.read_at).getTime()]));
 
     const newNotifications: NotificationData[] = [];
-    const highRiskThreshold = 0.7;
+    const currentActiveRisks: RiskCheck[] = [];
+    
+    const warningThreshold = 0.1;
+    const alertThreshold = 0.6;
 
-    const riskChecks = [
-      { key: 'heat_wave_risk', title: 'High Heat Wave Risk' },
-      { key: 'cold_wave_risk', title: 'High Cold Wave Risk' },
-      { key: 'flash_flood_risk', title: 'High Flash Flood Risk' },
-      { key: 'storm_risk', title: 'High Storm Risk' },
-      { key: 'forest_fire_risk', title: 'High Forest Fire Risk' },
+    const riskChecks: RiskCheck[] = [
+      { key: 'heat_wave_risk', title: 'Heat Wave', recommendation: ['Stay hydrated by drinking plenty of water.', 'Seek shade and avoid strenuous activity during peak sun hours.', 'Check on vulnerable neighbors, especially the elderly.'] },
+      { key: 'cold_wave_risk', title: 'Cold Wave', recommendation: ['Wear warm layers of clothing.', 'Ensure your heating system is functional and safe.', 'Bring pets indoors.'] },
+      { key: 'flash_flood_risk', title: 'Flash Flood', recommendation: ['Move to higher ground immediately.', 'Do not walk or drive through floodwaters.', 'Listen to local news for evacuation orders.'] },
+      { key: 'storm_risk', title: 'Storm', recommendation: ['Secure loose outdoor objects like furniture.', 'Stay indoors and away from windows.', 'Charge your electronic devices in case of a power outage.'] },
+      { key: 'forest_fire_risk', title: 'Forest Fire', recommendation: ['Be aware of your designated evacuation routes.', 'Monitor local news and emergency alerts for updates.', 'Clear flammable materials from around your home.'] },
     ];
 
     riskChecks.forEach(risk => {
-      if (latestRisk[risk.key] >= highRiskThreshold) {
-        const notificationId = `${latestRisk.id}-${risk.key}`;
+      const probability = latestRisk[risk.key];
+      if (probability >= warningThreshold) {
+        currentActiveRisks.push(risk);
+        
+        let alertType: 'warning' | 'alert' = 'warning';
+        let alertTitle = `High ${risk.title} Risk`;
 
-        // 4. Check if the cooldown period has passed for this specific risk type
-        const lastTime = readNotificationMap.get(notificationId) || 0;
-        const now = new Date().getTime();
-        const hoursSinceLast = (now - lastTime) / (1000 * 60 * 60);
-
-        // Only create a notification if it's a new risk or the cooldown has passed
-        if (hoursSinceLast >= NOTIFICATION_COOLDOWN_HOURS) {
-            newNotifications.push({
-                id: notificationId,
-                title: risk.title,
-                message: `A ${risk.title.toLowerCase()} has been detected. Please take precautions.`,
-                type: 'alert',
-                timestamp: new Date(latestRisk.timestamp),
-                read: false, // A new notification is always unread
-                location: `${location.city}, ${location.country}`,
-            });
+        if (probability >= alertThreshold) {
+            alertType = 'alert';
+            alertTitle = `Critical ${risk.title} Risk`;
         }
+
+        const notificationId = `${latestRisk.id}-${risk.key}`;
+        
+        newNotifications.push({
+            id: notificationId,
+            title: alertTitle,
+            message: `A ${risk.title.toLowerCase()} risk has been detected in your area.`,
+            type: alertType,
+            timestamp: new Date(latestRisk.timestamp),
+            read: readNotificationMap.has(notificationId),
+            location: `${location.city}, ${location.country}`,
+        });
       }
     });
 
-    setNotifications(prev => {
-        // A simple merge to avoid duplicates while preserving existing state
-        const existingIds = new Set(prev.map(p => p.id));
-        const combined = [...prev, ...newNotifications.filter(n => !existingIds.has(n.id))];
-        return combined.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
-    });
+    setNotifications(newNotifications.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime()));
+    setActiveRisks(currentActiveRisks);
+    setIsLoading(false);
 
   }, [user, location.latitude, location.city, location.country]);
 
@@ -116,7 +129,6 @@ export const useNotifications = () => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'user_notifications', filter: `user_id=eq.${user.id}` },
         () => {
-          // Re-check notifications when a new one is read to update cooldown status
           checkRisksAndNotify();
         }
       )
@@ -164,7 +176,9 @@ export const useNotifications = () => {
 
   return {
     notifications,
+    activeRisks,
     unreadCount,
+    isLoading,
     markAsRead,
     markAllAsRead,
     permission,

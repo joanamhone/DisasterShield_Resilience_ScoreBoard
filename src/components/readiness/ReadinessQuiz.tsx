@@ -1,9 +1,11 @@
+// src/components/readiness/ReadinessQuiz.tsx
 import React, { useState } from 'react';
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import { useReadiness } from '../../contexts/ReadinessContext';
+import { useReadiness, AssessmentAnswer } from '../../contexts/ReadinessContext'; // Import AssessmentAnswer
 
 interface ReadinessQuizProps {
-  onComplete: () => void;
+  // onComplete now receives score and detailed answers
+  onComplete: (score: number, answers: AssessmentAnswer[]) => void;
   onCancel: () => void;
 }
 
@@ -19,13 +21,13 @@ interface Option {
 }
 
 const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) => {
-  const { saveResponse } = useReadiness(); // **THE FIX: Use the correct function name**
+  // We don't use useReadiness's updateScore directly here.
+  // We'll pass the completed data back to Readiness.tsx via onComplete prop.
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [selectedOptionValues, setSelectedOptionValues] = useState<number[]>([]); // Store only selected option values
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const questions: Question[] = [
-    // Your questions array remains the same
     {
       id: 1,
       text: 'How many people are currently living in your household?',
@@ -138,34 +140,50 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
     },
   ];
 
+  // Store the selected option's value for the current question
   const handleAnswer = (value: number) => {
-    const newAnswers = [...answers];
+    const newAnswers = [...selectedOptionValues];
     newAnswers[currentQuestionIndex] = value;
-    setAnswers(newAnswers);
+    setSelectedOptionValues(newAnswers);
   };
 
-  const calculateAndSaveScore = async () => {
+  const calculateAndProvideAnswers = () => {
     setIsSubmitting(true);
-    try {
-      const totalPoints = answers.reduce((sum, value) => sum + value, 0);
-      const maxPossiblePoints = questions.length * 10;
-      const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100);
-      
-      await saveResponse(scorePercentage, answers);
-      
-      onComplete();
-    } catch (error) {
-      console.error("Failed to save assessment:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Transform numerical answers into detailed AssessmentAnswer objects
+    const detailedAnswers: AssessmentAnswer[] = questions.map((q, index) => {
+      const selectedValue = selectedOptionValues[index];
+      const selectedOption = q.options.find(opt => opt.value === selectedValue);
+      const userAnswerText = selectedOption ? selectedOption.text : 'No answer';
+
+      // For general quiz, we don't have a 'correct' answer directly.
+      // The 'value' is just a score. You might define 'correctAnswer' differently
+      // or omit it if it doesn't apply to a self-assessment.
+      // For simplicity, let's assume no explicit 'correctAnswer' for this type of quiz
+      // unless you add it to your question data later.
+      return {
+        questionId: q.id,
+        question: q.text,
+        userAnswer: userAnswerText,
+        // No explicit correctAnswer/isCorrect for a self-assessment,
+        // pointsAwarded is simply the value chosen.
+        pointsAwarded: selectedValue,
+        maxPoints: 10, // Max points per question is 10
+        selectedOptionText: userAnswerText // Store the text for display
+      };
+    });
+
+    const totalPoints = selectedOptionValues.reduce((sum, value) => sum + value, 0);
+    const maxPossiblePoints = questions.length * 10;
+    const scorePercentage = Math.round((totalPoints / maxPossiblePoints) * 100);
+
+    onComplete(scorePercentage, detailedAnswers); // Pass detailed answers to parent
   };
 
   const goToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      calculateAndSaveScore();
+      calculateAndProvideAnswers(); // Call the function to calculate and pass answers
     }
   };
 
@@ -175,7 +193,7 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
-  const isAnswered = answers[currentQuestionIndex] !== undefined;
+  const isAnswered = selectedOptionValues[currentQuestionIndex] !== undefined;
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   if (isSubmitting) {
@@ -183,7 +201,7 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-lg font-medium text-text-primary">Saving your assessment...</p>
+          <p className="text-lg font-medium text-text-primary">Completing your assessment...</p>
         </div>
       </div>
     );
@@ -200,7 +218,7 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
       </div>
       <div className="p-4 pb-2">
         <div className="w-full bg-border h-2 rounded-full mb-2">
-          <div 
+          <div
             className="h-2 bg-primary rounded-full transition-all duration-300"
             style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
           ></div>
@@ -215,13 +233,13 @@ const ReadinessQuiz: React.FC<ReadinessQuizProps> = ({ onComplete, onCancel }) =
               key={option.id}
               onClick={() => handleAnswer(option.value)}
               className={`w-full flex justify-between items-start p-4 rounded-lg border-2 transition-all duration-200 text-left ${
-                answers[currentQuestionIndex] === option.value
+                selectedOptionValues[currentQuestionIndex] === option.value
                   ? 'bg-primary border-primary text-white'
                   : 'bg-card border-divider hover:border-primary/50 text-text-primary'
               }`}
             >
               <span className="flex-1 leading-relaxed">{option.text}</span>
-              {answers[currentQuestionIndex] === option.value && (
+              {selectedOptionValues[currentQuestionIndex] === option.value && (
                 <Check size={20} className="text-white ml-3 flex-shrink-0 mt-0.5" />
               )}
             </button>

@@ -1,22 +1,25 @@
-import React, { useState } from 'react'
-import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+// src/components/readiness/CommunityReadinessQuiz.tsx
+import React, { useState } from 'react';
+import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { AssessmentAnswer } from '../../contexts/ReadinessContext'; // Import AssessmentAnswer
 
 interface CommunityReadinessQuizProps {
-  location: string
-  onComplete: (score: number, answers: number[]) => void
-  onCancel: () => void
+  location: string;
+  // onComplete now receives score and detailed answers
+  onComplete: (score: number, answers: AssessmentAnswer[]) => void;
+  onCancel: () => void;
 }
 
 interface Question {
-  id: number
-  text: string
-  options: Option[]
+  id: number;
+  text: string;
+  options: Option[];
 }
 
 interface Option {
-  id: number
-  text: string
-  value: number
+  id: number;
+  text: string;
+  value: number;
 }
 
 const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
@@ -24,9 +27,9 @@ const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
   onComplete,
   onCancel
 }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
-  const [quizComplete, setQuizComplete] = useState(false)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOptionValues, setSelectedOptionValues] = useState<number[]>([]); // Store selected option values
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submitting
 
   const questions: Question[] = [
     {
@@ -70,7 +73,7 @@ const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
     },
     {
       id: 5,
-      text: 'Does the community have an early warning system (e.g., SMS, sirens, radio)?',
+      text: 'Does your community have an early warning system (e.g., SMS, sirens, radio)?',
       options: [
         { id: 1, text: 'Yes, reliable and tested', value: 10 },
         { id: 2, text: 'Yes, but not reliable', value: 5 },
@@ -140,44 +143,63 @@ const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
         { id: 3, text: 'Not considered', value: 0 }
       ]
     }
-  ]
+  ];
 
-  const currentQuestion = questions[currentQuestionIndex]
+  const currentQuestion = questions[currentQuestionIndex];
 
   const handleAnswer = (value: number) => {
-    const newAnswers = [...answers]
-    newAnswers[currentQuestionIndex] = value
-    setAnswers(newAnswers)
-  }
+    const newAnswers = [...selectedOptionValues];
+    newAnswers[currentQuestionIndex] = value;
+    setSelectedOptionValues(newAnswers);
+  };
+
+  const calculateAndProvideAnswers = () => {
+    setIsSubmitting(true);
+    // Transform numerical answers into detailed AssessmentAnswer objects
+    const detailedAnswers: AssessmentAnswer[] = questions.map((q, index) => {
+      const selectedValue = selectedOptionValues[index];
+      const selectedOption = q.options.find(opt => opt.value === selectedValue);
+      const userAnswerText = selectedOption ? selectedOption.text : 'No answer';
+
+      return {
+        questionId: q.id,
+        question: q.text,
+        userAnswer: userAnswerText,
+        // No explicit correctAnswer/isCorrect for a self-assessment,
+        // pointsAwarded is simply the value chosen.
+        pointsAwarded: selectedValue,
+        maxPoints: 10, // Max points per question is 10
+        selectedOptionText: userAnswerText
+      };
+    });
+
+    setTimeout(() => {
+      const total = selectedOptionValues.reduce((sum, v) => sum + v, 0);
+      const max = questions.length * 10;
+      const percent = Math.round((total / max) * 100);
+      onComplete(percent, detailedAnswers); // Pass detailed answers to parent
+      setIsSubmitting(false); // End submitting state
+    }, 1000); // Simulate network delay
+  };
 
   const goToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      calculateScore()
+      calculateAndProvideAnswers();
     }
-  }
+  };
 
   const goToPreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1)
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  }
+  };
 
-  const calculateScore = () => {
-    setQuizComplete(true)
-    setTimeout(() => {
-      const total = answers.reduce((sum, v) => sum + v, 0)
-      const max = questions.length * 10
-      const percent = Math.round((total / max) * 100)
-      onComplete(percent, answers)
-    }, 1000)
-  }
+  const isAnswered = selectedOptionValues[currentQuestionIndex] !== undefined;
+  const isLastQuestion = currentQuestionIndex === questions.length - 1; // Renamed for consistency
 
-  const isAnswered = answers[currentQuestionIndex] !== undefined
-  const isLast = currentQuestionIndex === questions.length - 1
-
-  if (quizComplete) {
+  if (isSubmitting) { // Changed from quizComplete to isSubmitting
     return (
       <div className="flex justify-center items-center min-h-60">
         <div className="text-center">
@@ -185,7 +207,7 @@ const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
           <p className="text-lg font-semibold text-text-primary">Scoring community readiness...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -226,13 +248,13 @@ const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
               key={option.id}
               onClick={() => handleAnswer(option.value)}
               className={`w-full flex justify-between items-start p-4 rounded-lg border-2 transition-all duration-200 text-left ${
-                answers[currentQuestionIndex] === option.value
+                selectedOptionValues[currentQuestionIndex] === option.value
                   ? 'bg-primary text-white border-primary'
                   : 'bg-card border-divider hover:border-primary/50 text-text-primary'
               }`}
             >
               <span>{option.text}</span>
-              {answers[currentQuestionIndex] === option.value && (
+              {selectedOptionValues[currentQuestionIndex] === option.value && (
                 <Check size={20} className="ml-3 text-white" />
               )}
             </button>
@@ -263,12 +285,12 @@ const CommunityReadinessQuiz: React.FC<CommunityReadinessQuizProps> = ({
               : 'bg-primary text-white hover:bg-primary-dark'
           }`}
         >
-          {isLast ? 'Complete Assessment' : 'Next Question'}
-          {!isLast && <ChevronRight size={20} className="ml-1" />}
+          {isLastQuestion ? 'Complete Assessment' : 'Next Question'}
+          {!isLastQuestion && <ChevronRight size={20} className="ml-1" />}
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CommunityReadinessQuiz
+export default CommunityReadinessQuiz;
