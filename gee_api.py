@@ -2,11 +2,22 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import ee
 import json
+import base64
+import os
 
-# ee.Authenticate()
-# ee.Initialize(project='disastershield-466814')
+# Decode Base64 string and write it to a file
+service_account_base64 = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
 
-credentials = ee.ServiceAccountCredentials('disasteresilience@disastershield-v2.iam.gserviceaccount.com', 'disastershield-v2-97df00f86165.json')
+if service_account_base64:
+    with open('service_account.json', 'wb') as f:
+        f.write(base64.b64decode(service_account_base64))
+else:
+    raise Exception("Service account key not found in environment variables")
+credentials = ee.ServiceAccountCredentials(
+    'disasteresilience@disastershield-v2.iam.gserviceaccount.com',
+    'service_account.json'
+)
+
 ee.Initialize(credentials)
 
 app = Flask(__name__)
