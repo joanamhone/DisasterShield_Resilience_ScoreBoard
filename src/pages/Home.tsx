@@ -3,7 +3,6 @@ import {
   ClipboardCheck, 
   AlertCircle, 
   BarChart3, 
-  TrendingUp, 
   Shield, 
   Bell, 
   MapPin,

@@ -46,7 +46,7 @@ const RecommendationsComponent: React.FC<RecommendationsComponentProps> = ({ ans
         if (error) throw error;
 
         // Filter the recommendations to find ones that match the user's specific answers
-        const matchedRecommendations = data.filter(rec => 
+        const matchedRecommendations = data.filter((rec: { question_id: number; triggering_answer_value: number; }) => 
             answersNeedingImprovement.some(ans => 
                 rec.question_id === ans.question_id && rec.triggering_answer_value === ans.answer_value
             )

@@ -8,9 +8,7 @@ const RoleDashboard: React.FC = () => {
   const { 
     canAccessCommunityFeatures, 
     canAccessSchoolFeatures, 
-    canAccessCoordinatorFeatures,
-    getRoleDisplayName 
-  } = useRoleAccess()
+    canAccessCoordinatorFeatures  } = useRoleAccess()
 
   return (
     <div className="space-y-6">

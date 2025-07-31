@@ -1,11 +1,9 @@
 import React from 'react';
 import { Shield, Info } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
-import { useNavigate } from 'react-router-dom';
 
 const ActionableRecommendations: React.FC = () => {
   const { activeRisks } = useNotifications();
-  const navigate = useNavigate();
 
   // If there are active risks, show tailored recommendations in separate cards
   if (activeRisks.length > 0) {

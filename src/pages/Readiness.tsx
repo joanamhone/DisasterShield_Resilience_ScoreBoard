@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, X, AlertCircle, ChevronRight, Users, School, Loader2 } from 'lucide-react';
+import { AlertCircle, ChevronRight, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
 import { format } from 'date-fns';
@@ -11,7 +11,7 @@ import AssessmentDetails from '../components/readiness/AssessmentDetails'; // Im
 // import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'; 
 
 const Readiness: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
   const { assessmentHistory, isLoading, updateScore } = useReadiness();
   
   // Add 'history-detail' to the possible steps

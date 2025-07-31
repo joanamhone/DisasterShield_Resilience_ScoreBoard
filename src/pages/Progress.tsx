@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { TrendingUp, Target, Award, Loader2, ChevronRight } from 'lucide-react';
+import { Award, Loader2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, subDays, subMonths, subYears, differenceInMonths } from 'date-fns';
 import { useReadiness } from '../contexts/ReadinessContext';
@@ -24,7 +23,6 @@ const defaultKitItems = [
 
 
 const Progress: React.FC = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { assessmentHistory, isLoading: isReadinessLoading } = useReadiness();
   const { kitItems, isLoading: isKitLoading } = useEmergencyKit();

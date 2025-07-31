@@ -35,7 +35,7 @@ export const useNotifications = () => {
   const location = useLocation();
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
   const [activeRisks, setActiveRisks] = useState<RiskCheck[]>([]);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [permission] = useState<NotificationPermission>('default');
   const [isLoading, setIsLoading] = useState(true);
 
   const checkRisksAndNotify = useCallback(async () => {
