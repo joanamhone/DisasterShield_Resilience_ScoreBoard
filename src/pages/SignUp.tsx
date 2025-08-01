@@ -191,7 +191,7 @@ const SignUp: React.FC = () => {
               {[
                 { value: 'individual', label: 'Individual', description: 'Personal disaster preparedness' },
                 { value: 'community_leader', label: 'Community Leader', description: 'Lead community preparedness efforts' },
-                { value: 'school_admin', label: 'School Administrator', description: 'Manage school emergency plans' },
+                // { value: 'school_admin', label: 'School Administrator', description: 'Manage school emergency plans' },
                 { value: 'disaster_coordinator', label: 'Disaster Coordinator', description: 'Regional emergency management' }
               ].map((type) => (
                 <label key={type.value} className="flex items-start space-x-3 p-3 border border-border rounded-lg hover:bg-surface cursor-pointer">
