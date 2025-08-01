@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { AlertCircle, ChevronRight, Loader2 } from 'lucide-react';
+// Added Users2 for the new community button
+import { AlertCircle, ChevronRight, Loader2, Users2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
 import { format } from 'date-fns';
 
@@ -7,8 +9,10 @@ import { format } from 'date-fns';
 import ReadinessQuiz from '../components/readiness/ReadinessQuiz';
 import { ScoreOverview } from '../components/readiness/ScoreComponents';
 import AssessmentDetails from '../components/readiness/AssessmentDetails';
+import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'; 
 
 const Readiness: React.FC = () => {
+  useAuth();
   const { assessmentHistory, isLoading, saveAssessment } = useReadiness();
   
   const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results' | 'history-detail'>('choice');
@@ -34,6 +38,7 @@ const Readiness: React.FC = () => {
   
   const startNewAssessment = () => {
     setCurrentStep('choice');
+    setQuizType('general');
     setSelectedAssessment(null);
   };
 
@@ -50,7 +55,16 @@ const Readiness: React.FC = () => {
     );
   }
 
+  // --- MODIFICATION: Conditionally render the correct quiz component ---
   if (currentStep === 'quiz') {
+    if (quizType === 'community') {
+      return (
+        <CommunityReadinessQuiz 
+          onComplete={handleQuizComplete}
+          onCancel={() => setCurrentStep('choice')} location={''}        />
+      );
+    }
+    // Default to the general quiz for 'general' or 'school' types
     return (
       <ReadinessQuiz 
         onComplete={handleQuizComplete} 
@@ -72,7 +86,7 @@ const Readiness: React.FC = () => {
         </div>
     );
   }
-  
+
   if (currentStep === 'history-detail' && selectedAssessment) {
       return <AssessmentDetails assessment={selectedAssessment} onBack={startNewAssessment} />;
   }
@@ -81,11 +95,12 @@ const Readiness: React.FC = () => {
     <div className="space-y-6 pb-6">
       <div className="card p-6">
         <h3 className="text-xl font-bold text-text-primary mb-4">
-          Disaster Readiness Assessment
+          Disaster Readiness and Preparedness Assessment
         </h3>
         <p className="text-text-secondary mb-6">
           Select an assessment to evaluate your readiness.
         </p>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             onClick={() => handleAssessmentChoice('general')}
@@ -101,6 +116,26 @@ const Readiness: React.FC = () => {
               For Individuals & Families. Evaluate how prepared you and your household are.
             </p>
             <div className="mt-4 flex items-center text-primary">
+              <span className="text-sm font-medium">Start Assessment</span>
+              <ChevronRight size={16} className="ml-1" />
+            </div>
+          </button>
+
+          {/* --- MODIFICATION: Added button for Community Assessment --- */}
+          <button
+            onClick={() => handleAssessmentChoice('community')}
+            className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
+          >
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
+                <Users2 className="text-secondary" size={24} />
+              </div>
+              <h4 className="font-bold text-text-primary">Community Assessment</h4>
+            </div>
+            <p className="text-text-secondary text-sm leading-relaxed">
+              For Community Leaders. Evaluate the preparedness of your local community.
+            </p>
+            <div className="mt-4 flex items-center text-secondary">
               <span className="text-sm font-medium">Start Assessment</span>
               <ChevronRight size={16} className="ml-1" />
             </div>
