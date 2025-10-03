@@ -26,6 +26,8 @@ import Recommendations from './pages/Recommendations';
 import AllAlerts from './pages/AllAlerts';
 import AffectedPopulation from './pages/AffectedPopulation';
 import ResponseTeams from './pages/ResponseTeams';
+import SendAlert from './pages/SendAlert';
+import DrillSchedule from './pages/DrillSchedule';
 
 function App() {
   return (
@@ -93,6 +95,16 @@ function App() {
                         <Route path="/response-teams" element={
                           <ProtectedRoute allowedRoles={['disaster_coordinator']}>
                             <ResponseTeams />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/send-alert" element={
+                          <ProtectedRoute allowedRoles={['community_leader', 'disaster_coordinator']}>
+                            <SendAlert />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/schedule-drill" element={
+                          <ProtectedRoute allowedRoles={['community_leader', 'disaster_coordinator']}>
+                            <DrillSchedule />
                           </ProtectedRoute>
                         } />
                       </Routes>

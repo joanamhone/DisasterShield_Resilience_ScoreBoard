@@ -86,7 +86,7 @@ const CommunityDashboard: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate('/alerts')}
+          onClick={() => navigate('/send-alert')}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition-colors"
         >
           <Megaphone className="h-5 w-5" />
@@ -113,7 +113,7 @@ const CommunityDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <ReadinessScore score={0} />
         <RecentAlerts />
-        <RiskSummary />
+        <RiskSummary displayMode="summary" />
       </div>
 
       {/* Community Readiness Distribution */}

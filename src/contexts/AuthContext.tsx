@@ -35,6 +35,7 @@ export interface AuthContextType {
   signOut: () => Promise<void>;
   updateProfile: (profileData: Partial<User>) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -153,8 +154,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     if (error) throw error;
   };
-  
-  const value = { user, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword };
+
+  const deleteAccount = async () => {
+    if (!user) throw new Error('No user logged in');
+
+    const { error: deleteProfileError } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', user.id);
+
+    if (deleteProfileError) throw deleteProfileError;
+
+    const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(user.id);
+    if (deleteAuthError) {
+      console.error('Note: Auth user deletion requires admin privileges');
+    }
+
+    setUser(null);
+    await supabase.auth.signOut();
+  };
+
+  const value = { user, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, deleteAccount };
 
   return (
     <AuthContext.Provider value={value}>

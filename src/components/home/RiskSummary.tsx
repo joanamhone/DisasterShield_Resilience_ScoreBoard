@@ -1,15 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDisasterPrediction } from '../../contexts/DisasterPredictionContext';
-import { 
-  AlertOctagon, 
-  Droplets, 
-  Wind, 
-  Flame, 
-  Sun, 
+import {
+  AlertOctagon,
+  Droplets,
+  Wind,
+  Flame,
+  Sun,
   CloudSnow,
   Loader2,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  ChevronRight
 } from 'lucide-react';
 
 // Define the component's props
@@ -37,6 +39,7 @@ const getRiskIcon = (riskName: string) => {
 
 const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
   const { prediction, isLoading, error, retryFetch } = useDisasterPrediction();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -97,23 +100,34 @@ const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
       
       <div className="space-y-2">
         {risksToDisplay.length > 0 ? (
-          risksToDisplay.map((risk, index) => {
-            const Icon = risk.icon;
-            const percentage = (risk.probability * 100).toFixed(1);
-            return (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Icon size={16} className={risk.color} />
-                  <span className="text-sm text-text-secondary ml-2">
-                    {risk.type}
+          <>
+            {risksToDisplay.map((risk, index) => {
+              const Icon = risk.icon;
+              const percentage = (risk.probability * 100).toFixed(1);
+              return (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Icon size={16} className={risk.color} />
+                    <span className="text-sm text-text-secondary ml-2">
+                      {risk.type}
+                    </span>
+                  </div>
+                  <span className={`text-sm font-medium ${risk.color}`}>
+                    {percentage}%
                   </span>
                 </div>
-                <span className={`text-sm font-medium ${risk.color}`}>
-                  {percentage}%
-                </span>
-              </div>
-            );
-          })
+              );
+            })}
+            {displayMode === 'summary' && allCurrentRisks.length > 2 && (
+              <button
+                onClick={() => navigate('/assessment')}
+                className="w-full mt-3 flex items-center justify-center gap-2 text-sm text-primary hover:text-primary-dark font-medium transition-colors"
+              >
+                View All Risks ({allCurrentRisks.length})
+                <ChevronRight size={16} />
+              </button>
+            )}
+          </>
         ) : (
           <p className="text-sm text-text-secondary">
             No significant disaster risks detected at the moment.

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Settings, User, Phone, ChevronRight, LogOut, Bell, MapPin, Users as HouseholdIcon, Heart, PawPrint } from 'lucide-react';
+import { Settings, User, Phone, ChevronRight, LogOut, Bell, MapPin, Users as HouseholdIcon, Heart, PawPrint, Trash2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
-  const { user, updateProfile, signOut } = useAuth();
+  const { user, updateProfile, signOut, deleteAccount } = useAuth();
   const navigate = useNavigate();
 
   const [editing, setEditing] = useState(false);
@@ -22,6 +22,8 @@ const Profile: React.FC = () => {
   });
   const [] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   if (!user) return null;
 
@@ -32,12 +34,22 @@ const Profile: React.FC = () => {
   ];
 
   const validatePhoneNumber = (number: string) => {
-    // Simple regex for international phone numbers (e.g., +1234567890)
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
-    if (number && !phoneRegex.test(number)) {
-      setPhoneError('Please enter a valid phone number with country code (e.g., +123...).');
-    } else {
+    if (!number) {
       setPhoneError('');
+      return;
+    }
+
+    const phoneRegex = /^\+[1-9]\d{8,12}$/;
+
+    if (!phoneRegex.test(number)) {
+      setPhoneError('Phone number must be in format: +[country code][9-10 digits] (e.g., +1234567890)');
+    } else {
+      const digitsAfterPlus = number.substring(1);
+      if (digitsAfterPlus.length < 10 || digitsAfterPlus.length > 13) {
+        setPhoneError('Phone number must have 9-10 digits plus country code');
+      } else {
+        setPhoneError('');
+      }
     }
   };
 
@@ -85,6 +97,20 @@ const Profile: React.FC = () => {
       navigate('/signin');
     } catch (error) {
       console.error('Sign out error:', error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      return;
+    }
+
+    try {
+      await deleteAccount();
+      navigate('/signin');
+    } catch (error) {
+      console.error('Delete account error:', error);
+      alert('Failed to delete account. Please try again.');
     }
   };
 
@@ -200,6 +226,50 @@ const Profile: React.FC = () => {
         <LogOut size={20} className="text-error mr-2" />
         <span className="font-medium text-error">Sign Out</span>
       </button>
+
+      <button onClick={() => setShowDeleteModal(true)} className="w-full card p-4 flex items-center justify-center hover:bg-surface transition-colors duration-200 border border-error/20">
+        <Trash2 size={20} className="text-error mr-2" />
+        <span className="font-medium text-error">Delete Account</span>
+      </button>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-text-primary mb-4">Delete Account</h3>
+            <p className="text-text-secondary mb-4">
+              This action cannot be undone. All your data will be permanently deleted.
+            </p>
+            <p className="text-text-secondary mb-4">
+              Type <span className="font-bold text-error">DELETE</span> to confirm:
+            </p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              className="w-full bg-surface rounded-lg px-3 py-2 text-text-primary mb-4 border border-border focus:outline-none focus:ring-2 focus:ring-error"
+              placeholder="Type DELETE"
+            />
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteConfirmText('');
+                }}
+                className="flex-1 btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText !== 'DELETE'}
+                className="flex-1 bg-error text-white rounded-lg px-4 py-2 font-medium hover:bg-error/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
