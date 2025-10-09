@@ -43,7 +43,6 @@ const ProfileSetup: React.FC = () => {
     setIsSaving(true);
 
     try {
-      // 3. Call the correct 'updateProfile' function
       await updateProfile({
         ...formData, // This now includes fullName, location, phoneNumber
         profileCompleted: true // Mark the profile as complete
@@ -65,7 +64,6 @@ const ProfileSetup: React.FC = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      // You could add a user-facing error message here
     } finally {
       setIsSaving(false);
     }
@@ -182,7 +180,7 @@ const ProfileSetup: React.FC = () => {
             <button
               type="submit"
               disabled={isSaving}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? 'Saving...' : 'Complete Profile'}
             </button>

@@ -5,7 +5,6 @@ import { useAuth } from '../contexts/AuthContext'
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate()
-  // 1. Remove 'loading' from useAuth, it's no longer needed here
   const { signUp, signInWithGoogle } = useAuth()
   
   const [formData, setFormData] = useState({
@@ -22,7 +21,7 @@ const SignUp: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   
-  // 2. Add a local state to manage the form submission
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateEmail = (email: string, userType: string) => {
@@ -103,7 +102,6 @@ const SignUp: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  // 3. Update handleSubmit to use the local state
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
