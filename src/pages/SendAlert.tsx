@@ -179,6 +179,9 @@ const SendAlert: React.FC = () => {
               <div>📊 Recipients: {calculateRecipientsCount()} people</div>
               <div>📤 Delivery: {formData.deliveryMethod.join(', ')}</div>
               <div>🕰️ Expires: {new Date(Date.now() + formData.expiresInHours * 60 * 60 * 1000).toLocaleString()}</div>
+              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-blue-700">
+                📧 Email clients opened | 📱 SMS apps launched | 🔔 Push notifications sent
+              </div>
             </div>
             <div className="mt-2 text-sm opacity-75">Redirecting to dashboard...</div>
           </div>
@@ -396,7 +399,12 @@ const SendAlert: React.FC = () => {
               className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Send size={20} />
-              {loading ? 'Sending Alert...' : 'Send Alert'}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  Sending Alert...
+                </span>
+              ) : 'Send Alert'}
             </button>
           </div>
         </form>

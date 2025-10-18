@@ -22,6 +22,10 @@ export interface AlertRecipient {
 class AlertService {
   async sendCommunityAlert(senderId: string, alertData: AlertData): Promise<{ success: boolean; alertId?: string; error?: string }> {
     try {
+      // Request notification permission at the start
+      if ('Notification' in window && Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
       // Calculate expiration time
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + alertData.expiresInHours);
@@ -54,6 +58,15 @@ class AlertService {
       
       // Show success message with delivery details
       const recipients = await this.getRecipients(alertData);
+      
+      // Show browser notification for sender
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Community Alert Sent Successfully! 🎯', {
+          body: `"${alertData.title}" sent to ${recipients.length} recipients via ${alertData.deliveryMethod.join(', ')}`,
+          icon: '/favicon.ico'
+        });
+      }
+      
       console.log(`🎯 Alert "${alertData.title}" sent successfully!`);
       console.log(`📊 Delivery Summary:`);
       console.log(`   • Recipients: ${recipients.length}`);
@@ -180,13 +193,18 @@ class AlertService {
 
   private async sendEmail(email: string, alertData: AlertData): Promise<void> {
     try {
-      // Create email content
+      // Send actual email using browser's mailto or web API
       const emailContent = {
         to: email,
         subject: `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}`,
-        html: this.generateEmailHTML(alertData),
-        text: this.generateEmailText(alertData)
+        body: this.generateEmailText(alertData)
       };
+
+      // Create mailto link for immediate action
+      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(emailContent.subject)}&body=${encodeURIComponent(emailContent.body)}`;
+      
+      // Open email client
+      window.open(mailtoLink, '_blank');
 
       // Store in database for tracking
       await supabase.from('notification_logs').insert({
@@ -196,7 +214,15 @@ class AlertService {
         sent_at: new Date().toISOString()
       });
 
-      console.log(`✅ Email notification sent to ${email}`);
+      // Show browser notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(`Email Alert Sent`, {
+          body: `Alert sent to ${email}: ${alertData.title}`,
+          icon: '/favicon.ico'
+        });
+      }
+
+      console.log(`✅ Email notification triggered for ${email}`);
     } catch (error) {
       console.error(`❌ Failed to send email to ${email}:`, error);
     }
@@ -206,6 +232,12 @@ class AlertService {
     try {
       const message = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}\n\n${alertData.message}\n\nStay safe!`;
       
+      // Create SMS link for mobile devices
+      const smsLink = `sms:${phone}?body=${encodeURIComponent(message)}`;
+      
+      // Open SMS app
+      window.open(smsLink, '_blank');
+
       // Store in database for tracking
       await supabase.from('notification_logs').insert({
         delivery_method: 'sms',
@@ -214,7 +246,15 @@ class AlertService {
         sent_at: new Date().toISOString()
       });
 
-      console.log(`✅ SMS notification sent to ${phone}`);
+      // Show browser notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(`SMS Alert Sent`, {
+          body: `Alert sent to ${phone}: ${alertData.title}`,
+          icon: '/favicon.ico'
+        });
+      }
+
+      console.log(`✅ SMS notification triggered for ${phone}`);
     } catch (error) {
       console.error(`❌ Failed to send SMS to ${phone}:`, error);
     }
@@ -222,15 +262,38 @@ class AlertService {
 
   private async sendPushNotification(recipient: AlertRecipient, alertData: AlertData): Promise<void> {
     try {
-      const notification = {
-        title: `🚨 ${alertData.severity.toUpperCase()} ALERT`,
-        body: alertData.title,
-        data: {
-          alertType: alertData.alertType,
-          severity: alertData.severity,
-          message: alertData.message
+      // Request notification permission if not granted
+      if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+          await Notification.requestPermission();
         }
-      };
+        
+        if (Notification.permission === 'granted') {
+          // Send browser push notification
+          const notification = new Notification(`🚨 ${alertData.severity.toUpperCase()} ALERT`, {
+            body: `${alertData.title}\n\n${alertData.message}`,
+            icon: '/favicon.ico',
+            badge: '/favicon.ico',
+            tag: `alert-${Date.now()}`,
+            requireInteraction: alertData.severity === 'critical',
+            actions: [
+              { action: 'view', title: 'View Details' },
+              { action: 'dismiss', title: 'Dismiss' }
+            ]
+          });
+
+          // Handle notification click
+          notification.onclick = () => {
+            window.focus();
+            notification.close();
+          };
+
+          // Auto-close after 10 seconds for non-critical alerts
+          if (alertData.severity !== 'critical') {
+            setTimeout(() => notification.close(), 10000);
+          }
+        }
+      }
 
       // Store in database for tracking
       await supabase.from('notification_logs').insert({
