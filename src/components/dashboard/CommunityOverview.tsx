@@ -128,10 +128,9 @@ const CommunityOverview: React.FC = () => {
   }
 
   const sendAlert = (alertData: any) => {
-    // Implementation for sending alerts
-    console.log('Sending alert:', alertData)
+    // Navigate to the dedicated send alert page
+    navigate('/send-alert')
     setShowAlertModal(false)
-    alert('Community Alert Sent (Simulated)')
   }
 
   const scheduleDrill = (drillData: any) => {
@@ -157,7 +156,7 @@ const CommunityOverview: React.FC = () => {
         <div className="flex flex-wrap gap-3">
           {/* Send Alert Button */}
           <button
-            onClick={() => setShowAlertModal(true)}
+            onClick={() => navigate('/send-alert')}
             className="flex items-center gap-2 px-4 py-2 bg-error hover:bg-error/90 text-white rounded-lg shadow-md transition-colors font-medium"
           >
             <Megaphone size={16} />
