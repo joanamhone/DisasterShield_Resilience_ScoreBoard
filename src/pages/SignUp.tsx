@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Mail, Lock, User, MapPin, Phone } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, MapPin } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate()
-  // 1. Remove 'loading' from useAuth, it's no longer needed here
   const { signUp, signInWithGoogle } = useAuth()
   
   const [formData, setFormData] = useState({
@@ -14,16 +13,14 @@ const SignUp: React.FC = () => {
     password: '',
     confirmPassword: '',
     location: '',
-    phoneNumber: '',
     agreeToTerms: false
   })
   const [userType, setUserType] = useState('')
-
+  
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   
-  // 2. Add a local state to manage the form submission
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateEmail = (email: string, userType: string) => {
@@ -48,34 +45,17 @@ const SignUp: React.FC = () => {
     if (password.length < 6) {
       return 'Password must be at least 6 characters'
     }
-
+    
     const hasLetter = /[a-zA-Z]/.test(password)
     const hasNumber = /\d/.test(password)
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password)
-
+    
     if (!hasLetter || !hasNumber || !hasSpecial) {
       return 'Password must contain letters, numbers, and at least one special character'
     }
-
+    
     return null
   }
-
-  const validatePhoneNumber = (phoneNumber: string) => {
-    if (!phoneNumber) return null;
-
-    const phoneRegex = /^\+[1-9]\d{8,12}$/;
-    if (!phoneRegex.test(phoneNumber)) {
-      return 'Phone number must be in format: +[country code][9-10 digits] (e.g., +1234567890)';
-    }
-
-    const digitsAfterPlus = phoneNumber.substring(1);
-    if (digitsAfterPlus.length < 10 || digitsAfterPlus.length > 13) {
-      return 'Phone number must have 9-10 digits plus country code';
-    }
-
-    return null;
-  }
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
@@ -109,13 +89,6 @@ const SignUp: React.FC = () => {
       newErrors.location = 'Location is required'
     }
 
-    if (formData.phoneNumber) {
-      const phoneError = validatePhoneNumber(formData.phoneNumber);
-      if (phoneError) {
-        newErrors.phoneNumber = phoneError;
-      }
-    }
-
     if (!userType) {
       newErrors.userType = 'Please select a user type'
     }
@@ -128,7 +101,6 @@ const SignUp: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  // 3. Update handleSubmit to use the local state
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -350,27 +322,6 @@ const SignUp: React.FC = () => {
               />
             </div>
             {errors.location && <p className="text-error text-sm mt-1">{errors.location}</p>}
-          </div>
-
-          {/* Phone Number */}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              Phone Number (Optional)
-            </label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-tertiary" size={20} />
-              <input
-                type="tel"
-                value={formData.phoneNumber}
-                onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                  errors.phoneNumber ? 'border-error' : 'border-border'
-                }`}
-                placeholder="+1234567890"
-              />
-            </div>
-            {errors.phoneNumber && <p className="text-error text-sm mt-1">{errors.phoneNumber}</p>}
-            <p className="text-xs text-text-tertiary mt-1">Format: +[country code][9-10 digits]</p>
           </div>
 
           {/* Terms Agreement */}

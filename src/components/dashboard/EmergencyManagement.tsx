@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // <--- ADDED THIS IMPORT
-import ReadinessScore from '../home/ReadinessScore'; // <--- ADDED THIS IMPORT
-import RecentAlerts from '../home/RecentAlerts';     // <--- ADDED THIS IMPORT
-import RiskSummary from '../home/RiskSummary';       // <--- ADDED THIS IMPORT
+import { useAuth } from '../../contexts/AuthContext';
+import ReadinessScore from '../home/ReadinessScore'; 
+import RecentAlerts from '../home/RecentAlerts';     
+import RiskSummary from '../home/RiskSummary';       
 import {
   AlertTriangle, MapPin, Users, Activity, BarChart3,
   Shield, TrendingUp, Bell, Radio, Megaphone
