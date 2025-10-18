@@ -94,6 +94,10 @@ const SendAlert: React.FC = () => {
     setLoading(true);
 
     try {
+      console.log('🚀 Form submission started');
+      console.log('📋 Form data:', formData);
+      console.log('👤 User:', user);
+      
       const alertData: AlertData = {
         alertType: formData.alertType,
         severity: formData.severity,
@@ -104,8 +108,18 @@ const SendAlert: React.FC = () => {
         deliveryMethod: formData.deliveryMethod,
         expiresInHours: formData.expiresInHours,
       };
-
+      
+      console.log('📦 Alert data prepared:', alertData);
+      console.log('📤 Calling alertService.sendCommunityAlert...');
+      
+      // Test Supabase connection first
+      console.log('🔍 Testing Supabase connection...');
+      const { data: testData, error: testError } = await supabase.from('alerts').select('id').limit(1);
+      console.log('💾 Supabase test result:', { testData, testError });
+      
       const result = await alertService.sendCommunityAlert(user.id, alertData);
+      
+      console.log('📝 Alert service result:', result);
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to send alert');
@@ -123,7 +137,8 @@ const SendAlert: React.FC = () => {
         navigate('/community-dashboard');
       }, 3000);
     } catch (err) {
-      setError((err as Error).message);
+      console.error('❌ Error in handleSubmit:', err);
+      setError((err as Error).message || 'Unknown error occurred');
     } finally {
       setLoading(false);
     }

@@ -22,18 +22,27 @@ export interface AlertRecipient {
 class AlertService {
   async sendCommunityAlert(senderId: string, alertData: AlertData): Promise<{ success: boolean; alertId?: string; error?: string }> {
     try {
+      console.log('🚀 Starting alert send process...');
+      console.log('📋 Alert Data:', alertData);
+      console.log('👤 Sender ID:', senderId);
+      
       // Request notification permission at the start
       if ('Notification' in window && Notification.permission === 'default') {
-        await Notification.requestPermission();
+        console.log('🔔 Requesting notification permission...');
+        const permission = await Notification.requestPermission();
+        console.log('🔔 Permission result:', permission);
       }
       // Calculate expiration time
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + alertData.expiresInHours);
 
       // Get recipients count
+      console.log('👥 Getting recipients count...');
       const recipientsCount = await this.getRecipientsCount(senderId, alertData);
+      console.log('👥 Recipients count:', recipientsCount);
 
       // Insert alert into database
+      console.log('💾 Inserting alert into database...');
       const { data: alert, error: insertError } = await supabase
         .from('alerts')
         .insert({
@@ -51,10 +60,16 @@ class AlertService {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('❌ Database insert error:', insertError);
+        throw insertError;
+      }
+      console.log('✅ Alert inserted with ID:', alert.id);
 
       // Send notifications to recipients
+      console.log('📤 Starting notification delivery...');
       await this.deliverAlert(alert.id, alertData);
+      console.log('✅ Notification delivery completed');
       
       // Show success message with delivery details
       const recipients = await this.getRecipients(alertData);
@@ -115,10 +130,26 @@ class AlertService {
   private async deliverAlert(alertId: string, alertData: AlertData): Promise<void> {
     try {
       // Get recipients based on target audience
+      console.log('👥 Getting recipients for delivery...');
       const recipients = await this.getRecipients(alertData);
+      console.log(`📊 Found ${recipients.length} recipients`);
+
+      if (recipients.length === 0) {
+        console.warn('⚠️ No recipients found - creating demo notification');
+        // Show demo notification if no recipients
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('🚨 DEMO ALERT SENT', {
+            body: `"${alertData.title}" - No recipients in database, showing demo notification`,
+            icon: '/favicon.ico'
+          });
+        }
+        return;
+      }
 
       // Send notifications via selected delivery methods
+      console.log('📤 Processing delivery methods:', alertData.deliveryMethod);
       for (const method of alertData.deliveryMethod) {
+        console.log(`📨 Processing ${method} notifications...`);
         switch (method) {
           case 'email':
             await this.sendEmailNotifications(recipients, alertData);
@@ -141,6 +172,8 @@ class AlertService {
 
   private async getRecipients(alertData: AlertData): Promise<AlertRecipient[]> {
     try {
+      console.log('🔍 Getting recipients for target audience:', alertData.targetAudience);
+      
       let query = supabase.from('community_members').select(`
         id,
         name,
@@ -151,18 +184,29 @@ class AlertService {
       `);
 
       if (alertData.targetAudience === 'community' && alertData.targetCommunityId) {
+        console.log('🎯 Filtering by community ID:', alertData.targetCommunityId);
         query = query.eq('community_id', alertData.targetCommunityId);
       }
 
-      const { data: members } = await query;
+      const { data: members, error } = await query;
+      
+      if (error) {
+        console.error('❌ Error fetching members:', error);
+        return [];
+      }
+      
+      console.log('👥 Raw members data:', members);
 
-      return members?.map(member => ({
+      const recipients = members?.map(member => ({
         id: member.id,
         name: member.name,
         email: member.users?.email,
         phone: member.phone_number || member.users?.phone_number,
         communityId: member.community_id
       })) || [];
+      
+      console.log('📋 Processed recipients:', recipients);
+      return recipients;
     } catch (error) {
       console.error('Error getting recipients:', error);
       return [];
@@ -186,6 +230,7 @@ class AlertService {
   }
 
   private async sendPushNotifications(recipients: AlertRecipient[], alertData: AlertData): Promise<void> {
+    console.log(`🔔 Sending push notifications to ${recipients.length} recipients`);
     for (const recipient of recipients) {
       await this.sendPushNotification(recipient, alertData);
     }
@@ -193,6 +238,8 @@ class AlertService {
 
   private async sendEmail(email: string, alertData: AlertData): Promise<void> {
     try {
+      console.log(`📧 Sending email to: ${email}`);
+      
       // Send actual email using browser's mailto or web API
       const emailContent = {
         to: email,
@@ -203,20 +250,25 @@ class AlertService {
       // Create mailto link for immediate action
       const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(emailContent.subject)}&body=${encodeURIComponent(emailContent.body)}`;
       
+      console.log('📧 Opening email client with link:', mailtoLink);
       // Open email client
       window.open(mailtoLink, '_blank');
 
       // Store in database for tracking
-      await supabase.from('notification_logs').insert({
+      const { error: logError } = await supabase.from('notification_logs').insert({
         delivery_method: 'email',
         title: alertData.title,
         status: 'sent',
         sent_at: new Date().toISOString()
       });
+      
+      if (logError) {
+        console.warn('⚠️ Failed to log email notification:', logError);
+      }
 
       // Show browser notification
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(`Email Alert Sent`, {
+        new Notification(`📧 Email Alert Sent`, {
           body: `Alert sent to ${email}: ${alertData.title}`,
           icon: '/favicon.ico'
         });
