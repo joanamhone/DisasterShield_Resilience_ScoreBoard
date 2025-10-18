@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, Send, Users, MapPin, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { alertService, AlertData } from '../services/alertService';
 
 interface CommunityGroup {
   id: string;
@@ -85,37 +86,42 @@ const SendAlert: React.FC = () => {
       return;
     }
 
+    if (!user?.id) {
+      setError('User not authenticated');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + formData.expiresInHours);
-
-      const { error: insertError } = await supabase.from('alerts').insert({
-        sender_id: user?.id,
-        alert_type: formData.alertType,
+      const alertData: AlertData = {
+        alertType: formData.alertType,
         severity: formData.severity,
         title: formData.title,
         message: formData.message,
-        target_audience: formData.targetAudience,
-        target_community_id: formData.targetCommunityId || null,
-        recipients_count: calculateRecipientsCount(),
-        delivery_method: formData.deliveryMethod,
-        expires_at: expiresAt.toISOString(),
-      });
+        targetAudience: formData.targetAudience,
+        targetCommunityId: formData.targetCommunityId,
+        deliveryMethod: formData.deliveryMethod,
+        expiresInHours: formData.expiresInHours,
+      };
 
-      if (insertError) throw insertError;
+      const result = await alertService.sendCommunityAlert(user.id, alertData);
 
-      await supabase.from('progress_tracking').upsert({
-        user_id: user?.id,
-        progress_type: 'community_leader',
-        alerts_sent: supabase.rpc('increment', { x: 1 }),
-      }, { onConflict: 'user_id' });
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send alert');
+      }
 
       setSuccess(true);
+      
+      // Show detailed success message
+      console.log('✅ Community Alert Sent Successfully!');
+      console.log(`📋 Alert ID: ${result.alertId}`);
+      console.log(`📊 Recipients: ${calculateRecipientsCount()} people`);
+      console.log(`📤 Delivery Methods: ${formData.deliveryMethod.join(', ')}`);
+      
       setTimeout(() => {
         navigate('/community-dashboard');
-      }, 2000);
+      }, 3000);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -165,7 +171,16 @@ const SendAlert: React.FC = () => {
 
         {success && (
           <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-            Alert sent successfully! Redirecting...
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">✅</span>
+              <strong>Alert sent successfully!</strong>
+            </div>
+            <div className="text-sm space-y-1">
+              <div>📊 Recipients: {calculateRecipientsCount()} people</div>
+              <div>📤 Delivery: {formData.deliveryMethod.join(', ')}</div>
+              <div>🕰️ Expires: {new Date(Date.now() + formData.expiresInHours * 60 * 60 * 1000).toLocaleString()}</div>
+            </div>
+            <div className="mt-2 text-sm opacity-75">Redirecting to dashboard...</div>
           </div>
         )}
 
@@ -381,7 +396,7 @@ const SendAlert: React.FC = () => {
               className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Send size={20} />
-              {loading ? 'Sending...' : 'Send Alert'}
+              {loading ? 'Sending Alert...' : 'Send Alert'}
             </button>
           </div>
         </form>

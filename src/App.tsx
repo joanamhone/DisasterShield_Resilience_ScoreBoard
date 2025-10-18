@@ -28,6 +28,7 @@ import ScheduleDrill from './pages/ScheduleDrill';
 import AllAlerts from './pages/AllAlerts';
 import AffectedPopulation from './pages/AffectedPopulation';
 import ResponseTeams from './pages/ResponseTeams';
+import SendAlert from './pages/SendAlert';
 import MapPage from './pages/map';
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
                         <Route path="learning" element={<Learning />} />
                         <Route path="schedule-drill" element={<ScheduleDrill />} />
                         <Route path="all-alerts" element={<AllAlerts />} />
+                        <Route path="send-alert" element={<SendAlert />} />
                         <Route path="affected-population" element={<AffectedPopulation />} />
                         <Route path="response-teams" element={<ResponseTeams />} />
                         
