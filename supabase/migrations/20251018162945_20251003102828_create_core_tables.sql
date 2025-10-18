@@ -306,3 +306,6 @@ CREATE INDEX IF NOT EXISTS idx_drills_community_id ON drills(community_id);
 CREATE INDEX IF NOT EXISTS idx_drills_scheduled_date ON drills(scheduled_date);
 CREATE INDEX IF NOT EXISTS idx_progress_tracking_user_id ON progress_tracking(user_id);
 CREATE INDEX IF NOT EXISTS idx_community_progress_community_id ON community_progress(community_id);
+
+
+
