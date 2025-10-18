@@ -240,19 +240,17 @@ class AlertService {
     try {
       console.log(`📧 Sending email to: ${email}`);
       
-      // Send actual email using browser's mailto or web API
-      const emailContent = {
-        to: email,
-        subject: `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}`,
-        body: this.generateEmailText(alertData)
-      };
-
-      // Create mailto link for immediate action
-      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(emailContent.subject)}&body=${encodeURIComponent(emailContent.body)}`;
+      const subject = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}`;
+      const body = this.generateEmailText(alertData);
       
-      console.log('📧 Opening email client with link:', mailtoLink);
-      // Open email client
-      window.open(mailtoLink, '_blank');
+      // Try to send via EmailJS first
+      const { sendRealEmail, sendFallbackEmail } = await import('../services/emailService');
+      const result = await sendRealEmail(email, subject, body, alertData);
+      
+      if (!result.success) {
+        console.log('📧 EmailJS failed, using fallback mailto');
+        sendFallbackEmail(email, subject, body);
+      }
 
       // Store in database for tracking
       const { error: logError } = await supabase.from('notification_logs').insert({
@@ -274,7 +272,7 @@ class AlertService {
         });
       }
 
-      console.log(`✅ Email notification triggered for ${email}`);
+      console.log(`✅ Email notification sent to ${email}`);
     } catch (error) {
       console.error(`❌ Failed to send email to ${email}:`, error);
     }
@@ -284,11 +282,13 @@ class AlertService {
     try {
       const message = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}\n\n${alertData.message}\n\nStay safe!`;
       
-      // Create SMS link for mobile devices
-      const smsLink = `sms:${phone}?body=${encodeURIComponent(message)}`;
+      // Try to send via Twilio API first
+      const { sendRealSMS } = await import('../services/emailService');
+      const result = await sendRealSMS(phone, message);
       
-      // Open SMS app
-      window.open(smsLink, '_blank');
+      if (result.fallback) {
+        console.log('📱 Used SMS fallback (opened SMS app)');
+      }
 
       // Store in database for tracking
       await supabase.from('notification_logs').insert({
@@ -300,13 +300,13 @@ class AlertService {
 
       // Show browser notification
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(`SMS Alert Sent`, {
+        new Notification(`📱 SMS Alert Sent`, {
           body: `Alert sent to ${phone}: ${alertData.title}`,
           icon: '/favicon.ico'
         });
       }
 
-      console.log(`✅ SMS notification triggered for ${phone}`);
+      console.log(`✅ SMS notification sent to ${phone}`);
     } catch (error) {
       console.error(`❌ Failed to send SMS to ${phone}:`, error);
     }
