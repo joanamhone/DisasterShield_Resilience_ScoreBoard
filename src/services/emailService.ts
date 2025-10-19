@@ -44,26 +44,37 @@ export const sendRealEmail = async (to: string, subject: string, body: string, a
 
 export const sendRealSMS = async (to: string, message: string) => {
   try {
-    const response = await fetch('/api/send-sms', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to: to,
-        message: message
-      })
-    });
+    // Try Twilio API directly
+    const accountSid = import.meta.env.VITE_TWILIO_ACCOUNT_SID;
+    const authToken = import.meta.env.VITE_TWILIO_AUTH_TOKEN;
+    const fromNumber = import.meta.env.VITE_TWILIO_PHONE_NUMBER;
 
-    if (!response.ok) {
-      throw new Error(`SMS API error: ${response.statusText}`);
+    if (accountSid && authToken && fromNumber) {
+      const auth = btoa(`${accountSid}:${authToken}`);
+      
+      const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          From: fromNumber,
+          To: to,
+          Body: message
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ SMS sent via Twilio:', result.sid);
+        return { success: true, result };
+      }
     }
 
-    const result = await response.json();
-    console.log('✅ SMS sent successfully:', result);
-    return { success: true, result };
+    throw new Error('Twilio credentials not configured');
   } catch (error) {
-    console.error('❌ SMS send failed:', error);
+    console.error('❌ SMS send failed, using fallback:', error);
     const smsLink = `sms:${to}?body=${encodeURIComponent(message)}`;
     window.open(smsLink, '_blank');
     return { success: true, fallback: true };
