@@ -325,13 +325,8 @@ class AlertService {
           const notification = new Notification(`🚨 ${alertData.severity.toUpperCase()} ALERT`, {
             body: `${alertData.title}\n\n${alertData.message}`,
             icon: '/favicon.ico',
-            badge: '/favicon.ico',
             tag: `alert-${Date.now()}`,
-            requireInteraction: alertData.severity === 'critical',
-            actions: [
-              { action: 'view', title: 'View Details' },
-              { action: 'dismiss', title: 'Dismiss' }
-            ]
+            requireInteraction: alertData.severity === 'critical'
           });
 
           // Handle notification click
