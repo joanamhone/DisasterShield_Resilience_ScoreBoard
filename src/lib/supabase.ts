@@ -15,9 +15,13 @@ if (
   supabase = {
     auth: {
       getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-      onAuthStateChange: () => ({
-        data: { subscription: { unsubscribe: () => {} } },
-      }),
+      onAuthStateChange: (callback: any) => {
+        // Call the callback immediately with no session to initialize the auth state
+        setTimeout(() => callback('INITIAL_SESSION', null), 0);
+        return {
+          data: { subscription: { unsubscribe: () => {} } },
+        };
+      },
       signUp: () => Promise.reject(new Error('Supabase not configured')),
       signInWithPassword: () => Promise.reject(new Error('Supabase not configured')),
       signInWithOAuth: () => Promise.reject(new Error('Supabase not configured')),
