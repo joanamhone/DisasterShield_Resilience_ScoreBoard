@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MapPin, RefreshCw, BarChart3, TrendingUp } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
 
 // Import components
 import DisasterMap from '../components/assessment/DisasterMap';
@@ -13,15 +12,7 @@ import HistoricalTrendsChart from '../components/charts/HistoricalTrendsChart';
 import { useLocation } from '../hooks/useLocation';
 import { getWeather, getPredictions, WeatherData, PredictionResult } from '../services/predictionService';
 import { useAuth } from '../contexts/AuthContext';
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Supabase URL and anon key are required.");
-}
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '../lib/supabase';
 
 const Assessment: React.FC = () => {
     const userLocation = useLocation();
