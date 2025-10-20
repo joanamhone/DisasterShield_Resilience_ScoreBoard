@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from './useLocation';
+import { supabase } from '../lib/supabase';
 
 // --- Interfaces ---
 export interface NotificationData {
@@ -19,15 +20,6 @@ export interface RiskCheck {
     title: string;
     recommendation: string[]; // Changed to an array of strings
 }
-
-// --- Supabase Client Initialization ---
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Supabase URL and anon key are required.");
-}
-const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
 // --- Main Hook ---
 export const useNotifications = () => {
@@ -69,7 +61,7 @@ export const useNotifications = () => {
         setIsLoading(false);
         return;
     }
-    const readNotificationMap = new Map(recentNotifications.map(n => [n.notification_id, new Date(n.read_at).getTime()]));
+    const readNotificationMap = new Map(recentNotifications.map((n: any) => [n.notification_id, new Date(n.read_at).getTime()]));
 
     const newNotifications: NotificationData[] = [];
     const currentActiveRisks: RiskCheck[] = [];
