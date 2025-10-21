@@ -12,7 +12,7 @@ import {
     Package, 
     BookOpen, 
     Settings as SettingsIcon,
-    Map // ADDED: Icon for Flood Risk Areas map
+    Map 
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import NotificationCenter from './notifications/NotificationCenter'
@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { unreadCount } = useNotifications()
   const { user } = useAuth()
 
-  // FIX 1: Use the user's primary role for routing to the correct dashboard
+  
   const getDashboardPath = () => {
     switch (user?.userType) {
       // IMPORTANT: Replace these strings with your actual userType values
