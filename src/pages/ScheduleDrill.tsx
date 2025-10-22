@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Users, FileText, Send, ArrowLeft, Plus, X } from 'lucide-react'
+import { communityService, CommunityGroup } from '../services/communityService'
+import { drillService } from '../services/drillService'
+import { supabase } from '../lib/supabase'
 
 const ScheduleDrill: React.FC = () => {
   const navigate = useNavigate()
@@ -19,6 +22,8 @@ const ScheduleDrill: React.FC = () => {
     notificationMethod: 'all'
   })
   const [loading, setLoading] = useState(false)
+  const [communityGroups, setCommunityGroups] = useState<CommunityGroup[]>([])
+  const [loadingGroups, setLoadingGroups] = useState(true)
 
   const drillTypes = [
     'Fire Evacuation',
@@ -31,13 +36,15 @@ const ScheduleDrill: React.FC = () => {
     'Power Outage'
   ]
 
-  const communityGroups = [
-    'Riverside Village',
-    'Downtown District', 
-    'Hill Community',
-    'Industrial Zone',
-    'School District'
-  ]
+  useEffect(() => {
+    const fetchCommunityGroups = async () => {
+      setLoadingGroups(true)
+      const groups = await communityService.getCommunityGroups()
+      setCommunityGroups(groups)
+      setLoadingGroups(false)
+    }
+    fetchCommunityGroups()
+  }, [])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -64,12 +71,12 @@ const ScheduleDrill: React.FC = () => {
     }))
   }
 
-  const handleGroupToggle = (group: string) => {
+  const handleGroupToggle = (groupId: string) => {
     setFormData(prev => ({
       ...prev,
-      targetGroups: prev.targetGroups.includes(group)
-        ? prev.targetGroups.filter(g => g !== group)
-        : [...prev.targetGroups, group]
+      targetGroups: prev.targetGroups.includes(groupId)
+        ? prev.targetGroups.filter(g => g !== groupId)
+        : [...prev.targetGroups, groupId]
     }))
   }
 
@@ -78,10 +85,49 @@ const ScheduleDrill: React.FC = () => {
     setLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      console.log('Drill scheduled:', formData)
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+
+      // Map drill types to database enum values
+      const drillTypeMap: { [key: string]: string } = {
+        'Fire Evacuation': 'fire',
+        'Earthquake Response': 'earthquake',
+        'Flood Response': 'flood',
+        'Severe Weather': 'general',
+        'Medical Emergency': 'general',
+        'Security Threat': 'general',
+        'Chemical Spill': 'general',
+        'Power Outage': 'general'
+      }
+
+      // Prepare drill data
+      const drillData = {
+        drill_type: drillTypeMap[formData.type] || 'general' as any,
+        title: formData.title,
+        description: formData.description,
+        scheduled_date: `${formData.date}T${formData.time}:00`,
+        duration_minutes: formData.duration ? parseInt(formData.duration) : undefined,
+        location: formData.venue,
+        community_id: formData.targetGroups[0] || '' // Use first selected group as primary
+      }
+
+      // Determine notification methods
+      const notificationMethods = formData.notificationMethod === 'all' 
+        ? ['email', 'sms', 'push']
+        : [formData.notificationMethod]
+
+      // Schedule drill with notifications
+      const result = await drillService.scheduleDrill(
+        user.id,
+        drillData,
+        formData.targetGroups,
+        notificationMethods
+      )
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to schedule drill')
+      }
       
       // Navigate back to community dashboard
       navigate('/', { 
@@ -92,6 +138,12 @@ const ScheduleDrill: React.FC = () => {
       })
     } catch (error) {
       console.error('Error scheduling drill:', error)
+      navigate('/', {
+        state: {
+          message: `Error scheduling drill: ${(error as Error).message}`,
+          type: 'error'
+        }
+      })
     } finally {
       setLoading(false)
     }
@@ -99,7 +151,8 @@ const ScheduleDrill: React.FC = () => {
 
   const isFormValid = () => {
     return formData.title && formData.type && formData.date && formData.time && 
-           formData.venue && formData.maxParticipants && formData.description
+           formData.venue && formData.maxParticipants && formData.description &&
+           formData.targetGroups.length > 0
   }
 
   return (
@@ -323,19 +376,38 @@ const ScheduleDrill: React.FC = () => {
           <p className="text-text-secondary text-sm mb-4">
             Select which community groups should be invited to participate in this drill
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {communityGroups.map(group => (
-              <label key={group} className="flex items-center space-x-3 p-3 border border-border rounded-lg hover:bg-surface cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.targetGroups.includes(group)}
-                  onChange={() => handleGroupToggle(group)}
-                  className="text-primary focus:ring-primary"
-                />
-                <span className="text-text-primary">{group}</span>
-              </label>
-            ))}
-          </div>
+          {loadingGroups ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
+              <span className="ml-2 text-text-secondary">Loading community groups...</span>
+            </div>
+          ) : communityGroups.length === 0 ? (
+            <div className="text-center py-8 text-text-secondary">
+              No community groups found. Please create groups first.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {communityGroups.map(group => (
+                <label key={group.id} className="flex items-center space-x-3 p-3 border border-border rounded-lg hover:bg-surface cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.targetGroups.includes(group.id)}
+                    onChange={() => handleGroupToggle(group.id)}
+                    className="text-primary focus:ring-primary"
+                  />
+                  <div className="flex-1">
+                    <span className="text-text-primary font-medium">{group.name}</span>
+                    {group.description && (
+                      <p className="text-text-secondary text-sm">{group.description}</p>
+                    )}
+                    {group.member_count && (
+                      <p className="text-text-secondary text-xs">{group.member_count} members</p>
+                    )}
+                  </div>
+                </label>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Notification Settings */}

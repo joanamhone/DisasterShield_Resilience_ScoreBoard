@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings as SettingsIcon, Users, Bell, Save, Plus, Trash2, Phone, Mail, AlertTriangle } from 'lucide-react'
+import { Settings as SettingsIcon, Users, Bell, Save, Plus, Trash2, Phone, Mail, AlertTriangle, Download } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useAccount } from '../hooks/useAccount'
 
 interface EmergencyContact {
   id: string
@@ -13,12 +14,12 @@ interface EmergencyContact {
 
 const Settings: React.FC = () => {
   const navigate = useNavigate()
-  const { user, updateProfile, deleteProfile } = useAuth()
+  const { user, updateProfile } = useAuth()
+  const { deleteAccount, exportUserData, loading: accountLoading, error: accountError } = useAccount()
   const [activeTab, setActiveTab] = useState<'general' | 'contacts' | 'notifications'>('general')
   const [loading, setLoading] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
-  const [deleting, setDeleting] = useState(false)
   
   // Emergency Contacts State
   const [contacts, setContacts] = useState<EmergencyContact[]>([
@@ -88,17 +89,26 @@ const Settings: React.FC = () => {
     }
   }
 
-  const handleDeleteProfile = async () => {
-    setDeleting(true)
-    try {
-      await deleteProfile()
+  const handleDeleteAccount = async () => {
+    const result = await deleteAccount()
+    
+    if (result.success) {
       alert('Your account has been successfully deleted.')
-      // Redirect to login or home page after successful deletion
-      navigate('/login') 
-    } catch (error) {
-      console.error('Delete profile error:', error)
-      alert('Failed to delete profile. Please try again.')
-      setDeleting(false) 
+    } else {
+      alert(`Failed to delete account: ${result.error}`)
+    }
+    
+    setShowDeleteConfirm(false)
+    setDeleteConfirmText('')
+  }
+
+  const handleExportData = async () => {
+    const result = await exportUserData()
+    
+    if (result.success) {
+      alert('Your data has been exported and downloaded.')
+    } else {
+      alert(`Failed to export data: ${result.error}`)
     }
   }
 
@@ -176,6 +186,26 @@ const Settings: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Data Export */}
+                <div className="border-t border-border pt-6">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                      <Download size={20} className="mr-2" />
+                      Export Your Data
+                    </h4>
+                    <p className="text-blue-700 text-sm mb-4">
+                      Download a copy of all your data including profile, progress, alerts, and drills.
+                    </p>
+                    <button
+                      onClick={handleExportData}
+                      disabled={accountLoading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {accountLoading ? 'Exporting...' : 'Export Data'}
+                    </button>
+                  </div>
+                </div>
+
                 {/* Danger Zone - Delete Account */}
                 <div className="border-t border-error/20 pt-6">
                   <div className="bg-error/5 border border-error/20 rounded-lg p-4">
@@ -186,11 +216,17 @@ const Settings: React.FC = () => {
                     <p className="text-text-secondary text-sm mb-4">
                       Once you delete your account, there is no going back. This action cannot be undone.
                     </p>
+                    {accountError && (
+                      <div className="mb-4 p-3 bg-error/10 border border-error/20 rounded text-error text-sm">
+                        {accountError}
+                      </div>
+                    )}
                     <button
                       onClick={() => setShowDeleteConfirm(true)}
-                      className="bg-error hover:bg-error/90 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+                      disabled={accountLoading}
+                      className="bg-error hover:bg-error/90 text-white font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
                     >
-                      Delete Account
+                      {accountLoading ? 'Processing...' : 'Delete Account'}
                     </button>
                   </div>
                 </div>
@@ -395,17 +431,17 @@ const Settings: React.FC = () => {
                   setShowDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                disabled={deleting}
+                disabled={accountLoading}
                 className="flex-1 btn-secondary"
               >
                 Cancel
               </button>
               <button
-                onClick={handleDeleteProfile}
-                disabled={deleteConfirmText !== 'DELETE' || deleting}
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText !== 'DELETE' || accountLoading}
                 className="flex-1 bg-error hover:bg-error/90 text-white font-medium py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {deleting ? 'Deleting...' : 'Delete Account'}
+                {accountLoading ? 'Deleting...' : 'Delete Account'}
               </button>
             </div>
           </div>

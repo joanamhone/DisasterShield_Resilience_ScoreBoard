@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useProgress } from '../hooks/useProgress'
+import { useDrills } from '../hooks/useDrills'
+import { useActivity } from '../hooks/useActivity'
 import ReadinessScore from '../components/home/ReadinessScore'
 import RecentAlerts from '../components/home/RecentAlerts'
 import RiskSummary from '../components/home/RiskSummary'
+import RecentActivities from '../components/dashboard/RecentActivities'
+import ActiveDrills from '../components/dashboard/ActiveDrills'
 import {
   Users,
   TrendingUp,
@@ -32,6 +37,9 @@ import {
 const CommunityDashboard: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { personalProgress, loading: progressLoading } = useProgress()
+  const { activeDrills, loading: drillsLoading } = useDrills()
+  const { activities, stats, loading: activityLoading } = useActivity()
 
   // --- STATE AND DATA ---
   
@@ -46,16 +54,25 @@ const CommunityDashboard: React.FC = () => {
   const [messageContent, setMessageContent] = useState('')
   const [sendingMessage, setSendingMessage] = useState(false)
 
-  // Community Stats (Merged & Expanded)
+  // Community Stats from backend
   const communityStats = {
-    totalMembers: 2475,
-    averageReadiness: 72,
-    activeAlerts: 3,
-    upcomingDrills: 2,
-    vulnerableHouseholds: 15, // New stat used in grid
-    completedDrills: 8,
-    workshopsHeld: 5,
-    alertsSent: 23
+    totalMembers: 2475, // This would come from community service
+    averageReadiness: 72, // This would come from community service
+    activeAlerts: stats.totalAlerts || 0,
+    upcomingDrills: activeDrills.length || 0,
+    vulnerableHouseholds: 15, // This would come from community service
+    completedDrills: stats.totalDrills || 0,
+    workshopsHeld: stats.totalWorkshops || 0,
+    alertsSent: stats.totalAlerts || 0
+  }
+
+  // Loading state
+  if (progressLoading || drillsLoading || activityLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
   }
   
   const topStats = [
@@ -86,14 +103,7 @@ const CommunityDashboard: React.FC = () => {
     { id: 2, type: 'Severe Weather', date: '2024-01-08', participants: 42, effectiveness: 92, feedback: 'Excellent response time' }
   ]
 
-  // Personal Progress Data
-  const personalProgress = {
-    coursesCompleted: 8,
-    certificationsEarned: 3,
-    drillsLed: 12,
-    assessmentsConducted: 25,
-    engagementScore: 94
-  }
+  // Personal Progress Data is now from useProgress hook
 
   // Learning Data
   const availableCourses = [
@@ -206,6 +216,12 @@ const CommunityDashboard: React.FC = () => {
         <ReadinessScore score={communityStats.averageReadiness} />
         <RecentAlerts />
         <RiskSummary />
+      </div>
+
+      {/* Activity and Drills Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentActivities />
+        <ActiveDrills />
       </div>
 
       {/* 3. QUICK ACTIONS & LEARNING CARD (Consolidated) */}

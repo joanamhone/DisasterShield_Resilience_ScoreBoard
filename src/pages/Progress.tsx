@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useRoleAccess } from '../hooks/useRoleAccess'
+import { useProgress } from '../hooks/useProgress'
+import { useDrills } from '../hooks/useDrills'
+import { useActivity } from '../hooks/useActivity'
 import { TrendingUp, Calendar, Target, Award, ChevronRight } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import { format, subDays } from 'date-fns'
@@ -10,6 +13,9 @@ const Progress: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { canAccessCommunityFeatures } = useRoleAccess()
+  const { personalProgress, loading: progressLoading } = useProgress()
+  const { completedDrills, loading: drillsLoading } = useDrills()
+  const { stats, loading: activityLoading } = useActivity()
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('month')
   const [activeTab, setActiveTab] = useState<'community' | 'personal'>('community')
 
@@ -152,21 +158,14 @@ const Progress: React.FC = () => {
     return null
   }
 
-  // Community Leader specific data
-  const personalProgress = {
-    coursesCompleted: 8,
-    certificationsEarned: 3,
-    drillsLed: 12,
-    assessmentsConducted: 25,
-    engagementScore: 94,
-    workshopsHeld: 5,
-    alertsSent: 23
+  // Loading state
+  if (progressLoading || drillsLoading || activityLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
   }
-
-  const completedDrills = [
-    { id: 1, type: 'Fire Response', date: '2024-01-15', participants: 38, effectiveness: 85, feedback: 'Good coordination' },
-    { id: 2, type: 'Severe Weather', date: '2024-01-08', participants: 42, effectiveness: 92, feedback: 'Excellent response time' }
-  ]
 
   const availableCourses = [
     { id: 1, title: 'Emergency Response Leadership', duration: '4 hours', certification: true, completed: true },
@@ -423,7 +422,7 @@ const Progress: React.FC = () => {
                 <h3 className="font-medium text-text-secondary">Courses Completed</h3>
                 <Target className="text-primary" size={20} />
               </div>
-              <div className="text-2xl font-bold text-primary">{personalProgress.coursesCompleted}</div>
+              <div className="text-2xl font-bold text-primary">{personalProgress?.coursesCompleted || 0}</div>
             </div>
 
             <div className="card p-4">
@@ -431,7 +430,7 @@ const Progress: React.FC = () => {
                 <h3 className="font-medium text-text-secondary">Certifications</h3>
                 <Award className="text-success" size={20} />
               </div>
-              <div className="text-2xl font-bold text-success">{personalProgress.certificationsEarned}</div>
+              <div className="text-2xl font-bold text-success">{personalProgress?.certificationsEarned || 0}</div>
             </div>
 
             <div className="card p-4">
@@ -439,7 +438,7 @@ const Progress: React.FC = () => {
                 <h3 className="font-medium text-text-secondary">Drills Led</h3>
                 <TrendingUp className="text-accent" size={20} />
               </div>
-              <div className="text-2xl font-bold text-accent">{personalProgress.drillsLed}</div>
+              <div className="text-2xl font-bold text-accent">{personalProgress?.drillsLed || 0}</div>
             </div>
 
             <div className="card p-4">
@@ -447,7 +446,7 @@ const Progress: React.FC = () => {
                 <h3 className="font-medium text-text-secondary">Engagement Score</h3>
                 <TrendingUp className="text-warning" size={20} />
               </div>
-              <div className="text-2xl font-bold text-warning">{personalProgress.engagementScore}%</div>
+              <div className="text-2xl font-bold text-warning">{personalProgress?.engagementScore || 0}%</div>
             </div>
           </div>
 
@@ -455,28 +454,32 @@ const Progress: React.FC = () => {
           <div className="card p-6">
             <h3 className="font-bold text-text-primary mb-4">Drills You've Led</h3>
             <div className="space-y-4">
-              {completedDrills.map((drill) => (
+              {completedDrills.length > 0 ? completedDrills.map((drill) => (
                 <div key={drill.id} className="p-4 bg-surface rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-text-primary">{drill.type}</h4>
-                    <span className="text-sm text-text-secondary">{drill.date}</span>
+                    <h4 className="font-medium text-text-primary">{drill.title}</h4>
+                    <span className="text-sm text-text-secondary">{format(new Date(drill.scheduled_date), 'MMM dd, yyyy')}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="text-text-secondary">Participants:</span>
-                      <div className="font-medium text-text-primary">{drill.participants}</div>
+                      <div className="font-medium text-text-primary">{drill.participants_count}</div>
                     </div>
                     <div>
-                      <span className="text-text-secondary">Effectiveness:</span>
-                      <div className="font-medium text-success">{drill.effectiveness}%</div>
+                      <span className="text-text-secondary">Type:</span>
+                      <div className="font-medium text-success">{drill.drill_type}</div>
                     </div>
                     <div>
-                      <span className="text-text-secondary">Feedback:</span>
-                      <div className="font-medium text-text-primary">{drill.feedback}</div>
+                      <span className="text-text-secondary">Status:</span>
+                      <div className="font-medium text-text-primary">{drill.status}</div>
                     </div>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8 text-text-secondary">
+                  No completed drills yet. <button onClick={() => navigate('/schedule-drill')} className="text-primary hover:underline">Schedule your first drill</button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -519,21 +522,21 @@ const Progress: React.FC = () => {
                   <span className="text-sm text-text-secondary">Workshops Held</span>
                   <Calendar className="text-primary" size={16} />
                 </div>
-                <div className="text-xl font-bold text-text-primary">{personalProgress.workshopsHeld}</div>
+                <div className="text-xl font-bold text-text-primary">{personalProgress?.workshopsHeld || 0}</div>
               </div>
               <div className="p-4 bg-surface rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-text-secondary">Alerts Sent</span>
                   <TrendingUp className="text-warning" size={16} />
                 </div>
-                <div className="text-xl font-bold text-text-primary">{personalProgress.alertsSent}</div>
+                <div className="text-xl font-bold text-text-primary">{personalProgress?.alertsSent || 0}</div>
               </div>
               <div className="p-4 bg-surface rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-text-secondary">Assessments Conducted</span>
                   <Target className="text-secondary" size={16} />
                 </div>
-                <div className="text-xl font-bold text-text-primary">{personalProgress.assessmentsConducted}</div>
+                <div className="text-xl font-bold text-text-primary">{personalProgress?.assessmentsConducted || 0}</div>
               </div>
             </div>
           </div>

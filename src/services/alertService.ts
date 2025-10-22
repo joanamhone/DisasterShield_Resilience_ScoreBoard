@@ -402,13 +402,7 @@ class AlertService {
 
   private async updateSenderProgress(senderId: string): Promise<void> {
     try {
-      await supabase
-        .from('progress_tracking')
-        .upsert({
-          user_id: senderId,
-          progress_type: 'community_leader',
-          alerts_sent: supabase.rpc('increment', { x: 1 }),
-        }, { onConflict: 'user_id' });
+      await supabase.rpc('increment_alerts_sent', { user_id: senderId });
     } catch (error) {
       console.error('Error updating sender progress:', error);
     }
