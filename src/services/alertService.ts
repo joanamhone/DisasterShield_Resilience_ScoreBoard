@@ -143,6 +143,8 @@ class AlertService {
             icon: '/favicon.ico'
           });
         }
+        // Still log the delivery even with 0 recipients
+        await this.logDeliveryStatus(alertId, 0);
         return;
       }
 
@@ -179,8 +181,7 @@ class AlertService {
         name,
         phone_number,
         user_id,
-        community_id,
-        users!inner(email, phone_number)
+        community_id
       `);
 
       if (alertData.targetAudience === 'community' && alertData.targetCommunityId) {
@@ -197,13 +198,29 @@ class AlertService {
       
       console.log('👥 Raw members data:', members);
 
-      const recipients = members?.map(member => ({
-        id: member.id,
-        name: member.name,
-        email: member.users?.email,
-        phone: member.phone_number || member.users?.phone_number,
-        communityId: member.community_id
-      })) || [];
+      // Get user emails for members who have user_id
+      const recipients: AlertRecipient[] = [];
+      
+      for (const member of members || []) {
+        let email = undefined;
+        
+        if (member.user_id) {
+          const { data: user } = await supabase
+            .from('users')
+            .select('email')
+            .eq('id', member.user_id)
+            .single();
+          email = user?.email;
+        }
+        
+        recipients.push({
+          id: member.id,
+          name: member.name,
+          email: email,
+          phone: member.phone_number,
+          communityId: member.community_id
+        });
+      }
       
       console.log('📋 Processed recipients:', recipients);
       return recipients;
@@ -280,7 +297,7 @@ class AlertService {
 
   private async sendSMS(phone: string, alertData: AlertData): Promise<void> {
     try {
-      const message = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}\n\n${alertData.message}\n\nStay safe!`;
+      const message = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}\n\n${alertData.message}\n\nStay safe!\n\n[DisasterShield Community Alert]`;
       
       // Try to send via Twilio API first
       const { sendRealSMS } = await import('../services/emailService');
@@ -402,7 +419,20 @@ class AlertService {
 
   private async updateSenderProgress(senderId: string): Promise<void> {
     try {
-      await supabase.rpc('increment_alerts_sent', { user_id: senderId });
+      const { error } = await supabase.rpc('increment_alerts_sent', { user_id: senderId });
+      if (error) {
+        console.warn('RPC function not found, using direct update:', error);
+        // Fallback to direct update if function doesn't exist
+        await supabase
+          .from('progress_tracking')
+          .upsert({
+            user_id: senderId,
+            alerts_sent: 1
+          }, {
+            onConflict: 'user_id',
+            ignoreDuplicates: false
+          });
+      }
     } catch (error) {
       console.error('Error updating sender progress:', error);
     }

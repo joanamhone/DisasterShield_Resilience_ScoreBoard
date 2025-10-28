@@ -101,7 +101,24 @@ class DrillService {
       await this.sendDrillNotifications(organizerId, data, targetGroups, notificationMethod);
 
       // Update organizer's progress
-      await supabase.rpc('increment_drills_led', { user_id: organizerId });
+      try {
+        const { error } = await supabase.rpc('increment_drills_led', { user_id: organizerId });
+        if (error) {
+          console.warn('RPC function not found, using direct update:', error);
+          // Fallback to direct update if function doesn't exist
+          await supabase
+            .from('progress_tracking')
+            .upsert({
+              user_id: organizerId,
+              drills_led: 1
+            }, {
+              onConflict: 'user_id',
+              ignoreDuplicates: false
+            });
+        }
+      } catch (progressError) {
+        console.error('Error updating drill progress:', progressError);
+      }
 
       return { success: true, drillId: data.id };
     } catch (error) {
