@@ -1,45 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react'; // Import useRef
 import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/ui/Button';
+import Button from '../components/ui/Button'; // Ensure correct path
 import { Download, MapPin } from 'lucide-react';
 
-// Import the new components for each tab (we will create these next)
-import DemographicsTab from '../components/reporting/DemographicsTab';
-import ReadinessTab from '../components/reporting/ReadinessTab';
-import ResponseTab from '../components/reporting/ResponseTab';
+// Import tab components AND their Ref types
+import DemographicsTab, { DemographicsTabRef } from '../components/reporting/DemographicsTab';
+import ReadinessTab, { ReadinessTabRef } from '../components/reporting/ReadinessTab';
+import ResponseTab, { ResponseTabRef } from '../components/reporting/ResponseTab';
 
-// Define the available tabs
 type Tab = 'demographics' | 'readiness' | 'response';
 
 const ReportingCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('demographics');
-  const { user } = useAuth(); // To get coordinator's jurisdiction
+  const { user } = useAuth();
+  const userJurisdiction = user?.jurisdiction || 'All Regions'; // Assuming user object has jurisdiction
 
-  // TODO: Replace with real user jurisdiction from user object
-  const userJurisdiction = user?.jurisdiction || 'All Regions';
+  // Refs to access export functions within tab components
+  const demographicsRef = useRef<DemographicsTabRef>(null);
+  const readinessRef = useRef<ReadinessTabRef>(null);
+  const responseRef = useRef<ResponseTabRef>(null);
 
-  // --- EXPORT FUNCTIONS ---
-  // We pass the activeTab to the components to get the correct data
+  // --- Updated Export Functions ---
   const handleExportExcel = () => {
-    // We will trigger an export function inside the active tab component
-    // This is a placeholder for now
-    alert(`Exporting ${activeTab} data to Excel... (logic to be implemented in tab component)`);
+    switch (activeTab) {
+      case 'demographics':
+        demographicsRef.current?.exportToExcel(); // Call function on ref
+        break;
+      case 'readiness':
+        readinessRef.current?.exportToExcel();
+        break;
+      case 'response':
+        responseRef.current?.exportToExcel();
+        break;
+    }
   };
 
   const handleExportPdf = () => {
-    // This is a placeholder for now
-    alert(`Exporting ${activeTab} data to PDF... (logic to be implemented in tab component)`);
+    switch (activeTab) {
+      case 'demographics':
+        demographicsRef.current?.exportToPdf(); // Call function on ref
+        break;
+      case 'readiness':
+        readinessRef.current?.exportToPdf();
+        break;
+      case 'response':
+        responseRef.current?.exportToPdf();
+        break;
+    }
   };
+  // --- End Updated Export Functions ---
 
-  // --- RENDER FUNCTIONS ---
   const renderTabContent = () => {
     switch (activeTab) {
       case 'demographics':
-        return <DemographicsTab jurisdiction={userJurisdiction} />;
+        // Pass the ref to the component
+        return <DemographicsTab ref={demographicsRef} jurisdiction={userJurisdiction} />;
       case 'readiness':
-        return <ReadinessTab jurisdiction={userJurisdiction} />;
+        return <ReadinessTab ref={readinessRef} jurisdiction={userJurisdiction} />;
       case 'response':
-        return <ResponseTab jurisdiction={userJurisdiction} />;
+        return <ResponseTab ref={responseRef} jurisdiction={userJurisdiction} />;
       default:
         return null;
     }
@@ -47,7 +66,6 @@ const ReportingCenter: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* 1. Header & Export Buttons */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Reporting Center</h1>
@@ -68,7 +86,6 @@ const ReportingCenter: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Tabs */}
       <div className="border-b border-divider">
         <nav className="flex flex-wrap -mb-px space-x-4">
           <button
@@ -92,7 +109,6 @@ const ReportingCenter: React.FC = () => {
         </nav>
       </div>
 
-      {/* 3. Tab Content */}
       <div className="min-h-[400px]">
         {renderTabContent()}
       </div>
