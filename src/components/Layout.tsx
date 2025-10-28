@@ -1,24 +1,26 @@
-import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import {
-  Home,
-  AlertTriangle,
-  Clipboard,
-  User,
-  Menu,
-  X,
-  Bell,
-  TrendingUp,
-  Package,
-  BookOpen,
-  Settings as SettingsIcon,
-  Map, // ADDED: Icon for Flood Risk Areas map
-} from "lucide-react";
-import { clsx } from "clsx";
-import NotificationCenter from "./notifications/NotificationCenter";
-import ProfileDropdown from "./ProfileDropdown";
-import { useNotifications } from "../hooks/useNotifications";
-import { useAuth } from "../contexts/AuthContext";
+import React from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
+import { 
+    Home, 
+    AlertTriangle, 
+    Clipboard, 
+    User, 
+    Menu, 
+    X, 
+    Bell, 
+    TrendingUp, 
+    Package, 
+    BookOpen, 
+    Settings as SettingsIcon,
+    Map,
+    Users,
+    PieChart
+} from 'lucide-react'
+import { clsx } from 'clsx'
+import NotificationCenter from './notifications/NotificationCenter'
+import ProfileDropdown from './ProfileDropdown'
+import { useNotifications } from '../hooks/useNotifications'
+import { useAuth } from '../contexts/AuthContext'
 
 interface LayoutProps {
   children: React.ReactNode;
