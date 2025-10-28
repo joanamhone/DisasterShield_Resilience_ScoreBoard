@@ -4,7 +4,7 @@ import { Loader2, Eye } from 'lucide-react';
 import Button from '../ui/Button'; // Ensure correct path
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 // Mock Data
 const MOCK_TABLE_DATA = [
@@ -54,7 +54,7 @@ const ResponseTab = forwardRef<ResponseTabRef, { jurisdiction: string }>(({ juri
       }
       const doc = new jsPDF();
       doc.text(`Disaster Response Reports - ${jurisdiction}`, 14, 15);
-      (doc as any).autoTable({
+      autoTable(doc, {
         startY: 20,
         head: [['Title', 'Community', 'Submitted By', 'Date', 'Status']], // Define headers
         body: tableData.map(row => [row.title, row.community, row.leader, row.date, row.status]),

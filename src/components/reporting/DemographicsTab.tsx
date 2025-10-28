@@ -3,7 +3,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 // Mock Data
 const MOCK_STATS = { totalPopulation: 120500, households: 28100, highRisk: 15200 };
@@ -58,14 +58,6 @@ const DemographicsTab = forwardRef<DemographicsTabRef, { jurisdiction: string }>
       }
       try {
         const doc = new jsPDF();
-
-        // Check again if autoTable exists after using require
-        if (typeof (doc as any).autoTable !== 'function') {
-            console.error("doc.autoTable is still not a function even after using require(). Check installation/versions.");
-            alert("PDF export functionality is not available. Please check console errors.");
-            return;
-        }
-
         doc.text(`Demographics Report - ${jurisdiction}`, 14, 15);
 
         const head = [['Community', 'Population', 'Households']];
@@ -75,8 +67,7 @@ const DemographicsTab = forwardRef<DemographicsTabRef, { jurisdiction: string }>
           row.households.toLocaleString()
         ]);
 
-        // Call autoTable (should now exist via the require)
-        (doc as any).autoTable({
+        autoTable(doc, {
           startY: 20,
           head: head,
           body: body,

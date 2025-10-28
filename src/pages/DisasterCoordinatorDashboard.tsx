@@ -9,7 +9,8 @@ import {
   Activity,
   TrendingUp,
   Bell,
-  Radio
+  Radio,
+  FileText
 } from 'lucide-react';
 
 const DisasterCoordinatorDashboard: React.FC = () => {
@@ -51,6 +52,13 @@ const DisasterCoordinatorDashboard: React.FC = () => {
       icon: Radio,
       color: 'bg-green-500',
       onClick: () => navigate('/response-teams')
+    },
+    {
+      title: 'Reports & Analytics',
+      description: 'Generate and export PDF reports',
+      icon: FileText,
+      color: 'bg-purple-500',
+      onClick: () => navigate('/reporting-center')
     }
   ];
 
@@ -90,7 +98,7 @@ const DisasterCoordinatorDashboard: React.FC = () => {
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {quickActions.map((action, index) => (
             <button
               key={index}

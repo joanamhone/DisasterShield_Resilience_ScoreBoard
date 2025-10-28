@@ -3,7 +3,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 // Mock Data
 const MOCK_STATS = { avgScore: 72, mostPrepared: "Mlumbe - Zomba", leastPrepared: "Kuntaja - Blantyre" };
@@ -58,7 +58,7 @@ const ReadinessTab = forwardRef<ReadinessTabRef, { jurisdiction: string }>(({ ju
       }
       const doc = new jsPDF();
       doc.text(`Community Readiness Report - ${jurisdiction}`, 14, 15);
-      (doc as any).autoTable({
+      autoTable(doc, {
         startY: 20,
         head: [['Community', 'Readiness Score', 'Status']], // Define headers
         body: tableData.map(row => [row.community, `${row.score}%`, row.status]), // Format score for PDF
