@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const getDashboardPath = () => {
     switch (user?.userType) {
       case 'disaster_coordinator':
-        return '/coordinator-dashboard';
+        return '/';
       case 'school_admin':
         return '/school-dashboard';
       case 'community_leader':
@@ -82,7 +82,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       "/",
       "/community-dashboard",
       "/school-dashboard",
-      "/coordinator-dashboard",
     ].includes(location.pathname);
 
     if (isDashboardPath) {

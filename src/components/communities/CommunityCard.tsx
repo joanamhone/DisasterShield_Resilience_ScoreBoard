@@ -22,8 +22,8 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ community, action }) => {
 
   const handleAction = () => {
     if (action === 'view') {
-      // Navigate to the chat page for this community
-      navigate(`/community/${community.id}`);
+      // Navigate to the members page for this community
+      navigate(`/community/${community.id}/members`);
     }
     if (action === 'join') {
       // TODO: Add Supabase logic to join this community

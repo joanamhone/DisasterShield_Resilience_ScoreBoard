@@ -31,7 +31,6 @@ import Privacy from './pages/Privacy'
 // Role-Specific Dashboards
 import CommunityDashboard from './pages/CommunityDashboard'
 import SchoolDashboard from './pages/SchoolDashboard'
-import DisasterCoordinatorDashboard from './pages/DisasterCoordinatorDashboard'
 
 // Old Role-Specific Pages (if still used)
 import Recommendations from './pages/Recommendations'
@@ -44,6 +43,7 @@ import ResponseTeams from './pages/ResponseTeams'
 // New Community & Coordinator Pages
 import CommunitiesPage from './pages/CommunitiesPage'
 import CommunityChat from './pages/CommunityChat'
+import CommunityMembers from './components/communities/CommunityMembers'
 import ManageRequests from './pages/ManageRequests' // <-- Fixed
 import ReportingCenter from './pages/ReportingCenter'
 
@@ -85,10 +85,10 @@ function App() {
 
                         <Route path="community-dashboard" element={<CommunityDashboard />} />
                         <Route path="school-dashboard" element={<SchoolDashboard />} />
-                        <Route path="coordinator-dashboard" element={<DisasterCoordinatorDashboard />} />
 
                         <Route path="communities" element={<CommunitiesPage />} />
                         <Route path="community/:id" element={<CommunityChat />} />
+                        <Route path="community/:id/members" element={<CommunityMembers />} />
                         <Route path="manage-requests" element={<ManageRequests />} />
 
                         <Route path="reporting-center" element={<ReportingCenter />} />
