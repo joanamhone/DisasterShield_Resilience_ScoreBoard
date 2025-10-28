@@ -221,10 +221,6 @@ const Assessment: React.FC = () => {
                 </div>
             </div>
 
-            {userLocation.latitude && userLocation.longitude && (
-                <DisasterMap latitude={userLocation.latitude} longitude={userLocation.longitude} />
-            )}
-
             <RiskSummary displayMode="full" />
         </div>
     )

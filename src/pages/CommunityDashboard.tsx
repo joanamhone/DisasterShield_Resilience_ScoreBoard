@@ -215,12 +215,12 @@ const CommunityDashboard: React.FC = () => {
           
           {/* Action: View Risk Map */}
           <button
-            onClick={() => navigate('/assessment')}
+            onClick={() => navigate('/readiness')}
             className="p-4 bg-surface rounded-lg hover:bg-border transition-colors text-left border border-border"
           >
             <AlertTriangle className="h-6 w-6 text-red-500 mb-2" />
-            <h3 className="font-medium text-text-primary mb-1">View Risk Map</h3>
-            <p className="text-sm text-text-secondary">Explore geographic disaster risks.</p>
+            <h3 className="font-medium text-text-primary mb-1">Take Assessment</h3>
+            <p className="text-sm text-text-secondary">Evaluate your readiness and that of your community.</p>
           </button>
           
           {/* Action: Track Progress */}

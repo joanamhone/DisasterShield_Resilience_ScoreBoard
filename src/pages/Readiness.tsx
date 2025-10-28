@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // Added Users2 for the new community button
 import { AlertCircle, ChevronRight, Loader2, Users2 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext'; // We need the user object from here
 import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
 import { format } from 'date-fns';
 
@@ -9,10 +9,10 @@ import { format } from 'date-fns';
 import ReadinessQuiz from '../components/readiness/ReadinessQuiz';
 import { ScoreOverview } from '../components/readiness/ScoreComponents';
 import AssessmentDetails from '../components/readiness/AssessmentDetails';
-import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz'; 
+import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz';
 
 const Readiness: React.FC = () => {
-  useAuth();
+  const { user } = useAuth(); // <-- Get the user object
   const { assessmentHistory, isLoading, saveAssessment } = useReadiness();
   
   const [currentStep, setCurrentStep] = useState<'choice' | 'quiz' | 'results' | 'history-detail'>('choice');
@@ -47,7 +47,7 @@ const Readiness: React.FC = () => {
     setCurrentStep('history-detail');
   };
 
-  if (isLoading && currentStep !== 'quiz') {
+  if (isLoading && currentStep !== 'quiz' && currentStep !== 'choice') { // Added 'choice' to prevent loading flash
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-primary" size={48} />
@@ -55,16 +55,15 @@ const Readiness: React.FC = () => {
     );
   }
 
-  // --- MODIFICATION: Conditionally render the correct quiz component ---
   if (currentStep === 'quiz') {
     if (quizType === 'community') {
       return (
         <CommunityReadinessQuiz 
           onComplete={handleQuizComplete}
-          onCancel={() => setCurrentStep('choice')} location={''}        />
+          onCancel={() => setCurrentStep('choice')} location={''} // Assuming location is needed
+        />
       );
     }
-    // Default to the general quiz for 'general' or 'school' types
     return (
       <ReadinessQuiz 
         onComplete={handleQuizComplete} 
@@ -91,6 +90,7 @@ const Readiness: React.FC = () => {
       return <AssessmentDetails assessment={selectedAssessment} onBack={startNewAssessment} />;
   }
 
+  // --- Assessment Choice Screen ---
   return (
     <div className="space-y-6 pb-6">
       <div className="card p-6">
@@ -102,6 +102,7 @@ const Readiness: React.FC = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* --- Individual Assessment Card (Visible to All) --- */}
           <button
             onClick={() => handleAssessmentChoice('general')}
             className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
@@ -121,25 +122,30 @@ const Readiness: React.FC = () => {
             </div>
           </button>
 
-          {/* --- MODIFICATION: Added button for Community Assessment --- */}
-          <button
-            onClick={() => handleAssessmentChoice('community')}
-            className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
-          >
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
-                <Users2 className="text-secondary" size={24} />
+          {/* --- Community Assessment Card (Conditional Rendering) --- */}
+          {/* Only render this button if the user is a community leader */}
+          {user?.userType === 'community_leader' && (
+            <button
+              onClick={() => handleAssessmentChoice('community')}
+              className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
+                  <Users2 className="text-secondary" size={24} />
+                </div>
+                <h4 className="font-bold text-text-primary">Community Assessment</h4>
               </div>
-              <h4 className="font-bold text-text-primary">Community Assessment</h4>
-            </div>
-            <p className="text-text-secondary text-sm leading-relaxed">
-              For Community Leaders. Evaluate the preparedness of your local community.
-            </p>
-            <div className="mt-4 flex items-center text-secondary">
-              <span className="text-sm font-medium">Start Assessment</span>
-              <ChevronRight size={16} className="ml-1" />
-            </div>
-          </button>
+              <p className="text-text-secondary text-sm leading-relaxed">
+                For Community Leaders. Evaluate the preparedness of your local community.
+              </p>
+              <div className="mt-4 flex items-center text-secondary">
+                <span className="text-sm font-medium">Start Assessment</span>
+                <ChevronRight size={16} className="ml-1" />
+              </div>
+            </button>
+          )}
+          {/* --- End Conditional Rendering --- */}
+
         </div>
       </div>
 
