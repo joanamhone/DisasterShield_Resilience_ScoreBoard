@@ -4,7 +4,8 @@ import {
   ShieldCheck,
   ClipboardList,
   BarChart3,
-  HeartHandshake
+  HeartHandshake,
+  FileText
 } from 'lucide-react';
 
 export interface NavItem {
@@ -55,6 +56,14 @@ export const navItems: NavItem[] = [
     label: 'Community Hub',
     icon: HeartHandshake,
     roles: ['community_leader'],
+  },
+
+  // --- Disaster Coordinator Links ---
+  {
+    path: '/reporting-center',
+    label: 'Reports',
+    icon: FileText,
+    roles: ['disaster_coordinator'],
   },
 
   /* // --- School Admin Links (Ready to be slotted in) ---
