@@ -1,9 +1,9 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2 } from 'lucide-react';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// import * as XLSX from 'xlsx';
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
 
 // Mock Data
 const MOCK_STATS = { avgScore: 72, mostPrepared: "Mlumbe - Zomba", leastPrepared: "Kuntaja - Blantyre" };
@@ -42,28 +42,16 @@ const ReadinessTab = forwardRef<ReadinessTabRef, { jurisdiction: string }>(({ ju
           alert("No data available to export.");
           return;
       }
-      const exportData = tableData.map(({ id, ...rest }) => ({
-          ...rest,
-          score: `${rest.score}%` // Format score for Excel
-      }));
-      const ws = XLSX.utils.json_to_sheet(exportData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Readiness Report');
-      XLSX.writeFile(wb, `readiness_report_${jurisdiction}.xlsx`);
+      // Excel export temporarily disabled due to module issues
+      alert("Excel export feature is temporarily unavailable.");
     },
     exportToPdf: () => {
       if (!tableData || tableData.length === 0) {
           alert("No data available to export.");
           return;
       }
-      const doc = new jsPDF();
-      doc.text(`Community Readiness Report - ${jurisdiction}`, 14, 15);
-      autoTable(doc, {
-        startY: 20,
-        head: [['Community', 'Readiness Score', 'Status']], // Define headers
-        body: tableData.map(row => [row.community, `${row.score}%`, row.status]), // Format score for PDF
-      });
-      doc.save(`readiness_report_${jurisdiction}.pdf`);
+      // PDF export temporarily disabled due to module issues
+      alert("PDF export feature is temporarily unavailable.");
     },
   }));
 

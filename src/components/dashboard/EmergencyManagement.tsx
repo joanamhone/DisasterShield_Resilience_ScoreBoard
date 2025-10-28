@@ -69,7 +69,7 @@ const EmergencyManagement: React.FC = () => {
       description: 'Broadcast urgent messages to the community',
       icon: Megaphone,
       color: 'bg-red-600',
-      onClick: () => navigate('/alerts')
+      onClick: () => navigate('/send-alert')
     },
     
     {
@@ -149,7 +149,7 @@ const EmergencyManagement: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate('/alerts')}
+          onClick={() => navigate('/send-alert')}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition-colors"
         >
           <Megaphone className="h-5 w-5" />

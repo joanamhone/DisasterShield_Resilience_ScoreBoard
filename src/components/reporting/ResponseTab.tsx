@@ -2,9 +2,9 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2, Eye } from 'lucide-react';
 import Button from '../ui/Button'; // Ensure correct path
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// import XLSX from 'xlsx';
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
 
 // Mock Data
 const MOCK_TABLE_DATA = [
@@ -41,25 +41,16 @@ const ResponseTab = forwardRef<ResponseTabRef, { jurisdiction: string }>(({ juri
           alert("No data available to export.");
           return;
       }
-      const exportData = tableData.map(({ id, ...rest }) => rest); // Exclude ID
-      const ws = XLSX.utils.json_to_sheet(exportData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Response Reports');
-      XLSX.writeFile(wb, `response_reports_${jurisdiction}.xlsx`);
+      // Excel export temporarily disabled due to module issues
+      alert("Excel export feature is temporarily unavailable.");
     },
     exportToPdf: () => {
       if (!tableData || tableData.length === 0) {
           alert("No data available to export.");
           return;
       }
-      const doc = new jsPDF();
-      doc.text(`Disaster Response Reports - ${jurisdiction}`, 14, 15);
-      autoTable(doc, {
-        startY: 20,
-        head: [['Title', 'Community', 'Submitted By', 'Date', 'Status']], // Define headers
-        body: tableData.map(row => [row.title, row.community, row.leader, row.date, row.status]),
-      });
-      doc.save(`response_reports_${jurisdiction}.pdf`);
+      // PDF export temporarily disabled due to module issues
+      alert("PDF export feature is temporarily unavailable.");
     },
   }));
 

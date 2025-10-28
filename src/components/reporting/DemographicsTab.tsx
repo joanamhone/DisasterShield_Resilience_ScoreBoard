@@ -1,9 +1,9 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2 } from 'lucide-react';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// import * as XLSX from 'xlsx';
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
 
 // Mock Data
 const MOCK_STATS = { totalPopulation: 120500, households: 28100, highRisk: 15200 };
@@ -35,49 +35,20 @@ const DemographicsTab = forwardRef<DemographicsTabRef, { jurisdiction: string }>
 
   useImperativeHandle(ref, () => ({
     exportToExcel: () => {
-      // ... (Excel export logic remains the same) ...
         if (!tableData || tableData.length === 0) {
           alert("No data available to export.");
           return;
         }
-        try {
-          const exportData = tableData.map(({ id, ...rest }) => rest);
-          const ws = XLSX.utils.json_to_sheet(exportData);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Demographics Report');
-          XLSX.writeFile(wb, `demographics_report_${jurisdiction}.xlsx`);
-        } catch (error) {
-          console.error("Error during Excel generation:", error);
-          alert("An error occurred while generating the Excel file.");
-        }
+        // Excel export temporarily disabled due to module issues
+        alert("Excel export feature is temporarily unavailable.");
     },
     exportToPdf: () => {
       if (!tableData || tableData.length === 0) {
         alert("No data available to export.");
         return;
       }
-      try {
-        const doc = new jsPDF();
-        doc.text(`Demographics Report - ${jurisdiction}`, 14, 15);
-
-        const head = [['Community', 'Population', 'Households']];
-        const body = tableData.map(row => [
-          row.community,
-          row.population.toLocaleString(),
-          row.households.toLocaleString()
-        ]);
-
-        autoTable(doc, {
-          startY: 20,
-          head: head,
-          body: body,
-        });
-
-        doc.save(`demographics_report_${jurisdiction}.pdf`);
-      } catch (error) {
-        console.error("Error during PDF generation:", error);
-        alert("An error occurred while generating the PDF.");
-      }
+      // PDF export temporarily disabled due to module issues
+      alert("PDF export feature is temporarily unavailable.");
     },
   }));
 

@@ -40,10 +40,17 @@ const SendAlert: React.FC = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('community_groups')
-        .select('id, name, total_members, location')
-        .eq('leader_id', user.id);
+        .select('id, name, total_members, location');
+      
+      // For disaster coordinators, load all communities in their region
+      // For community leaders, load only their managed communities
+      if (user.userType !== 'disaster_coordinator') {
+        query = query.eq('leader_id', user.id);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setCommunities(data || []);
@@ -173,8 +180,15 @@ const SendAlert: React.FC = () => {
             <AlertTriangle className="h-6 w-6 text-red-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Send Community Alert</h1>
-            <p className="text-gray-600">Notify your community about important updates</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {user?.userType === 'disaster_coordinator' ? 'Send Regional Alert' : 'Send Community Alert'}
+            </h1>
+            <p className="text-gray-600">
+              {user?.userType === 'disaster_coordinator' 
+                ? 'Broadcast urgent messages across your region' 
+                : 'Notify your community about important updates'
+              }
+            </p>
           </div>
         </div>
 
