@@ -45,7 +45,6 @@ const CommunityDashboard: React.FC = () => {
   
   // Modals State (Note: showDrillModal removed)
   const [activeProgressTab, setActiveProgressTab] = useState<'community' | 'personal'>('community')
-  const [activeActivityTab, setActiveActivityTab] = useState<'drills' | 'alerts' | 'workshops'>('drills')
   const [showAlertModal, setShowAlertModal] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const [selectedHousehold, setSelectedHousehold] = useState<any>(null)
@@ -97,11 +96,7 @@ const CommunityDashboard: React.FC = () => {
     { id: 3, name: 'Chen Family', address: '789 Elm Dr', score: 38, risk: 'Medium', contact: '+1-555-0789', issues: ['Outdated emergency plan'] }
   ]
 
-  // Activity Data
-  const completedDrills = [
-    { id: 1, type: 'Flood Response', date: '2024-01-15', participants: 38, effectiveness: 85, feedback: 'Good coordination' },
-    { id: 2, type: 'Severe Weather', date: '2024-01-08', participants: 42, effectiveness: 92, feedback: 'Excellent response time' }
-  ]
+
 
   // Personal Progress Data is now from useProgress hook
 
@@ -294,87 +289,7 @@ const CommunityDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. RECENT COMMUNITY ACTIVITIES (Tabbed View) */}
-      <div className="card">
-        <div className="border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4">
-            <h3 className="font-bold text-text-primary">Recent Community Activity</h3>
-            <div className="flex bg-surface rounded-lg p-1">
-              {[
-                { id: 'drills', label: 'Completed Drills' },
-                { id: 'alerts', label: 'Alerts Sent' },
-                { id: 'workshops', label: 'Workshops' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveActivityTab(tab.id as any)}
-                  className={`px-4 py-2 rounded-md font-medium transition-colors text-sm ${
-                    activeActivityTab === tab.id
-                      ? 'bg-primary text-white'
-                      : 'text-text-secondary hover:text-text-primary'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        <div className="p-6">
-          {activeActivityTab === 'drills' && (
-            <div className="space-y-4">
-              {completedDrills.map((drill) => (
-                <div key={drill.id} className="p-4 bg-surface rounded-lg border border-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-text-primary">{drill.type}</h4>
-                    <span className="text-sm text-text-secondary">{drill.date}</span>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="text-text-secondary">Participants:</span>
-                      <div className="font-medium text-text-primary">{drill.participants}</div>
-                    </div>
-                    <div>
-                      <span className="text-text-secondary">Effectiveness:</span>
-                      <div className="font-medium text-success">{drill.effectiveness}%</div>
-                    </div>
-                    <div>
-                      <span className="text-text-secondary">Feedback:</span>
-                      <div className="font-medium text-text-primary">{drill.feedback}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {activeActivityTab === 'alerts' && (
-            <div className="space-y-4">
-              <div className="p-4 bg-surface rounded-lg border border-border">
-                <h4 className="font-medium text-text-primary mb-2">Severe Weather Warning</h4>
-                <div className="text-sm text-text-secondary mb-2">Sent to 247 members • 2 hours ago</div>
-                <p className="text-sm text-text-primary">Heavy rainfall expected. Residents should avoid unnecessary travel.</p>
-              </div>
-              <div className="p-4 bg-surface rounded-lg border border-border">
-                <h4 className="font-medium text-text-primary mb-2">Air Quality Alert</h4>
-                <div className="text-sm text-text-secondary mb-2">Sent to 156 members • 1 day ago</div>
-                <p className="text-sm text-text-primary">Air quality improved to moderate levels. Outdoor activities can resume.</p>
-              </div>
-            </div>
-          )}
-          {activeActivityTab === 'workshops' && (
-            <div className="space-y-4">
-              <div className="p-4 bg-surface rounded-lg border border-border">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-text-primary">Emergency Preparedness Workshop</h4>
-                  <span className="text-sm text-success">Completed</span>
-                </div>
-                <div className="text-sm text-text-secondary">32 participants • January 15, 2024</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* 1. VULNERABLE HOUSEHOLDS (Rich, Interactive List) */}
       <div className="card p-6">
