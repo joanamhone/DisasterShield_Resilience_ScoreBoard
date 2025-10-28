@@ -36,6 +36,7 @@ import DisasterCoordinatorDashboard from './pages/DisasterCoordinatorDashboard'
 // Old Role-Specific Pages (if still used)
 import Recommendations from './pages/Recommendations'
 import ScheduleDrill from './pages/ScheduleDrill'
+import SendAlert from './pages/SendAlert'
 import AllAlerts from './pages/AllAlerts'
 import AffectedPopulation from './pages/AffectedPopulation' // <-- Fixed
 import ResponseTeams from './pages/ResponseTeams'
@@ -97,6 +98,7 @@ function App() {
                         
                         <Route path="recommendations" element={<Recommendations />} />
                         <Route path="schedule-drill" element={<ScheduleDrill />} />
+                        <Route path="send-alert" element={<SendAlert />} />
                         <Route path="all-alerts" element={<AllAlerts />} />
                         <Route path="affected-population" element={<AffectedPopulation />} />
                         <Route path="response-teams" element={<ResponseTeams />} />

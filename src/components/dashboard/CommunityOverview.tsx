@@ -24,7 +24,8 @@ import {
   Download,
   X,
   Shield,
-  Loader2 // Added for potential modal loading
+  Loader2,
+  ClipboardCheck // Added missing import
 } from 'lucide-react'
 
 // FIX APPLIED: Component name changed back to CommunityOverview
