@@ -1,111 +1,121 @@
-import React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
-import { 
-    Home, 
-    AlertTriangle, 
-    Clipboard, 
-    User, 
-    Menu, 
-    X, 
-    Bell, 
-    TrendingUp, 
-    Package, 
-    BookOpen, 
-    Settings as SettingsIcon,
-    Map // ADDED: Icon for Flood Risk Areas map
-} from 'lucide-react'
-import { clsx } from 'clsx'
-import NotificationCenter from './notifications/NotificationCenter'
-import ProfileDropdown from './ProfileDropdown'
-import { useNotifications } from '../hooks/useNotifications'
-import { useAuth } from '../contexts/AuthContext'
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import {
+  Home,
+  AlertTriangle,
+  Clipboard,
+  User,
+  Menu,
+  X,
+  Bell,
+  TrendingUp,
+  Package,
+  BookOpen,
+  Settings as SettingsIcon,
+  Map, // ADDED: Icon for Flood Risk Areas map
+} from "lucide-react";
+import { clsx } from "clsx";
+import NotificationCenter from "./notifications/NotificationCenter";
+import ProfileDropdown from "./ProfileDropdown";
+import { useNotifications } from "../hooks/useNotifications";
+import { useAuth } from "../contexts/AuthContext";
 
 interface LayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const location = useLocation()
-  const [sidebarOpen, setSidebarOpen] = React.useState(false)
-  const [notificationsOpen, setNotificationsOpen] = React.useState(false)
-  const { unreadCount } = useNotifications()
-  const { user } = useAuth()
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [notificationsOpen, setNotificationsOpen] = React.useState(false);
+  const { unreadCount } = useNotifications();
+  const { user } = useAuth();
 
   // FIX 1: Use the user's primary role for routing to the correct dashboard
   const getDashboardPath = () => {
     switch (user?.userType) {
       // IMPORTANT: Replace these strings with your actual userType values
-      case 'disaster_coordinator':
-        return '/coordinator-dashboard';
-      case 'school_admin':
-        return '/school-dashboard';
-      case 'community_leader':
-        return '/community-dashboard';
+      case "disaster_coordinator":
+        return "/coordinator-dashboard";
+      case "school_admin":
+        return "/school-dashboard";
+      case "community_leader":
+        return "/community-dashboard";
       default:
         // This will apply to 'individual' users and any other case
-        return '/';
+        return "/";
     }
-  }
+  };
 
   const navigation = React.useMemo(() => {
-    const homeTitle = user?.userType && user.userType !== 'individual' ? 'Dashboard' : 'Home'
-    
-    return [
-      { name: homeTitle, href: getDashboardPath(), icon: Home },
-      { name: 'Risk Assessment', href: '/assessment', icon: AlertTriangle },
-      { name: 'Readiness Check', href: '/readiness', icon: Clipboard },
-      { name: 'Track Progress', href: '/progress', icon: TrendingUp },
-      { name: 'Emergency Kit', href: '/emergency-kit', icon: Package },
-      { name: 'Flood Risk Areas', href: '/flood-risk-areas', icon: Map },
-      { name: 'Learning', href: '/learning', icon: BookOpen },
-      { name: 'Profile', href: '/profile', icon: User },
-      { name: 'Settings', href: '/settings', icon: SettingsIcon },
-    ]
-  }, [user])
+    const homeTitle =
+      user?.userType && user.userType !== "individual" ? "Dashboard" : "Home";
 
-  
+    const baseNav = [
+      { name: homeTitle, href: getDashboardPath(), icon: Home },
+      { name: "Risk Assessment", href: "/assessment", icon: AlertTriangle },
+      { name: "Readiness Check", href: "/readiness", icon: Clipboard },
+      { name: "Track Progress", href: "/progress", icon: TrendingUp },
+      { name: "Emergency Kit", href: "/emergency-kit", icon: Package },
+      { name: "Flood Risk Areas", href: "/flood-risk-areas", icon: Map },
+      { name: "Profile", href: "/profile", icon: User },
+      { name: "Settings", href: "/settings", icon: SettingsIcon },
+    ];
+
+    // Add "Learning" only if the user is a community leader
+    if (user?.userType === "community_leader") {
+      baseNav.splice(6, 0, {
+        name: "Learning",
+        href: "/learning",
+        icon: BookOpen,
+      }); // insert before Profile
+    }
+
+    return baseNav;
+  }, [user]);
+
   const getPageTitle = () => {
     const isDashboardPath = [
-        '/', 
-        '/community-dashboard', 
-        '/school-dashboard', 
-        '/coordinator-dashboard'
+      "/",
+      "/community-dashboard",
+      "/school-dashboard",
+      "/coordinator-dashboard",
     ].includes(location.pathname);
 
     if (isDashboardPath) {
-        switch (user?.userType) {
-            case 'disaster_coordinator':
-                return 'Disaster Coordinator Dashboard';
-            case 'school_admin':
-                return 'School Dashboard';
-            case 'community_leader':
-                return 'Community Dashboard';
-            default:
-                return 'Home Dashboard';
-        }
+      switch (user?.userType) {
+        case "disaster_coordinator":
+          return "Disaster Coordinator Dashboard";
+        case "school_admin":
+          return "School Dashboard";
+        case "community_leader":
+          return "Community Dashboard";
+        default:
+          return "Home Dashboard";
+      }
     }
 
     switch (location.pathname) {
-      case '/assessment':
-        return 'Disaster Risk Assessment';
-            case '/readiness':
-        return 'Emergency Readiness';
-      case '/progress':
-        return 'Track Progress';
-      case '/emergency-kit':
-        return 'Emergency Kit';
-      case '/flood-risk-areas': 
-        return 'Flood Risk Areas';
-        case '/learning':
-        return 'Learning Center';
-      case '/profile':
-        return 'Profile Settings';
-      case '/settings':
-        return 'Settings';
+      case "/assessment":
+        return "Disaster Risk Assessment";
+      case "/readiness":
+        return "Emergency Readiness";
+      case "/progress":
+        return "Track Progress";
+      case "/emergency-kit":
+        return "Emergency Kit";
+      case "/flood-risk-areas":
+        return "Flood Risk Areas";
+      case "/learning":
+        return "Learning Center";
+      case "/profile":
+        return "Profile Settings";
+      case "/settings":
+        return "Settings";
       default:
-        return 'Disaster Shield';
+        return "Disaster Shield";
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -115,30 +125,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex items-center h-16 px-6 border-b border-divider">
             <h1 className="text-xl font-bold text-primary">Disaster Shield</h1>
           </div>
-          
+
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navigation.map((item) => {
-              const Icon = item.icon
-              const isActive = location.pathname === item.href || (location.pathname === '/' && item.href === getDashboardPath())
-              
+              const Icon = item.icon;
+              const isActive =
+                location.pathname === item.href ||
+                (location.pathname === "/" && item.href === getDashboardPath());
+
               return (
                 <NavLink
                   key={item.name}
                   to={item.href}
                   className={clsx(
-                    'flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200',
+                    "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200",
                     isActive
-                      ? 'bg-primary text-white'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface'
+                      ? "bg-primary text-white"
+                      : "text-text-secondary hover:text-text-primary hover:bg-surface"
                   )}
                 >
                   <Icon size={20} className="mr-3" />
                   {item.name}
                 </NavLink>
-              )
+              );
             })}
           </nav>
-          
+
           <div className="px-6 py-4 border-t border-divider">
             <p className="text-xs text-text-tertiary">Disaster Shield v1.0.0</p>
             <p className="text-xs text-text-tertiary">Climate Preparedness</p>
@@ -149,10 +161,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setSidebarOpen(false)}
+          />
           <div className="relative flex w-full max-w-xs flex-col bg-card">
             <div className="flex h-16 items-center justify-between px-6 border-b border-divider">
-              <h1 className="text-xl font-bold text-primary">Disaster Shield</h1>
+              <h1 className="text-xl font-bold text-primary">
+                Disaster Shield
+              </h1>
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="p-2 hover:bg-surface rounded-lg"
@@ -162,25 +179,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             <nav className="flex-1 px-4 py-6 space-y-2">
               {navigation.map((item) => {
-                const Icon = item.icon
-                const isActive = location.pathname === item.href || (location.pathname === '/' && item.href === getDashboardPath())
-                
+                const Icon = item.icon;
+                const isActive =
+                  location.pathname === item.href ||
+                  (location.pathname === "/" &&
+                    item.href === getDashboardPath());
+
                 return (
                   <NavLink
                     key={item.name}
                     to={item.href}
                     onClick={() => setSidebarOpen(false)}
                     className={clsx(
-                      'flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200',
+                      "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200",
                       isActive
-                        ? 'bg-primary text-white'
-                        : 'text-text-secondary hover:text-text-primary hover:bg-surface'
+                        ? "bg-primary text-white"
+                        : "text-text-secondary hover:text-text-primary hover:bg-surface"
                     )}
                   >
                     <Icon size={20} className="mr-3" />
                     {item.name}
                   </NavLink>
-                )
+                );
               })}
             </nav>
           </div>
@@ -202,7 +222,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {getPageTitle()}
               </h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="relative notification-center">
                 <button
@@ -212,16 +232,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Bell size={20} className="text-text-primary" />
                   {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-error text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium min-w-[20px]">
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                      {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
                 </button>
-                <NotificationCenter 
+                <NotificationCenter
                   isOpen={notificationsOpen}
                   onClose={() => setNotificationsOpen(false)}
                 />
               </div>
-              
+
               <ProfileDropdown />
             </div>
           </div>
@@ -234,7 +254,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Layout;
