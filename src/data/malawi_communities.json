@@ -1,0 +1,272 @@
+{
+  "regions": [
+    {
+      "name": "Northern Region",
+      "districts": [
+        {
+          "name": "Chitipa",
+          "tas": [
+            "Kameme",
+            "STA Bulambya Songwe",
+            "Mwabulambya",
+            "Mwenemisuku",
+            "STA Lwangwa",
+            "Mwenewenya",
+            "STA Nthengatenga",
+            "Nthalire",
+            "STA Vavikaza"
+          ]
+        },
+        {
+          "name": "Karonga",
+          "tas": [
+            "Mwakaboko",
+            "Kilupula",
+            "Kyungu",
+            "Mwirang’ombe",
+            "Wasambo"
+          ]
+        },
+        {
+          "name": "Rumphi",
+          "tas": [
+            "Mwalweni",
+            "STA Kachulu",
+            "STA Njikula",
+            "Mwamlowe",
+            "STA Chapinduka",
+            "Mwankhunikira",
+            "Mwahenga",
+            "STA Chisovya",
+            "Chikulamayembe",
+            "Katumbi",
+            "STA Zolekere"
+          ]
+        },
+        {
+          "name": "Mzimba",
+          "tas": [
+            "Jaravikuba Munthali",
+            "Mtwalo",
+            "Mpherembe",
+            "Chindi",
+            "Kampingo Sibande",
+            "M’mbelwa",
+            "Mzukuzuku",
+            "Mzikubola",
+            "STA Levi Jere",
+            "Mabulabo",
+            "Khosolo Gwaza Jere"
+          ]
+        },
+        {
+          "name": "Nkhata Bay",
+          "tas": [
+            "STA Mkondowe",
+            "Boghoyo",
+            "M’bwana",
+            "STA Nyaluwanga",
+            "Timbiri",
+            "Mkumbira",
+            "Mankhambira",
+            "Fukamalaza",
+            "Malanda",
+            "Kabunduli",
+            "Malenga Mzoma",
+            "Fukamapiri",
+            "Zilakoma"
+          ]
+        },
+        {
+          "name": "Likoma",
+          "tas": [
+            "Mkumpha"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Central Region",
+      "districts": [
+        {
+          "name": "Kasungu",
+          "tas": [
+            "STA Chisikwa",
+            "Kaluluma",
+            "STA Chisinga",
+            "Chisemphere",
+            "Chulu",
+            "STA M'nyanja",
+            "Simlemba",
+            "STA Mphomwa",
+            "Kaphaizi",
+            "Mwase",
+            "Kaomba",
+            "Wimbe",
+            "Kapelula",
+            "STA Kapichira",
+            "STA Mdunga",
+            "Chilowamatambe",
+            "STA Chainbwe",
+            "STA Mangwazu",
+            "STA Mawawa",
+            "Lukwa",
+            "Njombwa",
+            "Kawamba",
+            "STA Nthunduwala",
+            "STA Chaima",
+            "Chidzuma",
+            "Santhe"
+          ]
+        },
+        {
+          "name": "Lilongwe",
+          "tas": [
+            "Khongoni",
+            "Kabudula",
+            "Mtema",
+            "STA Mbang’ombe",
+            "Chitukuta",
+            "Chimutu",
+            "STA Chitekwele",
+            "Mazengera",
+            "Kalumbu",
+            "Chadza",
+            "Kalumba",
+            "Tsabango",
+            "Njewa",
+            "Malili",
+            "Masumbankhunda",
+            "Chiseka",
+            "Masula"
+          ]
+        },
+        {
+          "name": "Dedza",
+          "tas": [
+            "Tambala",
+            "Chauma",
+            "Kasumbu",
+            "Kachindamoto",
+            "Kamenya Gwaza",
+            "Kaphuka",
+            "Chilikumwendo",
+            "Kachere"
+          ]
+        },
+        {
+          "name": "Ntcheu",
+          "tas": [
+            "Masasa",
+            "Chakhumbira",
+            "Goodson Ganya",
+            "Njolomole",
+            "Kwataine",
+            "Makwangwala",
+            "Champiti",
+            "Mpando",
+            "Phambala"
+          ]
+        },
+        {
+          "name": "Salima",
+          "tas": [
+            "Msosa",
+            "Khombedza",
+            "Mwanza",
+            "Kuluunda",
+            "Karonga",
+            "Maganga",
+            "Kambwiri",
+            "Pemba",
+            "Ndindi",
+            "Kambalame"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Southern Region",
+      "districts": [
+        {
+          "name": "Blantyre",
+          "tas": [
+            "Chigaru",
+            "Lundu",
+            "Kunthembwe",
+            "Kuntaja",
+            "Kapeni",
+            "Makata",
+            "Machinjiri",
+            "Somba"
+          ]
+        },
+        {
+          "name": "Zomba",
+          "tas": [
+            "Malemia",
+            "Kuntumanji",
+            "Mkumbira",
+            "Mlumbe",
+            "Chikowi",
+            "Mwambo",
+            "Mbiza"
+          ]
+        },
+        {
+          "name": "Mangochi",
+          "tas": [
+            "Makanjila",
+            "Namabvi",
+            "Katuli",
+            "Chowe",
+            "Jalasi",
+            "Mbwana Nyambi",
+            "Nankumba",
+            "Mponda",
+            "Chilipa",
+            "Chiunda"
+          ]
+        },
+        {
+          "name": "Mulanje",
+          "tas": [
+            "Juma",
+            "Nkanda",
+            "Nthiramanja",
+            "Chikumbu",
+            "Mabuka",
+            "Laison Njema"
+          ]
+        },
+        {
+          "name": "Chikwawa",
+          "tas": [
+            "Chapananga",
+            "Kasisi",
+            "Mlilima",
+            "Katunga",
+            "Maseya",
+            "Lundu",
+            "Makhwira",
+            "Ngabu"
+          ]
+        },
+        {
+          "name": "Nsanje",
+          "tas": [
+            "Mlolo",
+            "Mbenje",
+            "Tengani",
+            "Malemia",
+            "Ngabu",
+            "Makoko",
+            "Chimombo",
+            "Ndamera",
+            "Nyachikadza"
+          ]
+        }
+      ]
+    }
+  ]
+}

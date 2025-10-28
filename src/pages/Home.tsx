@@ -6,7 +6,8 @@ import {
   Shield, 
   Bell, 
   MapPin,
-  Loader2
+  Loader2,
+  Users
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useRoleAccess } from '../hooks/useRoleAccess';
@@ -94,9 +95,9 @@ const Home: React.FC = () => {
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <ActionButton onClick={() => navigate('/readiness')} icon={ClipboardCheck} title="Take Assessment" description="Evaluate your readiness" />
-          <ActionButton onClick={() => navigate('/assessment')} icon={AlertCircle} title="View Risk Map" description="Check current risks" />
           <ActionButton onClick={() => navigate('/progress')} icon={BarChart3} title="Track Progress" description="Monitor your improvements" />
           <ActionButton onClick={() => navigate('/emergency-kit')} icon={Shield} title="Emergency Kit" description="Review your supplies" />
+          <ActionButton onClick={() => navigate('/communities')} icon={Users} title="Join Community" description="Find your local group" />
         </div>
       </div>
 

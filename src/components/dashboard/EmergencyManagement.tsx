@@ -71,13 +71,7 @@ const EmergencyManagement: React.FC = () => {
       color: 'bg-red-600',
       onClick: () => navigate('/alerts')
     },
-    {
-      title: 'View Risk Map',
-      description: 'Go to the comprehensive risk assessment',
-      icon: AlertTriangle,
-      color: 'bg-orange-500',
-      onClick: () => navigate('/assessment')
-    },
+    
     {
       title: 'Your Readiness',
       description: 'Check your personal readiness status',

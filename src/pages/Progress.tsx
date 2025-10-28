@@ -382,36 +382,6 @@ const Progress: React.FC = () => {
       </div>
       )}
 
-      {/* Next goals */}
-      {(!canAccessCommunityFeatures() || activeTab === 'community') && (
-        <div className="card p-6">
-        <h3 className="font-bold text-text-primary mb-4">Next Goals</h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
-            <div>
-              <h4 className="font-medium text-text-primary">Reach 80% Readiness Score</h4>
-              <p className="text-sm text-text-secondary">Complete 3 more preparedness actions</p>
-            </div>
-            <ChevronRight className="text-text-tertiary" size={20} />
-          </div>
-          <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
-            <div>
-              <h4 className="font-medium text-text-primary">Update Emergency Contacts</h4>
-              <p className="text-sm text-text-secondary">Review and update your emergency contact list</p>
-            </div>
-            <ChevronRight className="text-text-tertiary" size={20} />
-          </div>
-          <div className="flex items-center justify-between p-4 bg-surface rounded-lg">
-            <div>
-              <h4 className="font-medium text-text-primary">Practice Evacuation Plan</h4>
-              <p className="text-sm text-text-secondary">Conduct a family evacuation drill</p>
-            </div>
-            <ChevronRight className="text-text-tertiary" size={20} />
-          </div>
-        </div>
-      </div>
-      )}
-
       {/* Personal Progress Tab for Community Leaders */}
       {canAccessCommunityFeatures() && activeTab === 'personal' && (
         <div className="space-y-6">

@@ -1,0 +1,89 @@
+import React, { useState, useEffect } from 'react';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { Loader2 } from 'lucide-react';
+
+// Mock Data - Replace with Supabase fetch
+const MOCK_STATS = {
+  avgScore: 72,
+  mostPrepared: "Mlumbe - Zomba",
+  leastPrepared: "Kuntaja - Blantyre",
+};
+
+const MOCK_TABLE_DATA = [
+  { id: 1, community: 'Kuntaja - Blantyre', score: 65, status: 'Needs Improvement' },
+  { id: 2, community: 'Mlumbe - Zomba', score: 82, status: 'Prepared' },
+  { id: 3, community: 'Kachere - Dedza', score: 71, status: 'Acceptable' },
+];
+
+const ReadinessTab: React.FC<{ jurisdiction: string }> = ({ jurisdiction }) => {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(MOCK_STATS);
+  const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
+  const supabase = useSupabaseClient();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      // TODO: Fetch real data from Supabase
+      // 1. Fetch aggregated readiness stats based on 'jurisdiction'
+      // 2. Fetch readiness table data based on 'jurisdiction'
+      
+      // Simulating API call
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    };
+    fetchData();
+  }, [jurisdiction, supabase]);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64"><Loader2 className="animate-spin text-primary" size={32} /></div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Key Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="card p-4">
+          <p className="text-sm text-text-secondary">Average Readiness Score</p>
+          <p className="text-3xl font-bold text-primary">{stats.avgScore}%</p>
+        </div>
+        <div className="card p-4">
+          <p className="text-sm text-text-secondary">Most Prepared</p>
+          <p className="text-xl font-bold text-text-primary truncate">{stats.mostPrepared}</p>
+        </div>
+        <div className="card p-4">
+          <p className="text-sm text-text-secondary">Least Prepared</p>
+          <p className="text-xl font-bold text-text-primary truncate">{stats.leastPrepared}</p>
+        </div>
+      </div>
+
+      {/* TODO: Add Charts here (e.g., Bar chart of scores) */}
+
+      {/* Data Table */}
+      <div className="card p-0 overflow-hidden">
+        <h3 className="p-4 text-lg font-semibold">Readiness by Community</h3>
+        <table className="min-w-full divide-y divide-divider">
+          <thead className="bg-surface">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Community (T.A.)</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Readiness Score</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Status</th>
+            </tr>
+          </thead>
+          <tbody className="bg-card divide-y divide-divider">
+            {tableData.map((row) => (
+              <tr key={row.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-text-primary">{row.community}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary font-bold">{row.score}%</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{row.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default ReadinessTab;

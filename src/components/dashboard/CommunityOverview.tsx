@@ -201,14 +201,14 @@ const CommunityOverview: React.FC = () => {
         <h2 className="text-lg font-bold text-text-primary mb-4">Quick Actions & Learning</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           
-          {/* Action: View Risk Map */}
+          {/* Action: Take assessment */}
           <button
             onClick={() => navigate('/assessment')}
             className="p-4 bg-surface rounded-lg hover:bg-border transition-colors text-left border border-border"
           >
-            <AlertTriangle className="h-6 w-6 text-red-500 mb-2" />
-            <h3 className="font-medium text-text-primary mb-1">View Risk Map</h3>
-            <p className="text-sm text-text-secondary">Explore geographic disaster risks.</p>
+            <ClipboardCheck className="h-6 w-6 text-red-500 mb-2" />
+            <h3 className="font-medium text-text-primary mb-1">Take Assessment</h3>
+            <p className="text-sm text-text-secondary">Evaluate your readiness and that of your community.</p>
           </button>
           
           {/* Action: Track Progress */}

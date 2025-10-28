@@ -31,48 +31,49 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { unreadCount } = useNotifications();
   const { user } = useAuth();
 
-  // FIX 1: Use the user's primary role for routing to the correct dashboard
+  
   const getDashboardPath = () => {
     switch (user?.userType) {
-      // IMPORTANT: Replace these strings with your actual userType values
-      case "disaster_coordinator":
-        return "/coordinator-dashboard";
-      case "school_admin":
-        return "/school-dashboard";
-      case "community_leader":
-        return "/community-dashboard";
+      case 'disaster_coordinator':
+        return '/coordinator-dashboard';
+      case 'school_admin':
+        return '/school-dashboard';
+      case 'community_leader':
+        return '/community-dashboard';
       default:
-        // This will apply to 'individual' users and any other case
-        return "/";
+        return '/';
     }
   };
 
   const navigation = React.useMemo(() => {
-    const homeTitle =
-      user?.userType && user.userType !== "individual" ? "Dashboard" : "Home";
-
-    const baseNav = [
+    const homeTitle = user?.userType && user.userType !== 'individual' ? 'Dashboard' : 'Home'
+    
+    const menuItems = [
       { name: homeTitle, href: getDashboardPath(), icon: Home },
-      { name: "Risk Assessment", href: "/assessment", icon: AlertTriangle },
-      { name: "Readiness Check", href: "/readiness", icon: Clipboard },
-      { name: "Track Progress", href: "/progress", icon: TrendingUp },
-      { name: "Emergency Kit", href: "/emergency-kit", icon: Package },
-      { name: "Flood Risk Areas", href: "/flood-risk-areas", icon: Map },
-      { name: "Profile", href: "/profile", icon: User },
-      { name: "Settings", href: "/settings", icon: SettingsIcon },
+      { name: 'Risk Assessment', href: '/assessment', icon: AlertTriangle },
+      { name: 'Readiness Check', href: '/readiness', icon: Clipboard },
+      { name: 'Track Progress', href: '/progress', icon: TrendingUp },
+      { name: 'Emergency Kit', href: '/emergency-kit', icon: Package },
+      { name: 'Communities', href: '/communities', icon: Users },
     ];
 
-    // Add "Learning" only if the user is a community leader
-    if (user?.userType === "community_leader") {
-      baseNav.splice(6, 0, {
-        name: "Learning",
-        href: "/learning",
-        icon: BookOpen,
-      }); // insert before Profile
+    if (user?.userType === 'community_leader') {
+      menuItems.push({ name: 'Learning', href: '/learning', icon: BookOpen });
     }
 
-    return baseNav;
-  }, [user]);
+    if (user?.userType === 'disaster_coordinator') {
+      menuItems.push(
+        { name: 'Reporting Center', href: '/reporting-center', icon: PieChart }
+      );
+    }
+
+    menuItems.push(
+      { name: 'Profile', href: '/profile', icon: User },
+      { name: 'Settings', href: '/settings', icon: SettingsIcon }
+    );
+    
+    return menuItems;
+  }, [user])
 
   const getPageTitle = () => {
     const isDashboardPath = [
@@ -96,24 +97,33 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
 
     switch (location.pathname) {
-      case "/assessment":
-        return "Disaster Risk Assessment";
-      case "/readiness":
-        return "Emergency Readiness";
-      case "/progress":
-        return "Track Progress";
-      case "/emergency-kit":
-        return "Emergency Kit";
-      case "/flood-risk-areas":
-        return "Flood Risk Areas";
-      case "/learning":
-        return "Learning Center";
-      case "/profile":
-        return "Profile Settings";
-      case "/settings":
-        return "Settings";
+      case '/assessment':
+        return 'Disaster Risk Assessment';
+      case '/readiness':
+        return 'Emergency Readiness';
+      case '/progress':
+        return 'Track Progress';
+      case '/emergency-kit':
+        return 'Emergency Kit';
+      case '/learning':
+        return 'Learning Center';
+      case '/communities':
+        return 'Communities';
+      case '/reporting-center':
+        return 'Reporting Center';
+      case '/profile':
+        return 'Profile Settings';
+      case '/settings':
+        return 'Settings';
       default:
-        return "Disaster Shield";
+        // Handle dynamic paths like /community/:id
+        if (location.pathname.startsWith('/community/')) {
+          return 'Community Chat';
+        }
+        if (location.pathname.startsWith('/manage-requests')) {
+          return 'Manage Join Requests';
+        }
+        return 'Disaster Shield';
     }
   };
 
@@ -245,7 +255,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <ProfileDropdown />
             </div>
           </div>
-        </header>
+        </header> {/* <-- THE FIX IS HERE. It was missing the final '>' */}
 
         <main className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">

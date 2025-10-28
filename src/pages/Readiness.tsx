@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 // Added Users2 for the new community button
+<<<<<<< HEAD
 import { AlertCircle, ChevronRight, Loader2, Users2 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import {
@@ -17,6 +18,21 @@ import CommunityReadinessQuiz from "../components/readiness/CommunityReadinessQu
 
 const Readiness: React.FC = () => {
   const { user } = useAuth(); // this gives you the logged-in user from the Supabase auth context
+=======
+import { AlertCircle, ChevronRight, Loader2, Users2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext'; // We need the user object from here
+import { useReadiness, ReadinessResponse, AssessmentAnswer } from '../contexts/ReadinessContext';
+import { format } from 'date-fns';
+
+// Import your components
+import ReadinessQuiz from '../components/readiness/ReadinessQuiz';
+import { ScoreOverview } from '../components/readiness/ScoreComponents';
+import AssessmentDetails from '../components/readiness/AssessmentDetails';
+import CommunityReadinessQuiz from '../components/readiness/CommunityReadinessQuiz';
+
+const Readiness: React.FC = () => {
+  const { user } = useAuth(); // <-- Get the user object
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
   const { assessmentHistory, isLoading, saveAssessment } = useReadiness();
 
   const [currentStep, setCurrentStep] = useState<
@@ -61,7 +77,11 @@ const Readiness: React.FC = () => {
     setCurrentStep("history-detail");
   };
 
+<<<<<<< HEAD
   if (isLoading && currentStep !== "quiz") {
+=======
+  if (isLoading && currentStep !== 'quiz' && currentStep !== 'choice') { // Added 'choice' to prevent loading flash
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-primary" size={48} />
@@ -69,18 +89,26 @@ const Readiness: React.FC = () => {
     );
   }
 
+<<<<<<< HEAD
   // --- MODIFICATION: Conditionally render the correct quiz component ---
   if (currentStep === "quiz") {
     if (quizType === "community") {
+=======
+  if (currentStep === 'quiz') {
+    if (quizType === 'community') {
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
       return (
         <CommunityReadinessQuiz
           onComplete={handleQuizComplete}
+<<<<<<< HEAD
           onCancel={() => setCurrentStep("choice")}
           location={""}
+=======
+          onCancel={() => setCurrentStep('choice')} location={''} // Assuming location is needed
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
         />
       );
     }
-    // Default to the general quiz for 'general' or 'school' types
     return (
       <ReadinessQuiz
         onComplete={handleQuizComplete}
@@ -112,6 +140,7 @@ const Readiness: React.FC = () => {
     );
   }
 
+  // --- Assessment Choice Screen ---
   return (
     <div className="space-y-6 pb-6">
       <div className="card p-6">
@@ -123,6 +152,7 @@ const Readiness: React.FC = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* --- Individual Assessment Card (Visible to All) --- */}
           <button
             onClick={() => handleAssessmentChoice("general")}
             className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
@@ -145,16 +175,25 @@ const Readiness: React.FC = () => {
             </div>
           </button>
 
+<<<<<<< HEAD
           {/* Show Community Assessment only for community leaders */}
           {user?.userType === "community_leader" && (
             <button
               onClick={() => handleAssessmentChoice("community")}
+=======
+          {/* --- Community Assessment Card (Conditional Rendering) --- */}
+          {/* Only render this button if the user is a community leader */}
+          {user?.userType === 'community_leader' && (
+            <button
+              onClick={() => handleAssessmentChoice('community')}
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
               className="card p-6 hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-primary/20 text-left w-full"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
                   <Users2 className="text-secondary" size={24} />
                 </div>
+<<<<<<< HEAD
                 <h4 className="font-bold text-text-primary">
                   Community Assessment
                 </h4>
@@ -162,6 +201,12 @@ const Readiness: React.FC = () => {
               <p className="text-text-secondary text-sm leading-relaxed">
                 For Community Leaders. Evaluate the preparedness of your local
                 community.
+=======
+                <h4 className="font-bold text-text-primary">Community Assessment</h4>
+              </div>
+              <p className="text-text-secondary text-sm leading-relaxed">
+                For Community Leaders. Evaluate the preparedness of your local community.
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
               </p>
               <div className="mt-4 flex items-center text-secondary">
                 <span className="text-sm font-medium">Start Assessment</span>
@@ -169,6 +214,11 @@ const Readiness: React.FC = () => {
               </div>
             </button>
           )}
+<<<<<<< HEAD
+=======
+          {/* --- End Conditional Rendering --- */}
+
+>>>>>>> b5732be64e6d000e56349bce3ff25549b35db779
         </div>
       </div>
 
