@@ -2,61 +2,64 @@ import React, { useState, useEffect } from 'react';
 import Button from '../ui/Button';
 import { MapPin, Users, Shield, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { communityService, CommunityGroup, CommunityMember } from '../../services/communityService';
 
-const MOCK_MANAGED_COMMUNITY = {
-  id: 'mbare-001',
-  name: 'Mbare Community',
-  location: 'Mbare Township, Harare, Zimbabwe'
-};
+
 
 const CommunityManager: React.FC<{ user: any }> = ({ user }) => {
   const navigate = useNavigate();
-  const [members, setMembers] = useState<any[]>([]);
+  const [members, setMembers] = useState<CommunityMember[]>([]);
+  const [managedCommunity, setManagedCommunity] = useState<CommunityGroup | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    fetchCommunityMembers();
+    fetchCommunityData();
     
     // Refresh members every 30 seconds to show new joiners
-    const interval = setInterval(fetchCommunityMembers, 30000);
+    const interval = setInterval(fetchCommunityData, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
-  const fetchCommunityMembers = () => {
-    // Get real members who joined this community
-    const joinRequests = JSON.parse(localStorage.getItem('join_requests') || '[]');
-    const communityMembers = joinRequests
-      .filter((request: any) => request.communityId === MOCK_MANAGED_COMMUNITY.id)
-      .map((request: any) => ({
-        id: request.userId,
-        name: request.userName,
-        phone: request.phoneNumber,
-        email: request.email,
-        address: request.userLocation,
-        readiness: Math.floor(Math.random() * 40) + 60, // Random readiness 60-100%
-        risk: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
-        joinedAt: request.timestamp
-      }));
-
-    // Add some dummy members if no real members exist
-    if (communityMembers.length === 0) {
-      const dummyMembers = [
-        { id: 'demo-1', name: 'Tendai Mukamuri', phone: '+263771234567', address: 'Mbare Township', readiness: 85, risk: 'low' },
-        { id: 'demo-2', name: 'Grace Chikwanha', phone: '+263712345678', address: 'Mbare Township', readiness: 72, risk: 'medium' }
-      ];
-      setMembers(dummyMembers);
-    } else {
-      setMembers(communityMembers);
-    }
+  const fetchCommunityData = async () => {
+    if (!user?.id) return;
     
-    setLoading(false);
+    try {
+      // Get all communities to find the one this user leads
+      const allCommunities = await communityService.getCommunityGroups();
+      const userCommunity = allCommunities.find(c => c.leader_id === user.id);
+      
+      if (!userCommunity) {
+        console.log('User is not a community leader');
+        setLoading(false);
+        return;
+      }
+      
+      setManagedCommunity(userCommunity);
+      
+      // Get members of this community
+      const communityMembers = await communityService.getCommunityMembers(userCommunity.id);
+      setMembers(communityMembers);
+    } catch (error) {
+      console.error('Error fetching community data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const managedCommunity = MOCK_MANAGED_COMMUNITY;
-  const avgReadiness = Math.round(members.reduce((acc, m) => acc + m.readiness, 0) / members.length) || 0;
+  const avgReadiness = Math.round(
+    members.reduce((acc, m) => acc + parseFloat(m.readiness_score || '5'), 0) / members.length
+  ) || 0;
 
   if (loading) {
     return <div className="text-center py-8">Loading community...</div>;
+  }
+  
+  if (!managedCommunity) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-text-secondary">You are not assigned as a community leader yet.</p>
+      </div>
+    );
   }
 
   return (
@@ -105,7 +108,7 @@ const CommunityManager: React.FC<{ user: any }> = ({ user }) => {
           <div className="flex space-x-2">
             <Button 
               variant="outline" 
-              onClick={fetchCommunityMembers}
+              onClick={fetchCommunityData}
               className="flex items-center space-x-2"
             >
               <RefreshCw className="h-4 w-4" />
@@ -126,30 +129,35 @@ const CommunityManager: React.FC<{ user: any }> = ({ user }) => {
                 <h3 className="font-medium text-gray-900">{member.name}</h3>
                 <div className="mt-1 space-y-1">
                   <div className="flex items-center text-sm text-gray-600">
-                    <span>{member.phone}</span>
+                    <span>{member.phone_number}</span>
                   </div>
-                  {member.email && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <span>{member.email}</span>
-                    </div>
-                  )}
                   <div className="flex items-center text-sm text-gray-600">
                     <MapPin className="h-4 w-4 mr-1" />
                     {member.address}
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    Joined: {new Date(member.created_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">
-                  {member.readiness}% Ready
+                  {parseFloat(member.readiness_score || '5').toFixed(1)}/10 Ready
                 </p>
                 <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                  member.risk === 'high' ? 'bg-red-100 text-red-800' :
-                  member.risk === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                  member.risk_level === 'high' ? 'bg-red-100 text-red-800' :
+                  member.risk_level === 'medium' ? 'bg-yellow-100 text-yellow-800' :
                   'bg-green-100 text-green-800'
                 }`}>
-                  {member.risk} risk
+                  {member.risk_level} risk
                 </span>
+                {member.is_vulnerable && (
+                  <div className="mt-1">
+                    <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
+                      Vulnerable
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           ))}

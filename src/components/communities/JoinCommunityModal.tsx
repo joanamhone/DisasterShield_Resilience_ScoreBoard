@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { X, MapPin, Users } from 'lucide-react';
 import Button from '../ui/Button';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { communityService } from '../../services/communityService';
 
 interface Community {
   id: string;
@@ -28,7 +28,7 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const supabase = useSupabaseClient();
+  const [error, setError] = useState('');
   const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,34 +36,33 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
     if (!community || !user) return;
 
     setLoading(true);
+    setError('');
+    
     try {
-      // Store join request in localStorage
-      const joinRequests = JSON.parse(localStorage.getItem('join_requests') || '[]');
-      const newRequest = {
-        id: Date.now().toString(),
-        userId: user.id,
-        userName: user.user_metadata?.full_name || user.email,
-        userLocation: user.user_metadata?.location || 'Harare, Zimbabwe',
-        communityId: community.id,
-        communityName: community.name,
-        phoneNumber: countryCode + phoneNumber,
-        email: email,
-        status: 'pending',
-        timestamp: new Date().toISOString()
-      };
-      joinRequests.push(newRequest);
-      localStorage.setItem('join_requests', JSON.stringify(joinRequests));
+      const fullPhoneNumber = countryCode + phoneNumber;
+      const userName = user.fullName || user.email.split('@')[0];
+      
+      const result = await communityService.joinCommunity(
+        user.id,
+        community.id,
+        fullPhoneNumber,
+        email,
+        userName
+      );
 
-      // Directly join the community
-      localStorage.setItem(`joined_community_${user.id}`, community.id);
+      if (!result.success) {
+        setError(result.error || 'Failed to join community');
+        return;
+      }
       
       alert('Successfully joined the community!');
       onSuccess();
       setPhoneNumber('');
       setEmail('');
+      onClose();
     } catch (error) {
-      console.error('Error submitting join request:', error);
-      alert('Failed to submit join request. Please try again.');
+      console.error('Error joining community:', error);
+      setError('Failed to join community. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -97,6 +96,12 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
             <p className="text-sm text-gray-600 mt-2">{community.description}</p>
           )}
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

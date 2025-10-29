@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import CommunityCard from './CommunityCard';
 import JoinCommunityModal from './JoinCommunityModal';
+import { communityService, CommunityGroup } from '../../services/communityService';
 
-interface Community {
-  id: string;
-  name: string;
-  location: string;
-  description?: string;
-  leader_id?: string;
+type Community = CommunityGroup & {
   memberCount?: number;
-}
+};
 
 const CommunityBrowser: React.FC<{ user: any }> = ({ user }) => {
   const [joinedCommunity, setJoinedCommunity] = useState<Community | null>(null);
@@ -18,61 +13,57 @@ const CommunityBrowser: React.FC<{ user: any }> = ({ user }) => {
   const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const supabase = useSupabaseClient();
 
   useEffect(() => {
     fetchCommunities();
   }, [user]);
 
   const fetchCommunities = async () => {
-    console.log('Fetching communities for user:', user?.id);
-    
-    // Use localStorage for demo communities
-    const hardcodedCommunities = [
-      {
-        id: 'mbare-001',
-        name: 'Mbare Community',
-        location: 'Harare, Zimbabwe',
-        description: 'Active community in Mbare Township',
-        memberCount: 245
-      },
-      {
-        id: 'highfield-002',
-        name: 'Highfield Community',
-        location: 'Harare, Zimbabwe',
-        description: 'Well-organized community in Highfield Township',
-        memberCount: 312
-      },
-      {
-        id: 'chitungwiza-003',
-        name: 'Chitungwiza Community',
-        location: 'Chitungwiza, Zimbabwe',
-        description: 'Large community in Chitungwiza Town',
-        memberCount: 428
-      },
-      {
-        id: 'epworth-004',
-        name: 'Epworth Community',
-        location: 'Harare, Zimbabwe',
-        description: 'Growing community in Epworth Settlement',
-        memberCount: 189
-      }
-    ];
-
-    // Check if user has joined a community (from localStorage)
-    const joinedCommunityId = localStorage.getItem(`joined_community_${user?.id}`);
-    
-    if (joinedCommunityId) {
-      const joined = hardcodedCommunities.find(c => c.id === joinedCommunityId);
-      if (joined) {
-        setJoinedCommunity(joined);
-      }
+    if (!user?.id) {
+      console.log('❌ No user ID available');
+      return;
     }
+    
+    console.log('🔍 Fetching communities for user:', user.id);
+    
+    try {
+      // Check if user has joined a community
+      console.log('🔍 Checking if user has joined a community...');
+      const userCommunity = await communityService.getUserCommunity(user.id);
+      
+      console.log('📊 User community result:', userCommunity);
+      
+      if (userCommunity) {
+        console.log('✅ User has joined community:', userCommunity.name);
+        setJoinedCommunity({
+          ...userCommunity,
+          memberCount: userCommunity.total_members || 0
+        });
+      } else {
+        console.log('❌ User has not joined any community');
+        setJoinedCommunity(null);
+      }
 
-    // Set available communities (exclude joined one)
-    const available = hardcodedCommunities.filter(c => c.id !== joinedCommunityId);
-    setAvailableCommunities(available);
-    setLoading(false);
+      // Get all available communities
+      console.log('🔍 Fetching all communities...');
+      const allCommunities = await communityService.getCommunityGroups();
+      console.log('📊 All communities:', allCommunities.length);
+      
+      // Filter out the community user has already joined
+      const available = allCommunities
+        .filter(c => c.id !== userCommunity?.id)
+        .map(c => ({
+          ...c,
+          memberCount: c.total_members || 0
+        }));
+      
+      console.log('📊 Available communities:', available.length);
+      setAvailableCommunities(available);
+    } catch (error) {
+      console.error('❌ Error fetching communities:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleJoinCommunity = (community: Community) => {
@@ -81,8 +72,11 @@ const CommunityBrowser: React.FC<{ user: any }> = ({ user }) => {
   };
 
   const handleJoinSuccess = () => {
-    fetchCommunities();
-    setShowJoinModal(false);
+    console.log('✅ Join successful, refreshing communities...');
+    // Add a small delay to ensure database is updated
+    setTimeout(() => {
+      fetchCommunities();
+    }, 1000);
   };
 
   if (loading) {
