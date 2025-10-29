@@ -5,7 +5,8 @@ import {
   ClipboardList,
   BarChart3,
   HeartHandshake,
-  FileText
+  FileText,
+  Users
 } from 'lucide-react';
 
 export interface NavItem {
@@ -44,6 +45,12 @@ export const navItems: NavItem[] = [
     roles: ['individual'],
   },
   {
+    path: '/communities',
+    label: 'Communities',
+    icon: Users,
+    roles: ['individual'],
+  },
+  {
     path: '/progress',
     label: 'My Progress',
     icon: BarChart3,
@@ -55,6 +62,12 @@ export const navItems: NavItem[] = [
     path: '/community-dashboard',
     label: 'Community Hub',
     icon: HeartHandshake,
+    roles: ['community_leader'],
+  },
+  {
+    path: '/communities',
+    label: 'Manage Community',
+    icon: Users,
     roles: ['community_leader'],
   },
 

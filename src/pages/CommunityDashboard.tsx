@@ -7,8 +7,8 @@ import { useActivity } from '../hooks/useActivity'
 import ReadinessScore from '../components/home/ReadinessScore'
 import RecentAlerts from '../components/home/RecentAlerts'
 import RiskSummary from '../components/home/RiskSummary'
-import RecentActivities from '../components/dashboard/RecentActivities'
 import ActiveDrills from '../components/dashboard/ActiveDrills'
+
 import {
   Users,
   TrendingUp,
@@ -213,18 +213,14 @@ const CommunityDashboard: React.FC = () => {
         <RiskSummary />
       </div>
 
-      {/* Activity and Drills Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentActivities />
-        <ActiveDrills />
-      </div>
 
-      {/* 3. QUICK ACTIONS & LEARNING CARD (Consolidated) */}
+
+      {/* Quick Actions */}
       <div className="card p-6">
-        <h2 className="text-lg font-bold text-text-primary mb-4">Quick Actions & Learning</h2>
+        <h2 className="text-lg font-bold text-text-primary mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           
-          {/* Action: View Risk Map */}
+          {/* Action: Take Assessment */}
           <button
             onClick={() => navigate('/readiness')}
             className="p-4 bg-surface rounded-lg hover:bg-border transition-colors text-left border border-border"
@@ -263,8 +259,26 @@ const CommunityDashboard: React.FC = () => {
             <h3 className="font-medium text-primary mb-1">Learning Center</h3>
             <p className="text-sm text-text-secondary">Access training courses.</p>
           </button>
+
+        <button
+            onClick={() => navigate('/')}
+            className="p-4 bg-primary/10 rounded-lg border border-primary/30 hover:shadow-lg transition-shadow text-left"
+          >
+            <Calendar className="h-6 w-6 text-primary mb-2" />
+            <h3 className="font-medium text-primary mb-1">Active Drills</h3>
+            <p className="text-sm text-text-secondary"><button
+            onClick={() => window.location.href = '/schedule-drill'}
+            className="mt-2 text-primary hover:underline text-sm"
+          >
+            Schedule your first drill
+          </button></p>
+          </button>
+
         </div>
       </div>
+      
+      {/* Active Drills - Smaller Card */}
+      <ActiveDrills />
       
       {/* Community Readiness Distribution */}
       <div className="card p-6">
@@ -344,6 +358,8 @@ const CommunityDashboard: React.FC = () => {
           ))}
         </div>
       </div>
+
+
 
 
       {/* --- MODALS --- */}
