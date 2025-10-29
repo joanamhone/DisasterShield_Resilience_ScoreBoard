@@ -102,25 +102,18 @@ class AlertService {
 
   private async getRecipientsCount(senderId: string, alertData: AlertData): Promise<number> {
     try {
-      if (alertData.targetAudience === 'all') {
-        // Count all members in sender's communities
-        const { data: communities } = await supabase
-          .from('community_groups')
-          .select('total_members')
-          .eq('leader_id', senderId);
-
-        return communities?.reduce((sum, c) => sum + (c.total_members || 0), 0) || 0;
-      } else if (alertData.targetAudience === 'community' && alertData.targetCommunityId) {
-        // Count members in specific community
-        const { data: community } = await supabase
-          .from('community_groups')
-          .select('total_members')
-          .eq('id', alertData.targetCommunityId)
-          .single();
-
-        return community?.total_members || 0;
+      // Count actual community members
+      let query = supabase
+        .from('community_members')
+        .select('*', { count: 'exact', head: true });
+      
+      if (alertData.targetAudience === 'community' && alertData.targetCommunityId) {
+        query = query.eq('community_id', alertData.targetCommunityId);
       }
-      return 0;
+      // For 'all' audience, count all community members
+      
+      const { count } = await query;
+      return count || 0;
     } catch (error) {
       console.error('Error calculating recipients count:', error);
       return 0;
@@ -175,54 +168,46 @@ class AlertService {
   private async getRecipients(alertData: AlertData): Promise<AlertRecipient[]> {
     try {
       console.log('🔍 Getting recipients for target audience:', alertData.targetAudience);
+      console.log('🔍 Target community ID:', alertData.targetCommunityId);
       
-      let query = supabase.from('community_members').select(`
-        id,
-        name,
-        phone_number,
-        user_id,
-        community_id
-      `);
-
+      // Get community members with their contact info and linked user emails
+      let query = supabase
+        .from('community_members')
+        .select(`
+          id,
+          name,
+          phone_number,
+          user_id,
+          community_id,
+          users(email, full_name)
+        `);
+      
+      // Filter by specific community if needed
       if (alertData.targetAudience === 'community' && alertData.targetCommunityId) {
-        console.log('🎯 Filtering by community ID:', alertData.targetCommunityId);
         query = query.eq('community_id', alertData.targetCommunityId);
       }
-
+      // For 'all' audience, get all community members
+      
       const { data: members, error } = await query;
       
       if (error) {
-        console.error('❌ Error fetching members:', error);
+        console.error('❌ Error fetching community members:', error);
         return [];
       }
       
-      console.log('👥 Raw members data:', members);
-
-      // Get user emails for members who have user_id
-      const recipients: AlertRecipient[] = [];
+      console.log('👥 Raw community members data:', members);
+      console.log('👥 Members count from query:', members?.length || 0);
       
-      for (const member of members || []) {
-        let email = undefined;
-        
-        if (member.user_id) {
-          const { data: user } = await supabase
-            .from('users')
-            .select('email')
-            .eq('id', member.user_id)
-            .single();
-          email = user?.email;
-        }
-        
-        recipients.push({
-          id: member.id,
-          name: member.name,
-          email: email,
-          phone: member.phone_number,
-          communityId: member.community_id
-        });
-      }
+      // Convert members to recipients format
+      const recipients: AlertRecipient[] = (members || []).map(member => ({
+        id: member.id,
+        name: member.name,
+        email: member.users?.email,
+        phone: member.phone_number,
+        communityId: member.community_id
+      }));
       
-      console.log('📋 Processed recipients:', recipients);
+      console.log('📋 Processed recipients:', recipients.length);
       return recipients;
     } catch (error) {
       console.error('Error getting recipients:', error);
@@ -260,7 +245,7 @@ class AlertService {
       const subject = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}`;
       const body = this.generateEmailText(alertData);
       
-      // Try to send via EmailJS first
+      // Send real email using EmailJS
       const { sendRealEmail, sendFallbackEmail } = await import('../services/emailService');
       const result = await sendRealEmail(email, subject, body, alertData);
       
@@ -299,7 +284,7 @@ class AlertService {
     try {
       const message = `🚨 ${alertData.severity.toUpperCase()} ALERT: ${alertData.title}\n\n${alertData.message}\n\nStay safe!\n\n[DisasterShield Community Alert]`;
       
-      // Try to send via Twilio API first
+      // Send real SMS using Twilio
       const { sendRealSMS } = await import('../services/emailService');
       const result = await sendRealSMS(phone, message);
       

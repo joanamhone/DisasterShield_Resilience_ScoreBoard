@@ -141,7 +141,12 @@ const SendAlert: React.FC = () => {
       console.log(`📤 Delivery Methods: ${formData.deliveryMethod.join(', ')}`);
       
       setTimeout(() => {
-        navigate('/community-dashboard');
+        // Navigate to appropriate dashboard based on user role
+        if (user.userType === 'disaster_coordinator') {
+          navigate('/');
+        } else {
+          navigate('/community-dashboard');
+        }
       }, 3000);
     } catch (err) {
       console.error('❌ Error in handleSubmit:', err);
@@ -417,7 +422,13 @@ const SendAlert: React.FC = () => {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => navigate('/community-dashboard')}
+              onClick={() => {
+                if (user?.userType === 'disaster_coordinator') {
+                  navigate('/');
+                } else {
+                  navigate('/community-dashboard');
+                }
+              }}
               className="flex-1 px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel
