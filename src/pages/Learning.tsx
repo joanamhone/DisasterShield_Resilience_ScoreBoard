@@ -1,9 +1,17 @@
-import React, { useState } from 'react'
-import { BookOpen, Award, Clock, Users, Play, CheckCircle, Star, Download, Calendar } from 'lucide-react'
+import React, { useState } from 'react';
+import { BookOpen, Award, Clock, Users, Play, CheckCircle, Star } from 'lucide-react'; // Removed unused Download, Calendar
+
+// --- 1. Import your images from the assets folder ---
+import emergencyLeadershipImage from '../assets/emergency_leadership.jpg';
+import communityAssessmentImage from '../assets/community_assessment.jpg';
+import drillPlanningImage from '../assets/drill_planning.png';
+import crisisCommunicationImage from '../assets/download.jpg'; 
+import communityEngagementImage from '../assets/engagement.jpg';
+import firstAidImage from '../assets/images.jpg'; 
 
 const Learning: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'certifications' | 'progress'>('courses')
-  const [selectedCourse, setSelectedCourse] = useState<any>(null)
+  const [activeTab, setActiveTab] = useState<'courses' | 'certifications' | 'progress'>('courses');
+  // Removed unused selectedCourse state for now
 
   const courses = [
     {
@@ -20,7 +28,7 @@ const Learning: React.FC = () => {
       status: 'available',
       instructor: 'Dr. Sarah Johnson',
       topics: ['Crisis Leadership', 'Team Coordination', 'Decision Making', 'Communication'],
-      image: 'https://images.pexels.com/photos/7551659/pexels-photo-7551659.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: emergencyLeadershipImage // <-- Use imported variable
     },
     {
       id: 2,
@@ -36,7 +44,7 @@ const Learning: React.FC = () => {
       status: 'in-progress',
       instructor: 'Prof. Michael Chen',
       topics: ['Risk Identification', 'Vulnerability Analysis', 'Impact Assessment', 'Mitigation Planning'],
-      image: 'https://images.pexels.com/photos/8728380/pexels-photo-8728380.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: communityAssessmentImage // <-- Use imported variable
     },
     {
       id: 3,
@@ -52,7 +60,7 @@ const Learning: React.FC = () => {
       status: 'completed',
       instructor: 'Captain Lisa Rodriguez',
       topics: ['Drill Design', 'Safety Protocols', 'Evaluation Methods', 'Improvement Planning'],
-      image: 'https://images.pexels.com/photos/8728382/pexels-photo-8728382.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: drillPlanningImage // <-- Use imported variable
     },
     {
       id: 4,
@@ -68,7 +76,7 @@ const Learning: React.FC = () => {
       status: 'available',
       instructor: 'Maria Santos',
       topics: ['Message Clarity', 'Multi-channel Communication', 'Public Speaking', 'Media Relations'],
-      image: 'https://images.pexels.com/photos/7551677/pexels-photo-7551677.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: crisisCommunicationImage // <-- Use imported variable
     },
     {
       id: 5,
@@ -84,7 +92,7 @@ const Learning: React.FC = () => {
       status: 'available',
       instructor: 'Dr. James Park',
       topics: ['Community Outreach', 'Volunteer Management', 'Cultural Sensitivity', 'Stakeholder Engagement'],
-      image: 'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: communityEngagementImage // <-- Use imported variable
     },
     {
       id: 6,
@@ -100,11 +108,12 @@ const Learning: React.FC = () => {
       status: 'in-progress',
       instructor: 'Dr. Emily Watson',
       topics: ['Basic First Aid', 'CPR', 'Medical Triage', 'Emergency Medical Coordination'],
-      image: 'https://images.pexels.com/photos/6749778/pexels-photo-6749778.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: firstAidImage // <-- Use imported variable
     }
-  ]
+  ];
 
-  const certifications = [
+  // Certifications data remains the same
+   const certifications = [
     {
       id: 1,
       name: 'Certified Community Emergency Leader',
@@ -130,8 +139,9 @@ const Learning: React.FC = () => {
       earned: false,
       progress: 15
     }
-  ]
+  ];
 
+  // Helper functions remain the same
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Beginner':
@@ -168,6 +178,7 @@ const Learning: React.FC = () => {
     // Implementation for continuing a course
   }
 
+  // JSX structure remains the same
   return (
     <div className="space-y-6 pb-6">
       {/* Header */}
@@ -182,7 +193,8 @@ const Learning: React.FC = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="card p-4">
+        {/* ... Stat Cards remain the same ... */}
+         <div className="card p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-medium text-text-secondary">Courses Available</h3>
             <BookOpen className="text-primary" size={20} />
@@ -250,30 +262,30 @@ const Learning: React.FC = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {courses.map((course) => (
-                  <div key={course.id} className="card p-4 hover:shadow-lg transition-shadow">
-                    <div className="aspect-video mb-4 rounded-lg overflow-hidden">
+                  <div key={course.id} className="card p-4 hover:shadow-lg transition-shadow flex flex-col"> {/* Added flex flex-col */}
+                    <div className="aspect-video mb-4 rounded-lg overflow-hidden flex-shrink-0"> {/* Added flex-shrink-0 */}
                       <img
-                        src={course.image}
+                        src={course.image} // Now uses the imported variable
                         alt={course.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-3 flex flex-col flex-grow"> {/* Added flex flex-col flex-grow */}
                       <div className="flex items-start justify-between">
                         <h3 className="font-bold text-text-primary text-lg leading-tight">
                           {course.title}
                         </h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(course.status)}`}>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(course.status)}`}> {/* Added flex-shrink-0 */}
                           {course.status.replace('-', ' ')}
                         </span>
                       </div>
 
-                      <p className="text-text-secondary text-sm leading-relaxed">
+                      <p className="text-text-secondary text-sm leading-relaxed flex-grow"> {/* Added flex-grow */}
                         {course.description}
                       </p>
 
-                      <div className="flex items-center space-x-4 text-sm text-text-tertiary">
+                      <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-text-tertiary"> {/* Added flex-wrap gap */}
                         <span className="flex items-center">
                           <Clock size={14} className="mr-1" />
                           {course.duration}
@@ -288,7 +300,7 @@ const Learning: React.FC = () => {
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between pt-2"> {/* Added pt-2 */}
                         <div className="flex items-center space-x-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}>
                             {course.difficulty}
@@ -304,7 +316,7 @@ const Learning: React.FC = () => {
                       </div>
 
                       {course.progress > 0 && (
-                        <div className="space-y-1">
+                        <div className="space-y-1 pt-2"> {/* Added pt-2 */}
                           <div className="flex justify-between text-sm">
                             <span className="text-text-secondary">Progress</span>
                             <span className="font-medium">{course.progress}%</span>
@@ -318,11 +330,11 @@ const Learning: React.FC = () => {
                         </div>
                       )}
 
-                      <div className="pt-2">
+                      <div className="pt-2 mt-auto"> {/* Added mt-auto to push button down */}
                         {course.status === 'available' ? (
                           <button
                             onClick={() => startCourse(course)}
-                            className="w-full btn-primary"
+                            className="w-full btn-primary" // Use your button classes
                           >
                             <Play size={16} className="mr-2" />
                             Start Course
@@ -330,12 +342,12 @@ const Learning: React.FC = () => {
                         ) : course.status === 'in-progress' ? (
                           <button
                             onClick={() => continueCourse(course)}
-                            className="w-full btn-secondary"
+                            className="w-full btn-secondary" // Use your button classes
                           >
                             Continue Course
                           </button>
                         ) : (
-                          <button className="w-full btn-secondary" disabled>
+                          <button className="w-full btn-secondary" disabled> {/* Use your button classes */}
                             <CheckCircle size={16} className="mr-2" />
                             Completed
                           </button>
@@ -350,6 +362,7 @@ const Learning: React.FC = () => {
 
           {activeTab === 'certifications' && (
             <div className="space-y-4">
+              {/* ... Certifications JSX remains the same ... */}
               {certifications.map((cert) => (
                 <div key={cert.id} className="card p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -398,7 +411,7 @@ const Learning: React.FC = () => {
                     )}
                   </div>
                   
-                  {!cert.earned && cert.progress && (
+                  {!cert.earned && cert.progress != null && ( // Added null check for progress
                     <div className="space-y-1">
                       <div className="w-full bg-border h-2 rounded-full">
                         <div 
@@ -414,13 +427,15 @@ const Learning: React.FC = () => {
           )}
 
           {activeTab === 'progress' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div className="space-y-6">
+              {/* ... My Progress JSX remains the same ... */}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="card p-4">
                   <h3 className="font-bold text-text-primary mb-4">Learning Statistics</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-text-secondary">Total Learning Hours</span>
+                      {/* TODO: Calculate this dynamically */}
                       <span className="font-medium">23.5 hours</span>
                     </div>
                     <div className="flex justify-between">
@@ -433,6 +448,7 @@ const Learning: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-secondary">Average Rating</span>
+                      {/* TODO: Calculate this dynamically */}
                       <span className="font-medium">4.8/5.0</span>
                     </div>
                   </div>
@@ -440,6 +456,7 @@ const Learning: React.FC = () => {
 
                 <div className="card p-4">
                   <h3 className="font-bold text-text-primary mb-4">Recent Activity</h3>
+                  {/* TODO: Fetch recent activity dynamically */}
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="text-success" size={16} />
@@ -495,4 +512,4 @@ const Learning: React.FC = () => {
   )
 }
 
-export default Learning
+export default Learning;

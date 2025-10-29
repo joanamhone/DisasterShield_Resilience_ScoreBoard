@@ -7,7 +7,7 @@ import { useActivity } from '../hooks/useActivity'
 import ReadinessScore from '../components/home/ReadinessScore'
 import RecentAlerts from '../components/home/RecentAlerts'
 import RiskSummary from '../components/home/RiskSummary'
-import ActiveDrills from '../components/dashboard/ActiveDrills'
+
 
 import {
   Users,
@@ -277,8 +277,7 @@ const CommunityDashboard: React.FC = () => {
         </div>
       </div>
       
-      {/* Active Drills - Smaller Card */}
-      <ActiveDrills />
+
       
       {/* Community Readiness Distribution */}
       <div className="card p-6">
