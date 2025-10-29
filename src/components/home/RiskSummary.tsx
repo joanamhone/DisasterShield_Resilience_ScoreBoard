@@ -40,7 +40,7 @@ const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
 
   if (isLoading) {
     return (
-      <div className="card p-4 flex flex-col items-center justify-center text-center h-full">
+      <div className="card p-4 h-64 flex flex-col items-center justify-center text-center">
         <Loader2 className="animate-spin text-primary mb-3" size={24} />
         <h3 className="font-bold text-text-primary text-sm">Loading Risks...</h3>
       </div>
@@ -49,7 +49,7 @@ const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
 
   if (error) {
     return (
-      <div className="card p-4 flex flex-col items-center justify-center text-center h-full bg-error/10">
+      <div className="card p-4 h-64 flex flex-col items-center justify-center text-center bg-error/10">
         <AlertTriangle className="text-error mb-3" size={24} />
         <h3 className="font-bold text-error text-sm mb-2">Could Not Load Risks</h3>
         <button onClick={retryFetch} className="btn-secondary text-xs">
@@ -83,7 +83,7 @@ const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
     : allCurrentRisks;
 
   return (
-    <div className="card p-4">
+    <div className="card p-4 h-64 flex flex-col">
       <h3 className="font-bold text-text-primary mb-3">
         Current Risks
       </h3>
@@ -95,30 +95,32 @@ const RiskSummary: React.FC<RiskSummaryProps> = ({ displayMode = 'full' }) => {
         </span>
       </div>
       
-      <div className="space-y-2">
-        {risksToDisplay.length > 0 ? (
-          risksToDisplay.map((risk, index) => {
-            const Icon = risk.icon;
-            const percentage = (risk.probability * 100).toFixed(1);
-            return (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Icon size={16} className={risk.color} />
-                  <span className="text-sm text-text-secondary ml-2">
-                    {risk.type}
+      <div className="flex-1 overflow-hidden">
+        <div className="space-y-2">
+          {risksToDisplay.length > 0 ? (
+            risksToDisplay.map((risk, index) => {
+              const Icon = risk.icon;
+              const percentage = (risk.probability * 100).toFixed(1);
+              return (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Icon size={16} className={risk.color} />
+                    <span className="text-sm text-text-secondary ml-2">
+                      {risk.type}
+                    </span>
+                  </div>
+                  <span className={`text-sm font-medium ${risk.color}`}>
+                    {percentage}%
                   </span>
                 </div>
-                <span className={`text-sm font-medium ${risk.color}`}>
-                  {percentage}%
-                </span>
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-sm text-text-secondary">
-            No significant disaster risks detected at the moment.
-          </p>
-        )}
+              );
+            })
+          ) : (
+            <p className="text-sm text-text-secondary">
+              No significant disaster risks detected at the moment.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

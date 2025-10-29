@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Mock Data: Replace with a Supabase fetch of ALL communities
 const MOCK_ALL_COMMUNITIES = [
-  { id: 'uuid-1', name: 'Kuntaja - Blantyre', leaderName: 'Jane Smith', memberCount: 128, region: 'Southern' },
+  { id: 'uuid-1', name: 'Kuntaja - Blantyre', leaderName: 'Jane Smith', memberCount: 2, region: 'Southern' },
   { id: 'uuid-2', name: 'Somba - Blantyre', leaderName: 'Alex Johnson', memberCount: 76, region: 'Southern' },
   { id: 'uuid-3', name: 'Machinjiri - Blantyre', leaderName: 'Mike Tembo', memberCount: 204, region: 'Southern' },
   { id: 'uuid-4', name: 'Kachere - Dedza', leaderName: 'Grace Phiri', memberCount: 150, region: 'Central' },

@@ -24,11 +24,11 @@ const ReadinessScore: React.FC<ReadinessScoreProps> = ({ score }) => {
   const scoreLabel = getScoreLabel(score)
 
   return (
-    <div className="card p-4">
+    <div className="card p-4 h-64 flex flex-col">
       <h3 className="font-bold text-text-primary mb-3">
         Readiness Score
       </h3>
-      <div className="flex items-center justify-between">
+      <div className="flex-1 flex items-center justify-between">
         <CircleProgress 
           percentage={score} 
           color={scoreColor}

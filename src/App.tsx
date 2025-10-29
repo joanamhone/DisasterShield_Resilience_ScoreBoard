@@ -46,6 +46,8 @@ import CommunityChat from './pages/CommunityChat'
 import CommunityMembers from './components/communities/CommunityMembers'
 import ManageRequests from './pages/ManageRequests' // <-- Fixed
 import ReportingCenter from './pages/ReportingCenter'
+import CommunityView from './pages/CommunityView'
+import CommunityAlerts from './pages/CommunityAlerts'
 
 
 function App() {
@@ -87,7 +89,9 @@ function App() {
                         <Route path="school-dashboard" element={<SchoolDashboard />} />
 
                         <Route path="communities" element={<CommunitiesPage />} />
-                        <Route path="community/:id" element={<CommunityChat />} />
+                        <Route path="community/:id" element={<CommunityView />} />
+                        <Route path="community/:id/chat" element={<CommunityChat />} />
+                        <Route path="community-alerts" element={<CommunityAlerts />} />
                         <Route path="community/:id/members" element={<CommunityMembers />} />
                         <Route path="manage-requests" element={<ManageRequests />} />
 
