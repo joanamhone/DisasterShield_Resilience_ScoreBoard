@@ -12,6 +12,17 @@ if (EMAILJS_PUBLIC_KEY !== 'your_public_key') {
 
 export const sendRealEmail = async (to: string, subject: string, body: string, alertData?: any) => {
   try {
+    console.log('📧 EmailJS Config:', {
+      serviceId: EMAILJS_SERVICE_ID,
+      templateId: EMAILJS_TEMPLATE_ID,
+      publicKey: EMAILJS_PUBLIC_KEY ? 'Set' : 'Missing'
+    });
+    
+    if (EMAILJS_PUBLIC_KEY === 'your_public_key' || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
+      console.warn('⚠️ EmailJS not properly configured, using fallback');
+      return { success: false, error: 'EmailJS not configured' };
+    }
+    
     const templateParams = {
       to_email: to,
       to_name: to.split('@')[0],
@@ -28,6 +39,8 @@ export const sendRealEmail = async (to: string, subject: string, body: string, a
       reply_to: 'ekarimagaleta@gmail.com'
     };
 
+    console.log('📧 Sending email with params:', templateParams);
+    
     const response = await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
@@ -44,38 +57,39 @@ export const sendRealEmail = async (to: string, subject: string, body: string, a
 
 export const sendRealSMS = async (to: string, message: string) => {
   try {
-    // Try Twilio API directly
     const accountSid = import.meta.env.VITE_TWILIO_ACCOUNT_SID;
     const authToken = import.meta.env.VITE_TWILIO_AUTH_TOKEN;
     const fromNumber = import.meta.env.VITE_TWILIO_PHONE_NUMBER;
 
+    console.log('📱 Twilio Config:', {
+      accountSid: accountSid ? 'Set' : 'Missing',
+      authToken: authToken ? 'Set' : 'Missing',
+      fromNumber: fromNumber ? 'Set' : 'Missing'
+    });
+
     if (accountSid && authToken && fromNumber) {
-      const auth = btoa(`${accountSid}:${authToken}`);
+      console.log('📱 Attempting Twilio SMS to:', to);
       
-      const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          From: fromNumber,
-          To: to,
-          Body: message
-        })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('✅ SMS sent via Twilio:', result.sid);
-        return { success: true, result };
-      }
+      // Note: Direct Twilio API calls from browser will fail due to CORS
+      // This is expected - we'll use the fallback
+      console.warn('⚠️ Direct Twilio API calls blocked by CORS, using fallback');
+      throw new Error('CORS blocked - using fallback');
+    } else {
+      console.warn('⚠️ Twilio credentials missing, using fallback');
+      throw new Error('Twilio credentials not configured');
     }
-
-    throw new Error('Twilio credentials not configured');
   } catch (error) {
-    console.error('❌ SMS send failed, using fallback:', error);
+    console.log('📱 Using SMS fallback (opening SMS app):', error.message);
     const smsLink = `sms:${to}?body=${encodeURIComponent(message)}`;
+    
+    // Show notification that SMS app is opening
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('📱 SMS Alert', {
+        body: `Opening SMS app to send alert to ${to}`,
+        icon: '/favicon.ico'
+      });
+    }
+    
     window.open(smsLink, '_blank');
     return { success: true, fallback: true };
   }

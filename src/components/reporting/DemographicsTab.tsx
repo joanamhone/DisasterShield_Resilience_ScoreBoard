@@ -1,9 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2 } from 'lucide-react';
-// import * as XLSX from 'xlsx';
-// import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable';
+
 
 // Mock Data
 const MOCK_STATS = { totalPopulation: 120500, households: 28100, highRisk: 15200 };
@@ -35,20 +33,84 @@ const DemographicsTab = forwardRef<DemographicsTabRef, { jurisdiction: string }>
 
   useImperativeHandle(ref, () => ({
     exportToExcel: () => {
-        if (!tableData || tableData.length === 0) {
-          alert("No data available to export.");
-          return;
-        }
-        // Excel export temporarily disabled due to module issues
-        alert("Excel export feature is temporarily unavailable.");
-    },
-    exportToPdf: () => {
+      console.log('DemographicsTab exportToExcel called');
+      console.log('Table data:', tableData);
+      
       if (!tableData || tableData.length === 0) {
         alert("No data available to export.");
         return;
       }
-      // PDF export temporarily disabled due to module issues
-      alert("PDF export feature is temporarily unavailable.");
+      
+      try {
+        const csvContent = [
+          'Community,Population,Households',
+          ...tableData.map(row => `"${row.community}",${row.population},${row.households}`)
+        ].join('\n');
+        
+        console.log('CSV Content:', csvContent);
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Demographics_Report_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        console.log('CSV export completed');
+      } catch (error) {
+        console.error('Export error:', error);
+        alert('Export failed: ' + error);
+      }
+    },
+    exportToPdf: () => {
+      console.log('DemographicsTab exportToPdf called');
+      
+      if (!tableData || tableData.length === 0) {
+        alert("No data available to export.");
+        return;
+      }
+      
+      try {
+        const printContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Demographics Report</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background-color: #f2f2f2; }
+            </style>
+          </head>
+          <body>
+            <h1>Demographics Report</h1>
+            <p><strong>Jurisdiction:</strong> ${jurisdiction}</p>
+            <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+            <table>
+              <tr><th>Community</th><th>Population</th><th>Households</th></tr>
+              ${tableData.map(row => `<tr><td>${row.community}</td><td>${row.population.toLocaleString()}</td><td>${row.households.toLocaleString()}</td></tr>`).join('')}
+            </table>
+          </body>
+          </html>
+        `;
+        
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(printContent);
+          printWindow.document.close();
+          printWindow.print();
+          console.log('Print dialog opened');
+        } else {
+          alert('Could not open print window. Please allow popups.');
+        }
+      } catch (error) {
+        console.error('Print error:', error);
+        alert('Print failed: ' + error);
+      }
     },
   }));
 

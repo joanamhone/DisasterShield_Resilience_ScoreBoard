@@ -1,9 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2 } from 'lucide-react';
-// import * as XLSX from 'xlsx';
-// import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable';
+
 
 // Mock Data
 const MOCK_STATS = { avgScore: 72, mostPrepared: "Mlumbe - Zomba", leastPrepared: "Kuntaja - Blantyre" };
@@ -39,19 +37,59 @@ const ReadinessTab = forwardRef<ReadinessTabRef, { jurisdiction: string }>(({ ju
   useImperativeHandle(ref, () => ({
     exportToExcel: () => {
       if (!tableData || tableData.length === 0) {
-          alert("No data available to export.");
-          return;
+        alert("No data available to export.");
+        return;
       }
-      // Excel export temporarily disabled due to module issues
-      alert("Excel export feature is temporarily unavailable.");
+      
+      const csvContent = [
+        'Community,Readiness Score,Status',
+        ...tableData.map(row => `"${row.community}",${row.score}%,"${row.status}"`)
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Readiness_Report_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
     },
     exportToPdf: () => {
       if (!tableData || tableData.length === 0) {
-          alert("No data available to export.");
-          return;
+        alert("No data available to export.");
+        return;
       }
-      // PDF export temporarily disabled due to module issues
-      alert("PDF export feature is temporarily unavailable.");
+      
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Community Readiness Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h1>Community Readiness Report</h1>
+          <p><strong>Jurisdiction:</strong> ${jurisdiction}</p>
+          <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+          <table>
+            <tr><th>Community</th><th>Readiness Score</th><th>Status</th></tr>
+            ${tableData.map(row => `<tr><td>${row.community}</td><td>${row.score}%</td><td>${row.status}</td></tr>`).join('')}
+          </table>
+        </body>
+        </html>
+      `;
+      
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+      }
     },
   }));
 

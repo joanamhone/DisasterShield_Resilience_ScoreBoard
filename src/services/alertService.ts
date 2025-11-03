@@ -216,19 +216,37 @@ class AlertService {
   }
 
   private async sendEmailNotifications(recipients: AlertRecipient[], alertData: AlertData): Promise<void> {
+    console.log(`📧 Processing email notifications for ${recipients.length} recipients`);
+    let emailCount = 0;
+    
     for (const recipient of recipients) {
       if (recipient.email) {
+        emailCount++;
+        console.log(`📧 Sending email ${emailCount} to: ${recipient.email}`);
         await this.sendEmail(recipient.email, alertData);
+      } else {
+        console.log(`⚠️ No email for recipient: ${recipient.name}`);
       }
     }
+    
+    console.log(`📧 Email notifications completed: ${emailCount} emails sent`);
   }
 
   private async sendSMSNotifications(recipients: AlertRecipient[], alertData: AlertData): Promise<void> {
+    console.log(`📱 Processing SMS notifications for ${recipients.length} recipients`);
+    let smsCount = 0;
+    
     for (const recipient of recipients) {
       if (recipient.phone) {
+        smsCount++;
+        console.log(`📱 Sending SMS ${smsCount} to: ${recipient.phone}`);
         await this.sendSMS(recipient.phone, alertData);
+      } else {
+        console.log(`⚠️ No phone for recipient: ${recipient.name}`);
       }
     }
+    
+    console.log(`📱 SMS notifications completed: ${smsCount} SMS sent`);
   }
 
   private async sendPushNotifications(recipients: AlertRecipient[], alertData: AlertData): Promise<void> {

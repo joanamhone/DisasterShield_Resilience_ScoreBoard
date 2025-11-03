@@ -22,46 +22,74 @@ const ReportingCenter: React.FC = () => {
 
   // --- Updated Export Functions ---
   const handleExportExcel = () => {
+    console.log('Export Excel clicked, activeTab:', activeTab);
     switch (activeTab) {
       case 'demographics':
-        demographicsRef.current?.exportToExcel(); // Call function on ref
+        console.log('Demographics ref:', demographicsRef.current);
+        if (demographicsRef.current) {
+          demographicsRef.current.exportToExcel();
+        } else {
+          console.error('Demographics ref is null');
+        }
         break;
       case 'readiness':
-        readinessRef.current?.exportToExcel();
+        console.log('Readiness ref:', readinessRef.current);
+        if (readinessRef.current) {
+          readinessRef.current.exportToExcel();
+        } else {
+          console.error('Readiness ref is null');
+        }
         break;
       case 'response':
-        responseRef.current?.exportToExcel();
+        console.log('Response ref:', responseRef.current);
+        if (responseRef.current) {
+          responseRef.current.exportToExcel();
+        } else {
+          console.error('Response ref is null');
+        }
         break;
     }
   };
 
   const handleExportPdf = () => {
+    console.log('Export PDF clicked, activeTab:', activeTab);
     switch (activeTab) {
       case 'demographics':
-        demographicsRef.current?.exportToPdf(); // Call function on ref
+        if (demographicsRef.current) {
+          demographicsRef.current.exportToPdf();
+        } else {
+          console.error('Demographics ref is null');
+        }
         break;
       case 'readiness':
-        readinessRef.current?.exportToPdf();
+        if (readinessRef.current) {
+          readinessRef.current.exportToPdf();
+        } else {
+          console.error('Readiness ref is null');
+        }
         break;
       case 'response':
-        responseRef.current?.exportToPdf();
+        if (responseRef.current) {
+          responseRef.current.exportToPdf();
+        } else {
+          console.error('Response ref is null');
+        }
         break;
     }
   };
   // --- End Updated Export Functions ---
 
   const renderTabContent = () => {
-    switch (activeTab) {
-      case 'demographics':
-        // Pass the ref to the component
-        return <DemographicsTab ref={demographicsRef} jurisdiction={userJurisdiction} />;
-      case 'readiness':
-        return <ReadinessTab ref={readinessRef} jurisdiction={userJurisdiction} />;
-      case 'response':
-        return <ResponseTab ref={responseRef} jurisdiction={userJurisdiction} />;
-      default:
-        return null;
+    if (activeTab === 'demographics') {
+      return <DemographicsTab ref={demographicsRef} jurisdiction={userJurisdiction} />;
     }
+    if (activeTab === 'readiness') {
+      return <ReadinessTab ref={readinessRef} jurisdiction={userJurisdiction} />;
+    }
+    if (activeTab === 'response') {
+      return <ResponseTab ref={responseRef} jurisdiction={userJurisdiction} />;
+    }
+    return null;
   };
 
   return (

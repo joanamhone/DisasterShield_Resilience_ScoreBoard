@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
-  const { signIn, signInWithGoogle, loading } = useAuth();
+  const { signIn, signInWithGoogle, loading, user } = useAuth();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -14,12 +14,29 @@ const SignIn: React.FC = () => {
   
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Navigate to home when user is authenticated
+  useEffect(() => {
+    if (user && !loading) {
+      navigate('/');
+    }
+  }, [user, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clear previous errors
+    setErrors({});
+    
+    // Validate form
+    if (!formData.email || !formData.password) {
+      setErrors({ submit: 'Please fill in all fields' });
+      return;
+    }
+    
     try {
       await signIn(formData.email, formData.password);
-      navigate('/'); // Redirect to home on successful sign-in
+      // Don't navigate here - let the auth context handle it
     } catch (error) {
       setErrors({ submit: (error as Error).message });
     }
@@ -36,8 +53,9 @@ const SignIn: React.FC = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+    // Clear errors when user starts typing
+    if (errors[field] || errors.submit) {
+      setErrors(prev => ({ ...prev, [field]: '', submit: '' }));
     }
   };
 

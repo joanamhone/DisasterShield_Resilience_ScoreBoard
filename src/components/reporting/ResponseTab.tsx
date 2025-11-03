@@ -2,9 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Loader2, Eye } from 'lucide-react';
 import Button from '../ui/Button'; // Ensure correct path
-// import XLSX from 'xlsx';
-// import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable';
+
 
 // Mock Data
 const MOCK_TABLE_DATA = [
@@ -37,20 +35,60 @@ const ResponseTab = forwardRef<ResponseTabRef, { jurisdiction: string }>(({ juri
   // Expose export functions
   useImperativeHandle(ref, () => ({
     exportToExcel: () => {
-       if (!tableData || tableData.length === 0) {
-          alert("No data available to export.");
-          return;
+      if (!tableData || tableData.length === 0) {
+        alert("No data available to export.");
+        return;
       }
-      // Excel export temporarily disabled due to module issues
-      alert("Excel export feature is temporarily unavailable.");
+      
+      const csvContent = [
+        'Report Title,Community,Submitted By,Date,Status',
+        ...tableData.map(row => `"${row.title}","${row.community}","${row.leader}",${row.date},"${row.status}"`)
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Response_Reports_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
     },
     exportToPdf: () => {
       if (!tableData || tableData.length === 0) {
-          alert("No data available to export.");
-          return;
+        alert("No data available to export.");
+        return;
       }
-      // PDF export temporarily disabled due to module issues
-      alert("PDF export feature is temporarily unavailable.");
+      
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Disaster Response Reports</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h1>Disaster Response Reports</h1>
+          <p><strong>Jurisdiction:</strong> ${jurisdiction}</p>
+          <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+          <table>
+            <tr><th>Report Title</th><th>Community</th><th>Submitted By</th><th>Date</th><th>Status</th></tr>
+            ${tableData.map(row => `<tr><td>${row.title}</td><td>${row.community}</td><td>${row.leader}</td><td>${row.date}</td><td>${row.status}</td></tr>`).join('')}
+          </table>
+        </body>
+        </html>
+      `;
+      
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+      }
     },
   }));
 
