@@ -1,4 +1,4 @@
-# Climate & Geospatial Monitoring Dashboard README
+# DisasterShield - Climate & Geospatial Monitoring Dashboard README
 
 ```markdown
 # Climate & Geospatial Monitoring Platform
